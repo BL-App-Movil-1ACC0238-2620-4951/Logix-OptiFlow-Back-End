@@ -1,4 +1,4 @@
-package com.optiflow.platform.notification.infrastructure.persistence.inmemory;
+package com.optiflow.platform.notification.support;
 
 import com.optiflow.platform.notification.domain.entities.Notification;
 import com.optiflow.platform.notification.domain.repositories.NotificationRepository;
@@ -10,11 +10,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
-import org.springframework.stereotype.Repository;
 
-/** Temporary in-memory store until JPA persistence is added in a later commit. */
-@Repository
-public class InMemoryNotificationRepository implements NotificationRepository {
+public class FakeNotificationRepository implements NotificationRepository {
 
   private final Map<NotificationId, Notification> store = new ConcurrentHashMap<>();
 
@@ -42,11 +39,6 @@ public class InMemoryNotificationRepository implements NotificationRepository {
         .anyMatch(notification ->
             notification.patientId().equals(patientId)
                 && notification.appointmentId().filter(appointmentId::equals).isPresent());
-  }
-
-  /** Visible for tests that need a clean slate without Spring context restart. */
-  public void clear() {
-    store.clear();
   }
 
   public List<Notification> findAll() {

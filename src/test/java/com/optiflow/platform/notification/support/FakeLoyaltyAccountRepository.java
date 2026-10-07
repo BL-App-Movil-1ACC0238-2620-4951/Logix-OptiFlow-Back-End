@@ -1,4 +1,4 @@
-package com.optiflow.platform.notification.infrastructure.persistence.inmemory;
+package com.optiflow.platform.notification.support;
 
 import com.optiflow.platform.notification.domain.entities.LoyaltyAccount;
 import com.optiflow.platform.notification.domain.repositories.LoyaltyAccountRepository;
@@ -6,10 +6,8 @@ import com.optiflow.platform.notification.domain.valueobjects.PatientId;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public class InMemoryLoyaltyAccountRepository implements LoyaltyAccountRepository {
+public class FakeLoyaltyAccountRepository implements LoyaltyAccountRepository {
 
   private final Map<PatientId, LoyaltyAccount> store = new ConcurrentHashMap<>();
 
@@ -21,9 +19,5 @@ public class InMemoryLoyaltyAccountRepository implements LoyaltyAccountRepositor
   @Override
   public Optional<LoyaltyAccount> findByPatientId(PatientId patientId) {
     return Optional.ofNullable(store.get(patientId));
-  }
-
-  public void clear() {
-    store.clear();
   }
 }

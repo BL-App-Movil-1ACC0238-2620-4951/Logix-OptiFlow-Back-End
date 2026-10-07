@@ -11,8 +11,8 @@ import com.optiflow.platform.notification.application.queries.GetNotificationsBy
 import com.optiflow.platform.notification.domain.exceptions.LoyaltyAccountNotFoundException;
 import com.optiflow.platform.notification.domain.valueobjects.NotificationStatus;
 import com.optiflow.platform.notification.domain.valueobjects.NotificationType;
-import com.optiflow.platform.notification.infrastructure.persistence.inmemory.InMemoryLoyaltyAccountRepository;
-import com.optiflow.platform.notification.infrastructure.persistence.inmemory.InMemoryNotificationRepository;
+import com.optiflow.platform.notification.support.FakeLoyaltyAccountRepository;
+import com.optiflow.platform.notification.support.FakeNotificationRepository;
 import com.optiflow.platform.shared.domain.events.DomainEventPublisher;
 import com.optiflow.platform.shared.exceptions.DomainException;
 import java.time.Clock;
@@ -29,15 +29,15 @@ class NotificationApplicationServiceTest {
   private static final UUID APPOINTMENT_ID = UUID.fromString("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb");
   private static final Instant NOW = Instant.parse("2026-10-07T15:00:00Z");
 
-  private InMemoryNotificationRepository notificationRepository;
-  private InMemoryLoyaltyAccountRepository loyaltyAccountRepository;
+  private FakeNotificationRepository notificationRepository;
+  private FakeLoyaltyAccountRepository loyaltyAccountRepository;
   private NotificationApplicationService notificationApplicationService;
   private LoyaltyApplicationService loyaltyApplicationService;
 
   @BeforeEach
   void setUp() {
-    notificationRepository = new InMemoryNotificationRepository();
-    loyaltyAccountRepository = new InMemoryLoyaltyAccountRepository();
+    notificationRepository = new FakeNotificationRepository();
+    loyaltyAccountRepository = new FakeLoyaltyAccountRepository();
     Clock clock = Clock.fixed(NOW, ZoneOffset.UTC);
     DomainEventPublisher eventPublisher = Mockito.mock(DomainEventPublisher.class);
 
