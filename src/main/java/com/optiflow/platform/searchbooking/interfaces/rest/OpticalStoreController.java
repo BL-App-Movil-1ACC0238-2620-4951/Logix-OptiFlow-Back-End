@@ -7,12 +7,15 @@ import com.optiflow.platform.searchbooking.interfaces.rest.assemblers.FromSearch
 import com.optiflow.platform.searchbooking.interfaces.rest.assemblers.SearchBookingResponseAssembler;
 import com.optiflow.platform.searchbooking.interfaces.rest.resources.OpticalStoreListResponse;
 import com.optiflow.platform.searchbooking.interfaces.rest.resources.OpticalStoreResponse;
+import com.optiflow.platform.shared.documentation.openapi.configuration.OpenApiTags;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.UUID;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+@Tag(name = OpenApiTags.OPTICAL_STORES)
 @RestController
 public class OpticalStoreController {
 

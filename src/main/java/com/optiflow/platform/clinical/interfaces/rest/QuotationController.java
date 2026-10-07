@@ -12,6 +12,8 @@ import com.optiflow.platform.clinical.interfaces.rest.resources.ApplyPromotionOr
 import com.optiflow.platform.clinical.interfaces.rest.resources.GenerateQuotationRequest;
 import com.optiflow.platform.clinical.interfaces.rest.resources.QuotationResponse;
 import com.optiflow.platform.clinical.interfaces.rest.resources.RejectQuotationRequest;
+import com.optiflow.platform.shared.documentation.openapi.configuration.OpenApiTags;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.UUID;
 import org.springframework.http.HttpStatus;
@@ -23,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+@Tag(name = OpenApiTags.QUOTATIONS)
 @RestController
 public class QuotationController {
 

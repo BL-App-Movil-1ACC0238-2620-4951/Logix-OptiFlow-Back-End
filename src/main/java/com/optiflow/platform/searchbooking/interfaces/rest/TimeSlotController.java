@@ -5,11 +5,14 @@ import com.optiflow.platform.searchbooking.application.services.OpticalStoreAppl
 import com.optiflow.platform.searchbooking.domain.valueobjects.OpticalStoreId;
 import com.optiflow.platform.searchbooking.interfaces.rest.assemblers.SearchBookingResponseAssembler;
 import com.optiflow.platform.searchbooking.interfaces.rest.resources.TimeSlotListResponse;
+import com.optiflow.platform.shared.documentation.openapi.configuration.OpenApiTags;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.UUID;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
+@Tag(name = OpenApiTags.AVAILABILITY)
 @RestController
 public class TimeSlotController {
 

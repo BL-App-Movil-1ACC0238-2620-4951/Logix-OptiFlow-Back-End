@@ -15,6 +15,8 @@ import com.optiflow.platform.clinical.interfaces.rest.resources.GenerateOpticalP
 import com.optiflow.platform.clinical.interfaces.rest.resources.OpticalPrescriptionResponse;
 import com.optiflow.platform.clinical.interfaces.rest.resources.RecordMedicalHistoryRequest;
 import com.optiflow.platform.clinical.interfaces.rest.resources.RegisterClinicalRecordRequest;
+import com.optiflow.platform.shared.documentation.openapi.configuration.OpenApiTags;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
 import java.util.UUID;
@@ -27,6 +29,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+@Tag(name = OpenApiTags.CLINICAL_RECORDS)
 @RestController
 public class ClinicalRecordController {
 

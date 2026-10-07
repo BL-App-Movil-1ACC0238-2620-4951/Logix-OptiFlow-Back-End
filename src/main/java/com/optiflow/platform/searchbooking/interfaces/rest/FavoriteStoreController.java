@@ -7,6 +7,8 @@ import com.optiflow.platform.searchbooking.domain.valueobjects.PatientId;
 import com.optiflow.platform.searchbooking.interfaces.rest.assemblers.SearchBookingResponseAssembler;
 import com.optiflow.platform.searchbooking.interfaces.rest.resources.FavoriteStoreResponse;
 import com.optiflow.platform.searchbooking.interfaces.rest.resources.SaveFavoriteStoreRequest;
+import com.optiflow.platform.shared.documentation.openapi.configuration.OpenApiTags;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.UUID;
 import org.springframework.http.HttpStatus;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+@Tag(name = OpenApiTags.FAVORITES)
 @RestController
 public class FavoriteStoreController {
 
