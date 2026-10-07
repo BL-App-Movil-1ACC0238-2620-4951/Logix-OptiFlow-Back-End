@@ -12,10 +12,10 @@
   </parent>
 
   <groupId>com.optiflow</groupId>
-  <artifactId>optiflow-booking</artifactId>
+  <artifactId>optiflow-platform</artifactId>
   <version>0.1.0</version>
-  <name>optiflow-booking</name>
-  <description>OptiFlow Search and Booking web services</description>
+  <name>optiflow-platform</name>
+  <description>OptiFlow platform web services</description>
 
   <properties>
     <java.version>21</java.version>

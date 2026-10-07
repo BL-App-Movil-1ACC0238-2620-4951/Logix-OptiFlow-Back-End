@@ -1,9 +1,0 @@
-package com.optiflow.booking.application.command;
-
-import com.optiflow.booking.domain.vo.OpticalStoreId;
-import com.optiflow.booking.domain.vo.PatientId;
-import com.optiflow.booking.domain.vo.TimeSlotId;
-
-public record BookAppointmentCommand(
-    PatientId patientId, OpticalStoreId opticalStoreId, TimeSlotId timeSlotId) {
-}

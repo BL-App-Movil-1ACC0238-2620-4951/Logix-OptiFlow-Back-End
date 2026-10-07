@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="true" name="OptiFlowPlatformApplication (local, Java 21)" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+    <option name="ACTIVE_PROFILES" value="local" />
+    <module name="optiflow-platform" />
+    <option name="SPRING_BOOT_MAIN_CLASS" value="com.optiflow.platform.OptiFlowPlatformApplication" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
