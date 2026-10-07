@@ -1,0 +1,10 @@
+spring:
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/optiflow_booking}
+    username: ${SPRING_DATASOURCE_USERNAME:optiflow}
+    password: ${SPRING_DATASOURCE_PASSWORD:optiflow}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+  flyway:
+    enabled: true

@@ -19,6 +19,7 @@ services:
       postgres:
         condition: service_healthy
     environment:
+      SPRING_PROFILES_ACTIVE: postgres
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/optiflow_booking
       SPRING_DATASOURCE_USERNAME: optiflow
       SPRING_DATASOURCE_PASSWORD: optiflow
