@@ -86,4 +86,36 @@ class SearchAndBookingApiTest {
                 """))
         .andExpect(status().isUnauthorized());
   }
+  @Test
+  void rejectsPhoneLettersWithoutCreatingThePatient() throws Exception {
+    mockMvc.perform(post("/patients")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("""
+                {"name":"Phone Test","email":"phone.invalid@optiflow.test","phone":"abc999888777","password":"secret12"}
+                """))
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.status").value(400))
+        .andExpect(jsonPath("$.message").value(
+            "Phone number must contain 7 to 15 digits, with an optional leading +, spaces or hyphens."));
+
+    // The rejected request must not consume the email or persist a patient.
+    mockMvc.perform(post("/patients")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("""
+                {"name":"Phone Test","email":"phone.invalid@optiflow.test","phone":"999888777","password":"secret12"}
+                """))
+        .andExpect(status().isCreated())
+        .andExpect(jsonPath("$.phone").value("999888777"));
+  }
+
+  @Test
+  void acceptsAndNormalizesInternationalPhoneFormatting() throws Exception {
+    mockMvc.perform(post("/patients")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("""
+                {"name":"Formatted Phone","email":"phone.formatted@optiflow.test","phone":"+51 999-888-777","password":"secret12"}
+                """))
+        .andExpect(status().isCreated())
+        .andExpect(jsonPath("$.phone").value("51999888777"));
+  }
 }
