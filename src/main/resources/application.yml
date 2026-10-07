@@ -1,6 +1,6 @@
 spring:
   application:
-    name: optiflow-booking
+    name: optiflow-platform
   profiles:
     default: local
   jpa:
