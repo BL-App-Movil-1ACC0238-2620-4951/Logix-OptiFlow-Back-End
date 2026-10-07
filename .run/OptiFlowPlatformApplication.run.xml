@@ -1,0 +1,12 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="true" name="OptiFlowPlatformApplication (local, Java 21)" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+    <option name="ACTIVE_PROFILES" value="local" />
+    <option name="ALTERNATIVE_JRE_PATH" value="C:/Program Files/Eclipse Adoptium/jdk-21.0.12.101-hotspot" />
+    <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
+    <module name="optiflow-booking" />
+    <option name="SPRING_BOOT_MAIN_CLASS" value="com.optiflow.platform.OptiFlowPlatformApplication" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
