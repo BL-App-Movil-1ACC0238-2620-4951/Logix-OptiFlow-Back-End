@@ -1,0 +1,29 @@
+spring:
+  application:
+    name: optiflow-booking
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/optiflow_booking}
+    username: ${SPRING_DATASOURCE_USERNAME:optiflow}
+    password: ${SPRING_DATASOURCE_PASSWORD:optiflow}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: America/Lima
+  flyway:
+    enabled: true
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+
+server:
+  port: ${PORT:8080}
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+  api-docs:
+    path: /v3/api-docs
