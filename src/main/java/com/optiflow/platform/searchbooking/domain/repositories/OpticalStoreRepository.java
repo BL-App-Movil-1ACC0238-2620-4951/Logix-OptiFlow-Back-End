@@ -1,6 +1,7 @@
 package com.optiflow.platform.searchbooking.domain.repositories;
 
 import com.optiflow.platform.searchbooking.domain.model.entities.OpticalStore;
+import com.optiflow.platform.searchbooking.domain.model.valueobjects.GeoLocation;
 import com.optiflow.platform.searchbooking.domain.model.valueobjects.OpticalStoreId;
 import java.math.BigDecimal;
 import java.util.List;
@@ -13,6 +14,8 @@ public interface OpticalStoreRepository {
   List<OpticalStore> search(String name, String address);
 
   List<OpticalStore> filter(String name, String address, BigDecimal minRating);
+
+  List<OpticalStore> findNearby(GeoLocation reference, BigDecimal radiusKm);
 
   void save(OpticalStore opticalStore);
 

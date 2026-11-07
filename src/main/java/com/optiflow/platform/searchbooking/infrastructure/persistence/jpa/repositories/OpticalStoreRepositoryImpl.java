@@ -1,6 +1,7 @@
 package com.optiflow.platform.searchbooking.infrastructure.persistence.jpa.repositories;
 
 import com.optiflow.platform.searchbooking.domain.model.entities.OpticalStore;
+import com.optiflow.platform.searchbooking.domain.model.valueobjects.GeoLocation;
 import com.optiflow.platform.searchbooking.domain.model.valueobjects.OpticalStoreId;
 import com.optiflow.platform.searchbooking.domain.repositories.OpticalStoreRepository;
 import com.optiflow.platform.searchbooking.domain.services.OpticalStoreSearchService;
@@ -39,6 +40,11 @@ public class OpticalStoreRepositoryImpl implements OpticalStoreRepository {
   @Override
   public List<OpticalStore> filter(String name, String address, BigDecimal minRating) {
     return opticalStoreSearchService.filter(findAll(), name, address, minRating);
+  }
+
+  @Override
+  public List<OpticalStore> findNearby(GeoLocation reference, BigDecimal radiusKm) {
+    return opticalStoreSearchService.nearby(findAll(), reference, radiusKm);
   }
 
   @Override
