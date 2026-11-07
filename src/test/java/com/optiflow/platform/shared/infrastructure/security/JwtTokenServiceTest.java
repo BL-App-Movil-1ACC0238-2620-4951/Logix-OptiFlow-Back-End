@@ -39,7 +39,8 @@ class JwtTokenServiceTest {
     IssuedJwt issued = service.issue(USER_ID, "PATIENT");
 
     Clock later = Clock.fixed(Instant.parse("2026-11-07T13:00:00Z"), ZoneOffset.UTC);
-    JwtTokenService validator = new JwtTokenService(new JwtProperties(SECRET, Duration.ofMinutes(5)), later);
+    JwtTokenService validator =
+        new JwtTokenService(new JwtProperties(SECRET, Duration.ofMinutes(5)), later);
 
     assertThrows(DomainException.class, () -> validator.parse(issued.token()));
   }

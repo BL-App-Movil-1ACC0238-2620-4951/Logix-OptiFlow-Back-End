@@ -49,6 +49,7 @@ public class JwtTokenService {
     try {
       Claims claims = Jwts.parser()
           .verifyWith(secretKey)
+          .clock(() -> Date.from(clock.instant()))
           .build()
           .parseSignedClaims(token)
           .getPayload();
