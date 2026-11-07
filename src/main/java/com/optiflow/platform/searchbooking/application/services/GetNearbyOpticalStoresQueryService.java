@@ -4,7 +4,7 @@ import com.optiflow.platform.searchbooking.application.queries.GetNearbyOpticalS
 import com.optiflow.platform.searchbooking.domain.entities.OpticalStore;
 import com.optiflow.platform.searchbooking.domain.repositories.OpticalStoreRepository;
 import com.optiflow.platform.searchbooking.domain.valueobjects.GeoLocation;
-import com.optiflow.platform.shared.exceptions.DomainException;
+import com.optiflow.platform.shared.domain.exceptions.DomainException;
 import java.util.Comparator;
 import java.util.List;
 import org.springframework.stereotype.Service;

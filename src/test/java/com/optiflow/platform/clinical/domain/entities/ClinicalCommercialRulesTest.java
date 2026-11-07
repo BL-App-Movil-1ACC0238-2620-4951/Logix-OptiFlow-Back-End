@@ -16,7 +16,7 @@ import com.optiflow.platform.clinical.domain.valueobjects.PaymentMethod;
 import com.optiflow.platform.clinical.domain.valueobjects.QuotationItemType;
 import com.optiflow.platform.clinical.domain.valueobjects.QuotationStatus;
 import com.optiflow.platform.clinical.domain.valueobjects.SaleStatus;
-import com.optiflow.platform.shared.exceptions.DomainException;
+import com.optiflow.platform.shared.domain.exceptions.DomainException;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;

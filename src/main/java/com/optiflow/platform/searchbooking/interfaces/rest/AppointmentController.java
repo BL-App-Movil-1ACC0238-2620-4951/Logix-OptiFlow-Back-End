@@ -13,8 +13,8 @@ import com.optiflow.platform.searchbooking.interfaces.rest.assemblers.SearchBook
 import com.optiflow.platform.searchbooking.interfaces.rest.resources.AppointmentResponse;
 import com.optiflow.platform.searchbooking.interfaces.rest.resources.BookAppointmentRequest;
 import com.optiflow.platform.searchbooking.interfaces.rest.resources.UpdateAppointmentStatusRequest;
-import com.optiflow.platform.shared.documentation.openapi.configuration.OpenApiTags;
-import com.optiflow.platform.shared.exceptions.DomainException;
+import com.optiflow.platform.shared.infrastructure.documentation.openapi.configuration.OpenApiTags;
+import com.optiflow.platform.shared.domain.exceptions.DomainException;
 import com.optiflow.platform.shared.interfaces.rest.ApiV1;
 import com.optiflow.platform.shared.interfaces.rest.CreatedResourceResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;

@@ -1,7 +1,7 @@
 package com.optiflow.platform.production.domain.entities;
 
 import com.optiflow.platform.production.domain.valueobjects.TechnicianId;
-import com.optiflow.platform.shared.exceptions.DomainException;
+import com.optiflow.platform.shared.domain.exceptions.DomainException;
 
 /** Laboratory technician who manufactures the lenses of a work order. */
 public class Technician {

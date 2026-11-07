@@ -1,6 +1,6 @@
 package com.optiflow.platform.searchbooking.domain.valueobjects;
 
-import com.optiflow.platform.shared.exceptions.DomainException;
+import com.optiflow.platform.shared.domain.exceptions.DomainException;
 import java.util.UUID;
 
 public record StaffMemberId(UUID value) {

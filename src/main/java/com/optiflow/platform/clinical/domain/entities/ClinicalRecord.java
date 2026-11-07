@@ -5,7 +5,7 @@ import com.optiflow.platform.clinical.domain.valueobjects.ClinicalRecordId;
 import com.optiflow.platform.clinical.domain.valueobjects.ClinicalRecordStatus;
 import com.optiflow.platform.clinical.domain.valueobjects.OpticalPrescription;
 import com.optiflow.platform.clinical.domain.valueobjects.PatientId;
-import com.optiflow.platform.shared.exceptions.DomainException;
+import com.optiflow.platform.shared.domain.exceptions.DomainException;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;

@@ -9,7 +9,7 @@ import com.optiflow.platform.production.domain.valueobjects.SaleId;
 import com.optiflow.platform.production.domain.valueobjects.StatusChange;
 import com.optiflow.platform.production.domain.valueobjects.WorkOrderId;
 import com.optiflow.platform.production.domain.valueobjects.WorkOrderStatus;
-import com.optiflow.platform.shared.exceptions.DomainException;
+import com.optiflow.platform.shared.domain.exceptions.DomainException;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.ArrayList;

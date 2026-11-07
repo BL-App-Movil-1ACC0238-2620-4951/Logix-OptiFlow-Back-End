@@ -7,7 +7,7 @@ import com.optiflow.platform.clinical.domain.entities.QuotationItem;
 import com.optiflow.platform.clinical.domain.exceptions.ClinicalRecordNotFoundException;
 import com.optiflow.platform.clinical.domain.repositories.ClinicalRecordRepository;
 import com.optiflow.platform.clinical.domain.repositories.QuotationRepository;
-import com.optiflow.platform.shared.exceptions.DomainException;
+import com.optiflow.platform.shared.domain.exceptions.DomainException;
 import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

@@ -5,7 +5,7 @@ import com.optiflow.platform.searchbooking.interfaces.rest.assemblers.FromLoginR
 import com.optiflow.platform.searchbooking.interfaces.rest.assemblers.SearchBookingResponseAssembler;
 import com.optiflow.platform.searchbooking.interfaces.rest.resources.AuthTokenResponse;
 import com.optiflow.platform.searchbooking.interfaces.rest.resources.LoginRequest;
-import com.optiflow.platform.shared.documentation.openapi.configuration.OpenApiTags;
+import com.optiflow.platform.shared.infrastructure.documentation.openapi.configuration.OpenApiTags;
 import com.optiflow.platform.shared.interfaces.rest.ApiV1;
 import com.optiflow.platform.shared.interfaces.rest.CreatedResourceResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;

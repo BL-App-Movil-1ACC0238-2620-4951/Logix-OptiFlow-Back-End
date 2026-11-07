@@ -1,9 +1,9 @@
 package com.optiflow.platform.searchbooking.infrastructure.security;
 
 import com.optiflow.platform.searchbooking.application.services.AuthenticationPort;
-import com.optiflow.platform.shared.security.IssuedJwt;
+import com.optiflow.platform.shared.infrastructure.security.IssuedJwt;
 import java.util.UUID;
-import com.optiflow.platform.shared.security.JwtTokenService;
+import com.optiflow.platform.shared.infrastructure.security.JwtTokenService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 

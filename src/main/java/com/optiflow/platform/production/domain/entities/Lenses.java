@@ -1,7 +1,7 @@
 package com.optiflow.platform.production.domain.entities;
 
 import com.optiflow.platform.production.domain.valueobjects.LensId;
-import com.optiflow.platform.shared.exceptions.DomainException;
+import com.optiflow.platform.shared.domain.exceptions.DomainException;
 
 /** A lens to be manufactured according to the technical specifications of the order. */
 public class Lenses {

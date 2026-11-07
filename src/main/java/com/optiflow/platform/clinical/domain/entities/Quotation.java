@@ -5,7 +5,7 @@ import com.optiflow.platform.clinical.domain.valueobjects.Discount;
 import com.optiflow.platform.clinical.domain.valueobjects.Money;
 import com.optiflow.platform.clinical.domain.valueobjects.QuotationId;
 import com.optiflow.platform.clinical.domain.valueobjects.QuotationStatus;
-import com.optiflow.platform.shared.exceptions.DomainException;
+import com.optiflow.platform.shared.domain.exceptions.DomainException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;

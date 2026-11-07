@@ -1,7 +1,7 @@
 package com.optiflow.platform.production.domain.entities;
 
 import com.optiflow.platform.production.domain.valueobjects.LaboratoryId;
-import com.optiflow.platform.shared.exceptions.DomainException;
+import com.optiflow.platform.shared.domain.exceptions.DomainException;
 
 /** Laboratory where the lenses and frames of a work order are manufactured. */
 public class Laboratory {

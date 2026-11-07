@@ -5,7 +5,7 @@ import com.optiflow.platform.searchbooking.interfaces.rest.assemblers.FromRateOp
 import com.optiflow.platform.searchbooking.interfaces.rest.assemblers.SearchBookingResponseAssembler;
 import com.optiflow.platform.searchbooking.interfaces.rest.resources.RateOpticalStoreRequest;
 import com.optiflow.platform.searchbooking.interfaces.rest.resources.StoreRatingResponse;
-import com.optiflow.platform.shared.documentation.openapi.configuration.OpenApiTags;
+import com.optiflow.platform.shared.infrastructure.documentation.openapi.configuration.OpenApiTags;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.UUID;

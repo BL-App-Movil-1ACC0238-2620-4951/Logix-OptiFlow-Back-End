@@ -5,7 +5,7 @@ import com.optiflow.platform.searchbooking.domain.entities.StaffMember;
 import com.optiflow.platform.searchbooking.domain.events.StaffMemberRoleAssigned;
 import com.optiflow.platform.searchbooking.domain.repositories.StaffMemberRepository;
 import com.optiflow.platform.shared.domain.events.DomainEventPublisher;
-import com.optiflow.platform.shared.exceptions.DomainException;
+import com.optiflow.platform.shared.domain.exceptions.DomainException;
 import java.time.Clock;
 import java.time.Instant;
 import org.springframework.stereotype.Service;

@@ -12,7 +12,7 @@ import com.optiflow.platform.notification.domain.valueobjects.NotificationStatus
 import com.optiflow.platform.notification.domain.valueobjects.NotificationType;
 import com.optiflow.platform.notification.domain.valueobjects.PatientId;
 import com.optiflow.platform.notification.domain.valueobjects.WorkOrderId;
-import com.optiflow.platform.shared.exceptions.DomainException;
+import com.optiflow.platform.shared.domain.exceptions.DomainException;
 import java.time.Instant;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;

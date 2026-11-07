@@ -7,7 +7,7 @@ import com.optiflow.platform.searchbooking.domain.repositories.OpticalStoreRepos
 import com.optiflow.platform.searchbooking.domain.repositories.TimeSlotRepository;
 import com.optiflow.platform.searchbooking.domain.valueobjects.TimeSlotId;
 import com.optiflow.platform.shared.domain.events.DomainEventPublisher;
-import com.optiflow.platform.shared.exceptions.DomainException;
+import com.optiflow.platform.shared.domain.exceptions.DomainException;
 import java.time.Clock;
 import java.util.ArrayList;
 import java.util.List;

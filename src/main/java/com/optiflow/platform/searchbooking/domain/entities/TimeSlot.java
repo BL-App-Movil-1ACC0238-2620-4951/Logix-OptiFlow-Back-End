@@ -4,7 +4,7 @@ import com.optiflow.platform.searchbooking.domain.exceptions.TimeSlotUnavailable
 import com.optiflow.platform.searchbooking.domain.valueobjects.OpticalStoreId;
 import com.optiflow.platform.searchbooking.domain.valueobjects.TimeSlotId;
 import com.optiflow.platform.searchbooking.domain.valueobjects.TimeSlotStatus;
-import com.optiflow.platform.shared.exceptions.DomainException;
+import com.optiflow.platform.shared.domain.exceptions.DomainException;
 import java.time.Instant;
 
 public class TimeSlot {

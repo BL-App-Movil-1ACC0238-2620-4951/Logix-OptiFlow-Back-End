@@ -14,7 +14,7 @@ import com.optiflow.platform.notification.domain.valueobjects.NotificationType;
 import com.optiflow.platform.notification.support.FakeLoyaltyAccountRepository;
 import com.optiflow.platform.notification.support.FakeNotificationRepository;
 import com.optiflow.platform.shared.domain.events.DomainEventPublisher;
-import com.optiflow.platform.shared.exceptions.DomainException;
+import com.optiflow.platform.shared.domain.exceptions.DomainException;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneOffset;

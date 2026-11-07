@@ -6,7 +6,7 @@ import com.optiflow.platform.clinical.application.queries.GetOpticalPrescription
 import com.optiflow.platform.clinical.domain.entities.ClinicalRecord;
 import com.optiflow.platform.clinical.domain.exceptions.ClinicalRecordNotFoundException;
 import com.optiflow.platform.clinical.domain.repositories.ClinicalRecordRepository;
-import com.optiflow.platform.shared.exceptions.DomainException;
+import com.optiflow.platform.shared.domain.exceptions.DomainException;
 import java.time.Instant;
 import java.util.Comparator;
 import java.util.List;

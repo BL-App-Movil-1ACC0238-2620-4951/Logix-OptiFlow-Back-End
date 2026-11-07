@@ -6,7 +6,7 @@ import com.optiflow.platform.clinical.domain.events.ClinicalRecordRegistered;
 import com.optiflow.platform.clinical.domain.events.PatientExamined;
 import com.optiflow.platform.clinical.domain.repositories.ClinicalRecordRepository;
 import com.optiflow.platform.shared.domain.events.DomainEventPublisher;
-import com.optiflow.platform.shared.exceptions.DomainException;
+import com.optiflow.platform.shared.domain.exceptions.DomainException;
 import java.time.Clock;
 import java.time.Instant;
 import java.util.Optional;

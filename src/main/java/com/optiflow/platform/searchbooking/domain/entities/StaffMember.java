@@ -5,7 +5,7 @@ import com.optiflow.platform.searchbooking.domain.valueobjects.Name;
 import com.optiflow.platform.searchbooking.domain.valueobjects.OpticalStoreId;
 import com.optiflow.platform.searchbooking.domain.valueobjects.StaffMemberId;
 import com.optiflow.platform.searchbooking.domain.valueobjects.UserRole;
-import com.optiflow.platform.shared.exceptions.DomainException;
+import com.optiflow.platform.shared.domain.exceptions.DomainException;
 import java.time.Instant;
 
 public class StaffMember {

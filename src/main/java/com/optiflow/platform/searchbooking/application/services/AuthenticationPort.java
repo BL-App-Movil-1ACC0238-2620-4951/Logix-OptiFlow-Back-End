@@ -1,6 +1,6 @@
 package com.optiflow.platform.searchbooking.application.services;
 
-import com.optiflow.platform.shared.security.IssuedJwt;
+import com.optiflow.platform.shared.infrastructure.security.IssuedJwt;
 import java.util.UUID;
 
 public interface AuthenticationPort {

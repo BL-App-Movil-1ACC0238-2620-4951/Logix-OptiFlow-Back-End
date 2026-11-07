@@ -8,7 +8,7 @@ import com.optiflow.platform.searchbooking.application.queries.GetAppointmentQue
 import com.optiflow.platform.searchbooking.application.services.AppointmentApplicationService;
 import com.optiflow.platform.searchbooking.domain.entities.Appointment;
 import com.optiflow.platform.searchbooking.domain.valueobjects.AppointmentStatus;
-import com.optiflow.platform.shared.exceptions.DomainException;
+import com.optiflow.platform.shared.domain.exceptions.DomainException;
 import java.util.Optional;
 import org.springframework.stereotype.Component;
 

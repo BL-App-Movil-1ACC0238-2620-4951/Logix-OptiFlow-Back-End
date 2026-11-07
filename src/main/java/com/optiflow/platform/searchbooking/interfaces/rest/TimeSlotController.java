@@ -7,7 +7,7 @@ import com.optiflow.platform.searchbooking.interfaces.rest.assemblers.FromPublis
 import com.optiflow.platform.searchbooking.interfaces.rest.assemblers.SearchBookingResponseAssembler;
 import com.optiflow.platform.searchbooking.interfaces.rest.resources.PublishTimeSlotsRequest;
 import com.optiflow.platform.searchbooking.interfaces.rest.resources.TimeSlotResponse;
-import com.optiflow.platform.shared.documentation.openapi.configuration.OpenApiTags;
+import com.optiflow.platform.shared.infrastructure.documentation.openapi.configuration.OpenApiTags;
 import com.optiflow.platform.shared.interfaces.rest.ApiV1;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;

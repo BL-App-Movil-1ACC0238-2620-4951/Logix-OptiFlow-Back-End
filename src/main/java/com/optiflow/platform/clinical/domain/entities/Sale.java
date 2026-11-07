@@ -6,7 +6,7 @@ import com.optiflow.platform.clinical.domain.valueobjects.Payment;
 import com.optiflow.platform.clinical.domain.valueobjects.QuotationId;
 import com.optiflow.platform.clinical.domain.valueobjects.SaleId;
 import com.optiflow.platform.clinical.domain.valueobjects.SaleStatus;
-import com.optiflow.platform.shared.exceptions.DomainException;
+import com.optiflow.platform.shared.domain.exceptions.DomainException;
 import java.time.Instant;
 import java.util.Optional;
 

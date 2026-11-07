@@ -6,7 +6,7 @@ import com.optiflow.platform.searchbooking.domain.valueobjects.Name;
 import com.optiflow.platform.searchbooking.domain.valueobjects.OpticalStoreId;
 import com.optiflow.platform.searchbooking.domain.valueobjects.UserRole;
 import com.optiflow.platform.searchbooking.interfaces.rest.resources.RegisterStaffMemberRequest;
-import com.optiflow.platform.shared.exceptions.DomainException;
+import com.optiflow.platform.shared.domain.exceptions.DomainException;
 import org.springframework.stereotype.Component;
 
 @Component

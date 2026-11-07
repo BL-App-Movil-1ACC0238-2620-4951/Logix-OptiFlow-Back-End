@@ -5,7 +5,7 @@ import com.optiflow.platform.searchbooking.domain.entities.Appointment;
 import com.optiflow.platform.searchbooking.domain.repositories.AppointmentRepository;
 import com.optiflow.platform.searchbooking.domain.repositories.PatientRepository;
 import com.optiflow.platform.searchbooking.domain.repositories.TimeSlotRepository;
-import com.optiflow.platform.shared.exceptions.DomainException;
+import com.optiflow.platform.shared.domain.exceptions.DomainException;
 import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

@@ -20,7 +20,7 @@ import com.optiflow.platform.production.domain.valueobjects.SaleId;
 import com.optiflow.platform.searchbooking.application.queries.GetAppointmentQuery;
 import com.optiflow.platform.searchbooking.application.services.AppointmentApplicationService;
 import com.optiflow.platform.searchbooking.domain.valueobjects.AppointmentId;
-import com.optiflow.platform.shared.exceptions.DomainException;
+import com.optiflow.platform.shared.domain.exceptions.DomainException;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Locale;

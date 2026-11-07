@@ -9,9 +9,9 @@ import com.optiflow.platform.searchbooking.interfaces.rest.assemblers.SearchBook
 import com.optiflow.platform.searchbooking.interfaces.rest.resources.AppointmentResponse;
 import com.optiflow.platform.searchbooking.interfaces.rest.resources.PatientResponse;
 import com.optiflow.platform.searchbooking.interfaces.rest.resources.RegisterPatientRequest;
-import com.optiflow.platform.shared.documentation.openapi.configuration.OpenApiTags;
-import com.optiflow.platform.shared.security.AuthenticatedUser;
-import com.optiflow.platform.shared.security.PatientDataAccessGuard;
+import com.optiflow.platform.shared.infrastructure.documentation.openapi.configuration.OpenApiTags;
+import com.optiflow.platform.shared.infrastructure.security.AuthenticatedUser;
+import com.optiflow.platform.shared.infrastructure.security.PatientDataAccessGuard;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;

@@ -7,7 +7,7 @@ import com.optiflow.platform.searchbooking.domain.valueobjects.PatientId;
 import com.optiflow.platform.searchbooking.interfaces.rest.assemblers.SearchBookingResponseAssembler;
 import com.optiflow.platform.searchbooking.interfaces.rest.resources.FavoriteStoreResponse;
 import com.optiflow.platform.searchbooking.interfaces.rest.resources.SaveFavoriteStoreRequest;
-import com.optiflow.platform.shared.documentation.openapi.configuration.OpenApiTags;
+import com.optiflow.platform.shared.infrastructure.documentation.openapi.configuration.OpenApiTags;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.UUID;

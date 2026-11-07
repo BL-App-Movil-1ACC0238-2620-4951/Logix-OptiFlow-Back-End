@@ -5,7 +5,7 @@ import com.optiflow.platform.searchbooking.domain.entities.Appointment;
 import com.optiflow.platform.searchbooking.domain.repositories.AppointmentRepository;
 import com.optiflow.platform.searchbooking.domain.repositories.OpticalStoreRepository;
 import com.optiflow.platform.searchbooking.domain.repositories.TimeSlotRepository;
-import com.optiflow.platform.shared.exceptions.DomainException;
+import com.optiflow.platform.shared.domain.exceptions.DomainException;
 import java.time.Clock;
 import java.time.Instant;
 import java.util.List;

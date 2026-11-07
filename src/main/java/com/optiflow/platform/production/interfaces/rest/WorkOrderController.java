@@ -25,7 +25,7 @@ import com.optiflow.platform.production.interfaces.rest.resources.SendWorkOrderT
 import com.optiflow.platform.production.interfaces.rest.resources.UpdateWorkOrderStatusRequest;
 import com.optiflow.platform.production.interfaces.rest.resources.WorkOrderResponse;
 import com.optiflow.platform.production.interfaces.rest.resources.WorkOrderStatusResponse;
-import com.optiflow.platform.shared.documentation.openapi.configuration.OpenApiTags;
+import com.optiflow.platform.shared.infrastructure.documentation.openapi.configuration.OpenApiTags;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;

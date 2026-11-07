@@ -15,7 +15,7 @@ import com.optiflow.platform.clinical.interfaces.rest.resources.GenerateOpticalP
 import com.optiflow.platform.clinical.interfaces.rest.resources.OpticalPrescriptionResponse;
 import com.optiflow.platform.clinical.interfaces.rest.resources.RecordMedicalHistoryRequest;
 import com.optiflow.platform.clinical.interfaces.rest.resources.RegisterClinicalRecordRequest;
-import com.optiflow.platform.shared.documentation.openapi.configuration.OpenApiTags;
+import com.optiflow.platform.shared.infrastructure.documentation.openapi.configuration.OpenApiTags;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;

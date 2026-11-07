@@ -4,7 +4,7 @@ import com.optiflow.platform.searchbooking.application.queries.GetAvailableTimeS
 import com.optiflow.platform.searchbooking.domain.entities.TimeSlot;
 import com.optiflow.platform.searchbooking.domain.repositories.OpticalStoreRepository;
 import com.optiflow.platform.searchbooking.domain.repositories.TimeSlotRepository;
-import com.optiflow.platform.shared.exceptions.DomainException;
+import com.optiflow.platform.shared.domain.exceptions.DomainException;
 import java.time.Clock;
 import java.util.List;
 import org.springframework.stereotype.Service;

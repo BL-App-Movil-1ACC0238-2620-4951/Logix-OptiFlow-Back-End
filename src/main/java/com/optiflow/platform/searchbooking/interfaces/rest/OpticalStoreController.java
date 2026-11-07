@@ -8,8 +8,8 @@ import com.optiflow.platform.searchbooking.interfaces.rest.assemblers.FromOptica
 import com.optiflow.platform.searchbooking.interfaces.rest.assemblers.SearchBookingResponseAssembler;
 import com.optiflow.platform.searchbooking.interfaces.rest.resources.OpticalStoreQueryParams;
 import com.optiflow.platform.searchbooking.interfaces.rest.resources.OpticalStoreResponse;
-import com.optiflow.platform.shared.documentation.openapi.configuration.OpenApiTags;
-import com.optiflow.platform.shared.exceptions.DomainException;
+import com.optiflow.platform.shared.infrastructure.documentation.openapi.configuration.OpenApiTags;
+import com.optiflow.platform.shared.domain.exceptions.DomainException;
 import com.optiflow.platform.shared.interfaces.rest.ApiV1;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.math.BigDecimal;

@@ -1,6 +1,6 @@
 package com.optiflow.platform.clinical.domain.valueobjects;
 
-import com.optiflow.platform.shared.exceptions.DomainException;
+import com.optiflow.platform.shared.domain.exceptions.DomainException;
 import java.time.Instant;
 
 public record Payment(

@@ -6,7 +6,7 @@ import com.optiflow.platform.production.domain.events.EstimatedDeliveryDateCalcu
 import com.optiflow.platform.production.domain.events.WorkOrderGenerated;
 import com.optiflow.platform.production.domain.repositories.WorkOrderRepository;
 import com.optiflow.platform.shared.domain.events.DomainEventPublisher;
-import com.optiflow.platform.shared.exceptions.DomainException;
+import com.optiflow.platform.shared.domain.exceptions.DomainException;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;

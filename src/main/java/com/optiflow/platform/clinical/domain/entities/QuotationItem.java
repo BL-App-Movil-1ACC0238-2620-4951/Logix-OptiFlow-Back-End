@@ -3,7 +3,7 @@ package com.optiflow.platform.clinical.domain.entities;
 import com.optiflow.platform.clinical.domain.valueobjects.Money;
 import com.optiflow.platform.clinical.domain.valueobjects.QuotationItemId;
 import com.optiflow.platform.clinical.domain.valueobjects.QuotationItemType;
-import com.optiflow.platform.shared.exceptions.DomainException;
+import com.optiflow.platform.shared.domain.exceptions.DomainException;
 
 public class QuotationItem {
 
