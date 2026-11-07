@@ -35,13 +35,13 @@ public class FavoriteStoreController {
     this.responseAssembler = responseAssembler;
   }
 
-  @PostMapping("/patients/{id}/favorites")
+  @PostMapping("/patients/{patientId}/favorites")
   public ResponseEntity<FavoriteStoreResponse> save(
-      @PathVariable UUID id, @Valid @RequestBody SaveFavoriteStoreRequest request) {
+      @PathVariable UUID patientId, @Valid @RequestBody SaveFavoriteStoreRequest request) {
     FavoriteStoreResponse response = responseAssembler.toFavoriteResponse(
         opticalStoreApplicationService.saveFavorite(
             new SaveFavoriteOpticalStoreCommand(
-                PatientId.of(id), OpticalStoreId.of(request.opticalStoreId()))));
+                PatientId.of(patientId), OpticalStoreId.of(request.opticalStoreId()))));
     return CreatedResourceResponses.at(
         "/optical-stores/{id}", response, response.opticalStoreId());
   }

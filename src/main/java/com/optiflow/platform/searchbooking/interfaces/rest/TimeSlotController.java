@@ -40,19 +40,19 @@ public class TimeSlotController {
     this.publishAssembler = publishAssembler;
   }
 
-  @GetMapping("/optical-stores/{opticalStoreId}/time-slots")
-  public List<TimeSlotResponse> list(@PathVariable UUID opticalStoreId) {
+  @GetMapping("/optical-stores/{id}/time-slots")
+  public List<TimeSlotResponse> list(@PathVariable UUID id) {
     return responseAssembler.toTimeSlotResponses(
         opticalStoreApplicationService.availability(
-            new GetAvailableTimeSlotsQuery(OpticalStoreId.of(opticalStoreId))));
+            new GetAvailableTimeSlotsQuery(OpticalStoreId.of(id))));
   }
 
-  @PostMapping("/optical-stores/{opticalStoreId}/time-slots")
+  @PostMapping("/optical-stores/{id}/time-slots")
   @ResponseStatus(HttpStatus.CREATED)
   public List<TimeSlotResponse> publish(
-      @PathVariable UUID opticalStoreId, @Valid @RequestBody PublishTimeSlotsRequest request) {
+      @PathVariable UUID id, @Valid @RequestBody PublishTimeSlotsRequest request) {
     return responseAssembler.toTimeSlotResponses(
         opticalStoreApplicationService.publishTimeSlots(
-            publishAssembler.toCommand(opticalStoreId, request)));
+            publishAssembler.toCommand(id, request)));
   }
 }
