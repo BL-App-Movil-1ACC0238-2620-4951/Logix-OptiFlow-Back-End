@@ -206,6 +206,14 @@ class AuthenticationAuthorizationApiTest {
     mockMvc.perform(get(ApiV1.path("/technicians"))
             .header(HttpHeaders.AUTHORIZATION, bearer(advisorToken)))
         .andExpect(status().isForbidden());
+    mockMvc.perform(get(ApiV1.path("/work-orders"))
+            .header(HttpHeaders.AUTHORIZATION, bearer(advisorToken)))
+        .andExpect(status().isOk());
+    mockMvc.perform(patch(ApiV1.path("/work-orders/" + anyId + "/status"))
+            .header(HttpHeaders.AUTHORIZATION, bearer(advisorToken))
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{\"status\":\"DELIVERED\"}"))
+        .andExpect(status().isForbidden());
   }
 
   @Test
