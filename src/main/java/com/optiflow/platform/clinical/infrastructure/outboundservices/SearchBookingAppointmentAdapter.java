@@ -35,6 +35,7 @@ public class SearchBookingAppointmentAdapter implements ExternalAppointmentServi
       return Optional.of(new BookedAppointment(
           appointmentId,
           PatientId.of(appointment.patientId().value()),
+          appointment.opticalStoreId().value(),
           appointment.status() != AppointmentStatus.CANCELLED));
     } catch (DomainException exception) {
       if (exception.status() == 404) {

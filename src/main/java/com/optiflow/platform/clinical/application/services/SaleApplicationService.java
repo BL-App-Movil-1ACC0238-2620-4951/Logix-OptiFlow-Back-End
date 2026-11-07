@@ -4,10 +4,12 @@ import com.optiflow.platform.clinical.application.commandhandlers.CloseSaleHandl
 import com.optiflow.platform.clinical.application.commandhandlers.RecordPaymentHandler;
 import com.optiflow.platform.clinical.application.commandhandlers.RegisterSaleHandler;
 import com.optiflow.platform.clinical.application.queryservices.SaleQueryService;
+import com.optiflow.platform.clinical.application.results.ClosedSaleDetails;
 import com.optiflow.platform.clinical.domain.model.aggregates.Sale;
 import com.optiflow.platform.clinical.domain.model.commands.CloseSaleCommand;
 import com.optiflow.platform.clinical.domain.model.commands.RecordPaymentCommand;
 import com.optiflow.platform.clinical.domain.model.commands.RegisterSaleCommand;
+import com.optiflow.platform.clinical.domain.model.queries.GetClosedSaleQuery;
 import com.optiflow.platform.clinical.domain.model.queries.GetSaleByIdQuery;
 import org.springframework.stereotype.Service;
 
@@ -43,6 +45,10 @@ public class SaleApplicationService {
   }
 
   public Sale getById(GetSaleByIdQuery query) {
+    return saleQueryService.handle(query);
+  }
+
+  public ClosedSaleDetails getClosedSale(GetClosedSaleQuery query) {
     return saleQueryService.handle(query);
   }
 }
