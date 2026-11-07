@@ -6,6 +6,8 @@ import com.optiflow.platform.searchbooking.interfaces.rest.assemblers.SearchBook
 import com.optiflow.platform.searchbooking.interfaces.rest.resources.RateOpticalStoreRequest;
 import com.optiflow.platform.searchbooking.interfaces.rest.resources.StoreRatingResponse;
 import com.optiflow.platform.shared.infrastructure.documentation.openapi.configuration.OpenApiTags;
+import com.optiflow.platform.shared.interfaces.rest.ApiV1;
+import com.optiflow.platform.shared.interfaces.rest.CreatedResourceResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.UUID;
@@ -15,8 +17,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.optiflow.platform.shared.interfaces.rest.ApiV1;
-import com.optiflow.platform.shared.interfaces.rest.CreatedResourceResponses;
 
 @Tag(name = OpenApiTags.RATINGS)
 @RestController

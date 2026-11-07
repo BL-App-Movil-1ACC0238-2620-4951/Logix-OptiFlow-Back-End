@@ -1,20 +1,20 @@
 package com.optiflow.platform.clinical.application.commandhandlers;
 
-import com.optiflow.platform.clinical.domain.model.commands.RecordPaymentCommand;
-import com.optiflow.platform.clinical.domain.model.aggregates.Quotation;
-import com.optiflow.platform.clinical.domain.model.aggregates.Sale;
-import com.optiflow.platform.clinical.domain.model.events.PaymentRecorded;
+import com.optiflow.platform.clinical.application.outboundservices.PaymentGatewayService;
 import com.optiflow.platform.clinical.domain.exceptions.QuotationNotFoundException;
 import com.optiflow.platform.clinical.domain.exceptions.SaleNotFoundException;
+import com.optiflow.platform.clinical.domain.model.aggregates.Quotation;
+import com.optiflow.platform.clinical.domain.model.aggregates.Sale;
+import com.optiflow.platform.clinical.domain.model.commands.RecordPaymentCommand;
+import com.optiflow.platform.clinical.domain.model.events.PaymentRecorded;
+import com.optiflow.platform.clinical.domain.model.valueobjects.Payment;
 import com.optiflow.platform.clinical.domain.repositories.QuotationRepository;
 import com.optiflow.platform.clinical.domain.repositories.SaleRepository;
-import com.optiflow.platform.clinical.domain.model.valueobjects.Payment;
 import com.optiflow.platform.shared.domain.events.DomainEventPublisher;
 import java.time.Clock;
 import java.time.Instant;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.optiflow.platform.clinical.application.outboundservices.PaymentGatewayService;
 
 @Service
 public class RecordPaymentHandler {

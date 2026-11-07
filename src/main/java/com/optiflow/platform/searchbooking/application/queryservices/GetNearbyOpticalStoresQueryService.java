@@ -1,9 +1,9 @@
 package com.optiflow.platform.searchbooking.application.queryservices;
 
-import com.optiflow.platform.searchbooking.domain.model.queries.GetNearbyOpticalStoresQuery;
 import com.optiflow.platform.searchbooking.domain.model.entities.OpticalStore;
-import com.optiflow.platform.searchbooking.domain.repositories.OpticalStoreRepository;
+import com.optiflow.platform.searchbooking.domain.model.queries.GetNearbyOpticalStoresQuery;
 import com.optiflow.platform.searchbooking.domain.model.valueobjects.GeoLocation;
+import com.optiflow.platform.searchbooking.domain.repositories.OpticalStoreRepository;
 import com.optiflow.platform.shared.domain.exceptions.DomainException;
 import java.util.Comparator;
 import java.util.List;

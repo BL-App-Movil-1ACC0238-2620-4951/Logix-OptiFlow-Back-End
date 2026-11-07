@@ -2,6 +2,7 @@ package com.optiflow.platform.searchbooking.application.queryservices;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import com.optiflow.platform.searchbooking.application.services.PatientApplicationService;
 import com.optiflow.platform.searchbooking.domain.model.commands.RegisterPatientCommand;
 import com.optiflow.platform.searchbooking.domain.model.queries.GetPatientsByBirthdayQuery;
 import com.optiflow.platform.searchbooking.domain.model.valueobjects.EmailAddress;
@@ -15,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
-import com.optiflow.platform.searchbooking.application.services.PatientApplicationService;
 
 @SpringBootTest
 @ActiveProfiles("test")

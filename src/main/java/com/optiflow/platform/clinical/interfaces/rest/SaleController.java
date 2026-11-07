@@ -1,9 +1,9 @@
 package com.optiflow.platform.clinical.interfaces.rest;
 
+import com.optiflow.platform.clinical.application.services.SaleApplicationService;
 import com.optiflow.platform.clinical.domain.model.commands.CloseSaleCommand;
 import com.optiflow.platform.clinical.domain.model.commands.RegisterSaleCommand;
 import com.optiflow.platform.clinical.domain.model.queries.GetSaleByIdQuery;
-import com.optiflow.platform.clinical.application.services.SaleApplicationService;
 import com.optiflow.platform.clinical.domain.model.valueobjects.QuotationId;
 import com.optiflow.platform.clinical.domain.model.valueobjects.SaleId;
 import com.optiflow.platform.clinical.domain.model.valueobjects.SaleStatus;
@@ -13,8 +13,8 @@ import com.optiflow.platform.clinical.interfaces.rest.resources.RecordPaymentReq
 import com.optiflow.platform.clinical.interfaces.rest.resources.RegisterSaleRequest;
 import com.optiflow.platform.clinical.interfaces.rest.resources.SaleResponse;
 import com.optiflow.platform.clinical.interfaces.rest.resources.UpdateSaleStatusRequest;
-import com.optiflow.platform.shared.infrastructure.documentation.openapi.configuration.OpenApiTags;
 import com.optiflow.platform.shared.domain.exceptions.DomainException;
+import com.optiflow.platform.shared.infrastructure.documentation.openapi.configuration.OpenApiTags;
 import com.optiflow.platform.shared.interfaces.rest.ApiV1;
 import com.optiflow.platform.shared.interfaces.rest.CreatedResourceResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;

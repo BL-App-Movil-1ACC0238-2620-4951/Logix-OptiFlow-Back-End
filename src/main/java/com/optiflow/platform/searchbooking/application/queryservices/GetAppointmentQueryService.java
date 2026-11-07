@@ -1,13 +1,13 @@
 package com.optiflow.platform.searchbooking.application.queryservices;
 
-import com.optiflow.platform.searchbooking.domain.model.queries.GetAppointmentQuery;
+import com.optiflow.platform.searchbooking.application.results.AppointmentDetails;
 import com.optiflow.platform.searchbooking.domain.model.aggregates.Appointment;
+import com.optiflow.platform.searchbooking.domain.model.queries.GetAppointmentQuery;
 import com.optiflow.platform.searchbooking.domain.repositories.AppointmentRepository;
 import com.optiflow.platform.searchbooking.domain.repositories.TimeSlotRepository;
 import com.optiflow.platform.shared.domain.exceptions.DomainException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.optiflow.platform.searchbooking.application.results.AppointmentDetails;
 
 @Service
 public class GetAppointmentQueryService {

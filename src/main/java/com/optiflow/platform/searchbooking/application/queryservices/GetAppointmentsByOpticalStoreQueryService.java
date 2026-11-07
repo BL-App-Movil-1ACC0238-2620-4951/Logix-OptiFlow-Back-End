@@ -1,7 +1,8 @@
 package com.optiflow.platform.searchbooking.application.queryservices;
 
-import com.optiflow.platform.searchbooking.domain.model.queries.GetAppointmentsByOpticalStoreQuery;
+import com.optiflow.platform.searchbooking.application.results.AppointmentDetails;
 import com.optiflow.platform.searchbooking.domain.model.aggregates.Appointment;
+import com.optiflow.platform.searchbooking.domain.model.queries.GetAppointmentsByOpticalStoreQuery;
 import com.optiflow.platform.searchbooking.domain.repositories.AppointmentRepository;
 import com.optiflow.platform.searchbooking.domain.repositories.OpticalStoreRepository;
 import com.optiflow.platform.searchbooking.domain.repositories.TimeSlotRepository;
@@ -11,7 +12,6 @@ import java.time.Instant;
 import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.optiflow.platform.searchbooking.application.results.AppointmentDetails;
 
 @Service
 public class GetAppointmentsByOpticalStoreQueryService {

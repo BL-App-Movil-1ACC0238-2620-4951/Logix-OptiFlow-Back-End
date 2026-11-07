@@ -1,14 +1,15 @@
 package com.optiflow.platform.searchbooking.application.commandhandlers;
 
+import com.optiflow.platform.searchbooking.application.results.RatingResult;
 import com.optiflow.platform.searchbooking.domain.model.commands.RateOpticalStoreCommand;
 import com.optiflow.platform.searchbooking.domain.model.entities.OpticalStore;
 import com.optiflow.platform.searchbooking.domain.model.entities.PatientStoreRating;
 import com.optiflow.platform.searchbooking.domain.model.events.OpticalStoreRated;
+import com.optiflow.platform.searchbooking.domain.model.valueobjects.StoreRating;
 import com.optiflow.platform.searchbooking.domain.repositories.OpticalStoreRepository;
 import com.optiflow.platform.searchbooking.domain.repositories.PatientRepository;
 import com.optiflow.platform.searchbooking.domain.repositories.StoreRatingRepository;
 import com.optiflow.platform.searchbooking.domain.services.StoreRatingService;
-import com.optiflow.platform.searchbooking.domain.model.valueobjects.StoreRating;
 import com.optiflow.platform.shared.domain.events.DomainEventPublisher;
 import com.optiflow.platform.shared.domain.exceptions.DomainException;
 import java.time.Clock;
@@ -16,7 +17,6 @@ import java.time.Instant;
 import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.optiflow.platform.searchbooking.application.results.RatingResult;
 
 @Service
 public class RateOpticalStoreCommandHandler {

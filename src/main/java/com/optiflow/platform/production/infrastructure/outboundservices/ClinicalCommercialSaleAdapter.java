@@ -1,14 +1,14 @@
 package com.optiflow.platform.production.infrastructure.outboundservices;
 
-import com.optiflow.platform.clinical.domain.model.queries.GetClinicalRecordByIdQuery;
-import com.optiflow.platform.clinical.domain.model.queries.GetQuotationByIdQuery;
-import com.optiflow.platform.clinical.domain.model.queries.GetSaleByIdQuery;
 import com.optiflow.platform.clinical.application.services.ClinicalRecordApplicationService;
 import com.optiflow.platform.clinical.application.services.QuotationApplicationService;
 import com.optiflow.platform.clinical.application.services.SaleApplicationService;
 import com.optiflow.platform.clinical.domain.model.aggregates.ClinicalRecord;
 import com.optiflow.platform.clinical.domain.model.aggregates.Quotation;
 import com.optiflow.platform.clinical.domain.model.aggregates.Sale;
+import com.optiflow.platform.clinical.domain.model.queries.GetClinicalRecordByIdQuery;
+import com.optiflow.platform.clinical.domain.model.queries.GetQuotationByIdQuery;
+import com.optiflow.platform.clinical.domain.model.queries.GetSaleByIdQuery;
 import com.optiflow.platform.clinical.domain.model.valueobjects.OpticalPrescription;
 import com.optiflow.platform.clinical.domain.model.valueobjects.QuotationItemType;
 import com.optiflow.platform.clinical.domain.model.valueobjects.SaleStatus;
@@ -17,8 +17,8 @@ import com.optiflow.platform.production.application.outboundservices.ExternalSal
 import com.optiflow.platform.production.domain.model.valueobjects.OpticalStoreId;
 import com.optiflow.platform.production.domain.model.valueobjects.PatientId;
 import com.optiflow.platform.production.domain.model.valueobjects.SaleId;
-import com.optiflow.platform.searchbooking.domain.model.queries.GetAppointmentQuery;
 import com.optiflow.platform.searchbooking.application.services.AppointmentApplicationService;
+import com.optiflow.platform.searchbooking.domain.model.queries.GetAppointmentQuery;
 import com.optiflow.platform.searchbooking.domain.model.valueobjects.AppointmentId;
 import com.optiflow.platform.shared.domain.exceptions.DomainException;
 import java.math.BigDecimal;

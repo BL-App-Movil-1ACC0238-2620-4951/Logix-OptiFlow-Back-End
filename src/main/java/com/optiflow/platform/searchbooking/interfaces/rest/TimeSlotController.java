@@ -1,7 +1,7 @@
 package com.optiflow.platform.searchbooking.interfaces.rest;
 
-import com.optiflow.platform.searchbooking.domain.model.queries.GetAvailableTimeSlotsQuery;
 import com.optiflow.platform.searchbooking.application.services.OpticalStoreApplicationService;
+import com.optiflow.platform.searchbooking.domain.model.queries.GetAvailableTimeSlotsQuery;
 import com.optiflow.platform.searchbooking.domain.model.valueobjects.OpticalStoreId;
 import com.optiflow.platform.searchbooking.interfaces.rest.assemblers.FromPublishTimeSlotsRequestAssembler;
 import com.optiflow.platform.searchbooking.interfaces.rest.assemblers.SearchBookingResponseAssembler;

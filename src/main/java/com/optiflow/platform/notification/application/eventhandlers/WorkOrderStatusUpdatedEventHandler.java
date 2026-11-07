@@ -1,7 +1,7 @@
 package com.optiflow.platform.notification.application.eventhandlers;
 
-import com.optiflow.platform.notification.domain.model.commands.NotifyLensOrderProgressCommand;
 import com.optiflow.platform.notification.application.commandhandlers.NotifyLensOrderProgressHandler;
+import com.optiflow.platform.notification.domain.model.commands.NotifyLensOrderProgressCommand;
 import com.optiflow.platform.production.domain.model.events.WorkOrderStatusUpdated;
 import com.optiflow.platform.production.domain.model.valueobjects.WorkOrderStatus;
 import org.slf4j.Logger;

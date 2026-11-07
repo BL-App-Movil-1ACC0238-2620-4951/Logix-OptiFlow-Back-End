@@ -1,18 +1,18 @@
 package com.optiflow.platform.clinical.application.services;
 
+import com.optiflow.platform.clinical.application.commandhandlers.GenerateOpticalPrescriptionHandler;
+import com.optiflow.platform.clinical.application.commandhandlers.RecordMedicalHistoryHandler;
+import com.optiflow.platform.clinical.application.commandhandlers.RegisterClinicalRecordHandler;
+import com.optiflow.platform.clinical.application.queryservices.ClinicalRecordQueryService;
+import com.optiflow.platform.clinical.domain.model.aggregates.ClinicalRecord;
 import com.optiflow.platform.clinical.domain.model.commands.GenerateOpticalPrescriptionCommand;
 import com.optiflow.platform.clinical.domain.model.commands.RecordMedicalHistoryCommand;
 import com.optiflow.platform.clinical.domain.model.commands.RegisterClinicalRecordCommand;
 import com.optiflow.platform.clinical.domain.model.queries.GetClinicalRecordByIdQuery;
 import com.optiflow.platform.clinical.domain.model.queries.GetClinicalRecordsByPatientIdQuery;
 import com.optiflow.platform.clinical.domain.model.queries.GetOpticalPrescriptionQuery;
-import com.optiflow.platform.clinical.domain.model.aggregates.ClinicalRecord;
 import java.util.List;
 import org.springframework.stereotype.Service;
-import com.optiflow.platform.clinical.application.commandhandlers.GenerateOpticalPrescriptionHandler;
-import com.optiflow.platform.clinical.application.commandhandlers.RecordMedicalHistoryHandler;
-import com.optiflow.platform.clinical.application.commandhandlers.RegisterClinicalRecordHandler;
-import com.optiflow.platform.clinical.application.queryservices.ClinicalRecordQueryService;
 
 @Service
 public class ClinicalRecordApplicationService {

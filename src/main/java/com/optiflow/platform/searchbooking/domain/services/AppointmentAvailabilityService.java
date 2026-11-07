@@ -1,7 +1,7 @@
 package com.optiflow.platform.searchbooking.domain.services;
 
-import com.optiflow.platform.searchbooking.domain.model.entities.TimeSlot;
 import com.optiflow.platform.searchbooking.domain.exceptions.TimeSlotUnavailableException;
+import com.optiflow.platform.searchbooking.domain.model.entities.TimeSlot;
 import java.time.Instant;
 
 public class AppointmentAvailabilityService {

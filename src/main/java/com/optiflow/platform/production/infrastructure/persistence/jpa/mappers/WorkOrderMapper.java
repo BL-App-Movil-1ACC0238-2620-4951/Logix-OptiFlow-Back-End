@@ -1,9 +1,9 @@
 package com.optiflow.platform.production.infrastructure.persistence.jpa.mappers;
 
+import com.optiflow.platform.production.domain.model.aggregates.WorkOrder;
 import com.optiflow.platform.production.domain.model.entities.Laboratory;
 import com.optiflow.platform.production.domain.model.entities.Lenses;
 import com.optiflow.platform.production.domain.model.entities.Technician;
-import com.optiflow.platform.production.domain.model.aggregates.WorkOrder;
 import com.optiflow.platform.production.domain.model.valueobjects.DeliveryDate;
 import com.optiflow.platform.production.domain.model.valueobjects.DeliveryDelay;
 import com.optiflow.platform.production.domain.model.valueobjects.LaboratoryId;

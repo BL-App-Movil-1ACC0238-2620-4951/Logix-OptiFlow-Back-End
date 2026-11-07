@@ -1,8 +1,8 @@
 package com.optiflow.platform.notification.support;
 
 import com.optiflow.platform.notification.domain.model.aggregates.LoyaltyAccount;
-import com.optiflow.platform.notification.domain.repositories.LoyaltyAccountRepository;
 import com.optiflow.platform.notification.domain.model.valueobjects.PatientId;
+import com.optiflow.platform.notification.domain.repositories.LoyaltyAccountRepository;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;

@@ -1,10 +1,10 @@
 package com.optiflow.platform.clinical.application.commandhandlers;
 
-import com.optiflow.platform.clinical.domain.model.commands.GenerateQuotationCommand;
+import com.optiflow.platform.clinical.domain.exceptions.ClinicalRecordNotFoundException;
 import com.optiflow.platform.clinical.domain.model.aggregates.ClinicalRecord;
 import com.optiflow.platform.clinical.domain.model.aggregates.Quotation;
+import com.optiflow.platform.clinical.domain.model.commands.GenerateQuotationCommand;
 import com.optiflow.platform.clinical.domain.model.entities.QuotationItem;
-import com.optiflow.platform.clinical.domain.exceptions.ClinicalRecordNotFoundException;
 import com.optiflow.platform.clinical.domain.repositories.ClinicalRecordRepository;
 import com.optiflow.platform.clinical.domain.repositories.QuotationRepository;
 import com.optiflow.platform.shared.domain.exceptions.DomainException;

@@ -1,7 +1,7 @@
 package com.optiflow.platform.searchbooking.application.queryservices;
 
-import com.optiflow.platform.searchbooking.domain.model.queries.GetOpticalStoreQuery;
 import com.optiflow.platform.searchbooking.domain.model.entities.OpticalStore;
+import com.optiflow.platform.searchbooking.domain.model.queries.GetOpticalStoreQuery;
 import com.optiflow.platform.searchbooking.domain.repositories.OpticalStoreRepository;
 import com.optiflow.platform.shared.domain.exceptions.DomainException;
 import org.springframework.stereotype.Service;

@@ -1,14 +1,14 @@
 package com.optiflow.platform.searchbooking.application.services;
 
-import com.optiflow.platform.searchbooking.domain.model.commands.AssignStaffRoleCommand;
-import com.optiflow.platform.searchbooking.domain.model.commands.RegisterStaffMemberCommand;
-import com.optiflow.platform.searchbooking.domain.model.queries.GetStaffMembersQuery;
-import com.optiflow.platform.searchbooking.domain.model.entities.StaffMember;
-import java.util.List;
-import org.springframework.stereotype.Service;
 import com.optiflow.platform.searchbooking.application.commandhandlers.AssignStaffRoleCommandHandler;
 import com.optiflow.platform.searchbooking.application.commandhandlers.RegisterStaffMemberCommandHandler;
 import com.optiflow.platform.searchbooking.application.queryservices.GetStaffMembersQueryService;
+import com.optiflow.platform.searchbooking.domain.model.commands.AssignStaffRoleCommand;
+import com.optiflow.platform.searchbooking.domain.model.commands.RegisterStaffMemberCommand;
+import com.optiflow.platform.searchbooking.domain.model.entities.StaffMember;
+import com.optiflow.platform.searchbooking.domain.model.queries.GetStaffMembersQuery;
+import java.util.List;
+import org.springframework.stereotype.Service;
 
 @Service
 public class StaffMemberApplicationService {

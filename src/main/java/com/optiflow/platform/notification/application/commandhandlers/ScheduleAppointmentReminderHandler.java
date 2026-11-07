@@ -1,13 +1,13 @@
 package com.optiflow.platform.notification.application.commandhandlers;
 
-import com.optiflow.platform.notification.domain.model.commands.ScheduleAppointmentReminderCommand;
 import com.optiflow.platform.notification.domain.model.aggregates.Notification;
+import com.optiflow.platform.notification.domain.model.commands.ScheduleAppointmentReminderCommand;
 import com.optiflow.platform.notification.domain.model.events.InAppNotificationSent;
-import com.optiflow.platform.notification.domain.repositories.NotificationRepository;
 import com.optiflow.platform.notification.domain.model.valueobjects.AppointmentId;
 import com.optiflow.platform.notification.domain.model.valueobjects.NotificationId;
 import com.optiflow.platform.notification.domain.model.valueobjects.NotificationMessage;
 import com.optiflow.platform.notification.domain.model.valueobjects.PatientId;
+import com.optiflow.platform.notification.domain.repositories.NotificationRepository;
 import com.optiflow.platform.shared.domain.events.DomainEventPublisher;
 import java.time.Clock;
 import java.time.Instant;

@@ -1,20 +1,5 @@
 package com.optiflow.platform.production.application.services;
 
-import com.optiflow.platform.production.domain.model.commands.AssignWorkOrderToTechnicianCommand;
-import com.optiflow.platform.production.domain.model.commands.CompleteLensesCommand;
-import com.optiflow.platform.production.domain.model.commands.GenerateWorkOrderCommand;
-import com.optiflow.platform.production.domain.model.commands.MarkOrderAsDeliveredCommand;
-import com.optiflow.platform.production.domain.model.commands.NotifyDeliveryDelayCommand;
-import com.optiflow.platform.production.domain.model.commands.SendWorkOrderToLaboratoryCommand;
-import com.optiflow.platform.production.domain.model.commands.UpdateWorkOrderStatusCommand;
-import com.optiflow.platform.production.domain.model.queries.GetWorkOrderByIdQuery;
-import com.optiflow.platform.production.domain.model.queries.GetWorkOrdersByPatientIdQuery;
-import com.optiflow.platform.production.domain.model.queries.GetWorkOrdersQuery;
-import com.optiflow.platform.production.domain.model.entities.Laboratory;
-import com.optiflow.platform.production.domain.model.entities.Technician;
-import com.optiflow.platform.production.domain.model.aggregates.WorkOrder;
-import java.util.List;
-import org.springframework.stereotype.Service;
 import com.optiflow.platform.production.application.commandhandlers.AssignWorkOrderToTechnicianHandler;
 import com.optiflow.platform.production.application.commandhandlers.CompleteLensesHandler;
 import com.optiflow.platform.production.application.commandhandlers.GenerateWorkOrderHandler;
@@ -24,6 +9,21 @@ import com.optiflow.platform.production.application.commandhandlers.SendWorkOrde
 import com.optiflow.platform.production.application.commandhandlers.UpdateWorkOrderStatusHandler;
 import com.optiflow.platform.production.application.queryservices.ProductionCatalogQueryService;
 import com.optiflow.platform.production.application.queryservices.WorkOrderQueryService;
+import com.optiflow.platform.production.domain.model.aggregates.WorkOrder;
+import com.optiflow.platform.production.domain.model.commands.AssignWorkOrderToTechnicianCommand;
+import com.optiflow.platform.production.domain.model.commands.CompleteLensesCommand;
+import com.optiflow.platform.production.domain.model.commands.GenerateWorkOrderCommand;
+import com.optiflow.platform.production.domain.model.commands.MarkOrderAsDeliveredCommand;
+import com.optiflow.platform.production.domain.model.commands.NotifyDeliveryDelayCommand;
+import com.optiflow.platform.production.domain.model.commands.SendWorkOrderToLaboratoryCommand;
+import com.optiflow.platform.production.domain.model.commands.UpdateWorkOrderStatusCommand;
+import com.optiflow.platform.production.domain.model.entities.Laboratory;
+import com.optiflow.platform.production.domain.model.entities.Technician;
+import com.optiflow.platform.production.domain.model.queries.GetWorkOrderByIdQuery;
+import com.optiflow.platform.production.domain.model.queries.GetWorkOrdersByPatientIdQuery;
+import com.optiflow.platform.production.domain.model.queries.GetWorkOrdersQuery;
+import java.util.List;
+import org.springframework.stereotype.Service;
 
 /** Facade of the generation, assignment, laboratory, tracking and delivery use cases. */
 @Service

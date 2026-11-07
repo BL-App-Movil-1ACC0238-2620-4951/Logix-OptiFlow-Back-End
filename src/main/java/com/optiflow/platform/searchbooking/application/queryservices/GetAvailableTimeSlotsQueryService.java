@@ -1,7 +1,7 @@
 package com.optiflow.platform.searchbooking.application.queryservices;
 
-import com.optiflow.platform.searchbooking.domain.model.queries.GetAvailableTimeSlotsQuery;
 import com.optiflow.platform.searchbooking.domain.model.entities.TimeSlot;
+import com.optiflow.platform.searchbooking.domain.model.queries.GetAvailableTimeSlotsQuery;
 import com.optiflow.platform.searchbooking.domain.repositories.OpticalStoreRepository;
 import com.optiflow.platform.searchbooking.domain.repositories.TimeSlotRepository;
 import com.optiflow.platform.shared.domain.exceptions.DomainException;

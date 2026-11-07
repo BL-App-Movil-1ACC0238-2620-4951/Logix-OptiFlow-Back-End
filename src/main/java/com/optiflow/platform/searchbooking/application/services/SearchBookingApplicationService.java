@@ -1,11 +1,11 @@
 package com.optiflow.platform.searchbooking.application.services;
 
+import com.optiflow.platform.searchbooking.application.results.AppointmentDetails;
 import com.optiflow.platform.searchbooking.domain.model.commands.BookAppointmentCommand;
-import com.optiflow.platform.searchbooking.domain.model.queries.FilterOpticalStoresQuery;
 import com.optiflow.platform.searchbooking.domain.model.entities.OpticalStore;
+import com.optiflow.platform.searchbooking.domain.model.queries.FilterOpticalStoresQuery;
 import java.util.List;
 import org.springframework.stereotype.Service;
-import com.optiflow.platform.searchbooking.application.results.AppointmentDetails;
 
 @Service
 public class SearchBookingApplicationService {

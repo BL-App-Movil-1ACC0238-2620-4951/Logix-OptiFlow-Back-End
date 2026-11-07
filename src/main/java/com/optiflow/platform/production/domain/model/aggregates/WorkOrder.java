@@ -1,5 +1,8 @@
 package com.optiflow.platform.production.domain.model.aggregates;
 
+import com.optiflow.platform.production.domain.model.entities.Laboratory;
+import com.optiflow.platform.production.domain.model.entities.Lenses;
+import com.optiflow.platform.production.domain.model.entities.Technician;
 import com.optiflow.platform.production.domain.model.valueobjects.DeliveryDate;
 import com.optiflow.platform.production.domain.model.valueobjects.DeliveryDelay;
 import com.optiflow.platform.production.domain.model.valueobjects.LensId;
@@ -15,9 +18,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import com.optiflow.platform.production.domain.model.entities.Laboratory;
-import com.optiflow.platform.production.domain.model.entities.Lenses;
-import com.optiflow.platform.production.domain.model.entities.Technician;
 
 /**
  * Aggregate root that controls the manufacturing life cycle of an optical order, from the closed

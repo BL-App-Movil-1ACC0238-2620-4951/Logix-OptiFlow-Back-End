@@ -9,11 +9,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.optiflow.platform.shared.interfaces.rest.ApiV1;
 import com.optiflow.platform.searchbooking.domain.model.entities.TimeSlot;
-import com.optiflow.platform.searchbooking.domain.repositories.TimeSlotRepository;
 import com.optiflow.platform.searchbooking.domain.model.valueobjects.OpticalStoreId;
 import com.optiflow.platform.searchbooking.domain.model.valueobjects.TimeSlotId;
+import com.optiflow.platform.searchbooking.domain.repositories.TimeSlotRepository;
+import com.optiflow.platform.shared.interfaces.rest.ApiV1;
 import io.cucumber.java.es.Cuando;
 import io.cucumber.java.es.Dado;
 import io.cucumber.java.es.Entonces;

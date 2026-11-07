@@ -1,11 +1,11 @@
 package com.optiflow.platform.clinical.application.commandhandlers;
 
-import com.optiflow.platform.clinical.domain.model.commands.RegisterSaleCommand;
+import com.optiflow.platform.clinical.domain.exceptions.ClinicalRecordNotFoundException;
+import com.optiflow.platform.clinical.domain.exceptions.QuotationNotFoundException;
 import com.optiflow.platform.clinical.domain.model.aggregates.ClinicalRecord;
 import com.optiflow.platform.clinical.domain.model.aggregates.Quotation;
 import com.optiflow.platform.clinical.domain.model.aggregates.Sale;
-import com.optiflow.platform.clinical.domain.exceptions.ClinicalRecordNotFoundException;
-import com.optiflow.platform.clinical.domain.exceptions.QuotationNotFoundException;
+import com.optiflow.platform.clinical.domain.model.commands.RegisterSaleCommand;
 import com.optiflow.platform.clinical.domain.repositories.ClinicalRecordRepository;
 import com.optiflow.platform.clinical.domain.repositories.QuotationRepository;
 import com.optiflow.platform.clinical.domain.repositories.SaleRepository;

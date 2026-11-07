@@ -4,9 +4,9 @@ import com.optiflow.platform.clinical.application.outboundservices.BookedAppoint
 import com.optiflow.platform.clinical.application.outboundservices.ExternalAppointmentService;
 import com.optiflow.platform.clinical.domain.model.valueobjects.AppointmentId;
 import com.optiflow.platform.clinical.domain.model.valueobjects.PatientId;
-import com.optiflow.platform.searchbooking.domain.model.queries.GetAppointmentQuery;
 import com.optiflow.platform.searchbooking.application.services.AppointmentApplicationService;
 import com.optiflow.platform.searchbooking.domain.model.aggregates.Appointment;
+import com.optiflow.platform.searchbooking.domain.model.queries.GetAppointmentQuery;
 import com.optiflow.platform.searchbooking.domain.model.valueobjects.AppointmentStatus;
 import com.optiflow.platform.shared.domain.exceptions.DomainException;
 import java.util.Optional;

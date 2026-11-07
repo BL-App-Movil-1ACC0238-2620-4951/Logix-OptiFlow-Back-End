@@ -1,9 +1,9 @@
 package com.optiflow.platform.clinical.interfaces.rest;
 
+import com.optiflow.platform.clinical.application.services.ClinicalRecordApplicationService;
 import com.optiflow.platform.clinical.domain.model.queries.GetClinicalRecordByIdQuery;
 import com.optiflow.platform.clinical.domain.model.queries.GetClinicalRecordsByPatientIdQuery;
 import com.optiflow.platform.clinical.domain.model.queries.GetOpticalPrescriptionQuery;
-import com.optiflow.platform.clinical.application.services.ClinicalRecordApplicationService;
 import com.optiflow.platform.clinical.domain.model.valueobjects.ClinicalRecordId;
 import com.optiflow.platform.clinical.domain.model.valueobjects.PatientId;
 import com.optiflow.platform.clinical.interfaces.rest.assemblers.ClinicalCommercialResponseAssembler;
@@ -16,6 +16,8 @@ import com.optiflow.platform.clinical.interfaces.rest.resources.OpticalPrescript
 import com.optiflow.platform.clinical.interfaces.rest.resources.RecordMedicalHistoryRequest;
 import com.optiflow.platform.clinical.interfaces.rest.resources.RegisterClinicalRecordRequest;
 import com.optiflow.platform.shared.infrastructure.documentation.openapi.configuration.OpenApiTags;
+import com.optiflow.platform.shared.interfaces.rest.ApiV1;
+import com.optiflow.platform.shared.interfaces.rest.CreatedResourceResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -28,8 +30,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.optiflow.platform.shared.interfaces.rest.ApiV1;
-import com.optiflow.platform.shared.interfaces.rest.CreatedResourceResponses;
 
 @Tag(name = OpenApiTags.CLINICAL_RECORDS)
 @RestController

@@ -2,10 +2,10 @@ package com.optiflow.platform.production.infrastructure.configuration;
 
 import com.optiflow.platform.production.domain.model.entities.Laboratory;
 import com.optiflow.platform.production.domain.model.entities.Technician;
-import com.optiflow.platform.production.domain.repositories.LaboratoryRepository;
-import com.optiflow.platform.production.domain.repositories.TechnicianRepository;
 import com.optiflow.platform.production.domain.model.valueobjects.LaboratoryId;
 import com.optiflow.platform.production.domain.model.valueobjects.TechnicianId;
+import com.optiflow.platform.production.domain.repositories.LaboratoryRepository;
+import com.optiflow.platform.production.domain.repositories.TechnicianRepository;
 import java.util.UUID;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;

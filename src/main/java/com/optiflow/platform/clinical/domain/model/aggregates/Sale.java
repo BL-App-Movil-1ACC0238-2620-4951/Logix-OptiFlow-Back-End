@@ -1,5 +1,6 @@
 package com.optiflow.platform.clinical.domain.model.aggregates;
 
+import com.optiflow.platform.clinical.domain.model.entities.ElectronicReceipt;
 import com.optiflow.platform.clinical.domain.model.valueobjects.Money;
 import com.optiflow.platform.clinical.domain.model.valueobjects.PatientId;
 import com.optiflow.platform.clinical.domain.model.valueobjects.Payment;
@@ -9,7 +10,6 @@ import com.optiflow.platform.clinical.domain.model.valueobjects.SaleStatus;
 import com.optiflow.platform.shared.domain.exceptions.DomainException;
 import java.time.Instant;
 import java.util.Optional;
-import com.optiflow.platform.clinical.domain.model.entities.ElectronicReceipt;
 
 public class Sale {
 

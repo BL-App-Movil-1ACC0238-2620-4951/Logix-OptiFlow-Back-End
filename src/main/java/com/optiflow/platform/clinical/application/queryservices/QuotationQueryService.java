@@ -1,8 +1,8 @@
 package com.optiflow.platform.clinical.application.queryservices;
 
-import com.optiflow.platform.clinical.domain.model.queries.GetQuotationByIdQuery;
-import com.optiflow.platform.clinical.domain.model.aggregates.Quotation;
 import com.optiflow.platform.clinical.domain.exceptions.QuotationNotFoundException;
+import com.optiflow.platform.clinical.domain.model.aggregates.Quotation;
+import com.optiflow.platform.clinical.domain.model.queries.GetQuotationByIdQuery;
 import com.optiflow.platform.clinical.domain.repositories.QuotationRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

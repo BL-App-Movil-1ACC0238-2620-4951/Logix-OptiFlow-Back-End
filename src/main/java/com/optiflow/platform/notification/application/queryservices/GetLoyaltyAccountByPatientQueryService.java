@@ -1,10 +1,10 @@
 package com.optiflow.platform.notification.application.queryservices;
 
-import com.optiflow.platform.notification.domain.model.queries.GetLoyaltyAccountByPatientQuery;
-import com.optiflow.platform.notification.domain.model.aggregates.LoyaltyAccount;
 import com.optiflow.platform.notification.domain.exceptions.LoyaltyAccountNotFoundException;
-import com.optiflow.platform.notification.domain.repositories.LoyaltyAccountRepository;
+import com.optiflow.platform.notification.domain.model.aggregates.LoyaltyAccount;
+import com.optiflow.platform.notification.domain.model.queries.GetLoyaltyAccountByPatientQuery;
 import com.optiflow.platform.notification.domain.model.valueobjects.PatientId;
+import com.optiflow.platform.notification.domain.repositories.LoyaltyAccountRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

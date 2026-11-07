@@ -1,10 +1,10 @@
 package com.optiflow.platform.notification.infrastructure.persistence.jpa.repositories;
 
 import com.optiflow.platform.notification.domain.model.aggregates.Notification;
-import com.optiflow.platform.notification.domain.repositories.NotificationRepository;
 import com.optiflow.platform.notification.domain.model.valueobjects.AppointmentId;
 import com.optiflow.platform.notification.domain.model.valueobjects.NotificationId;
 import com.optiflow.platform.notification.domain.model.valueobjects.PatientId;
+import com.optiflow.platform.notification.domain.repositories.NotificationRepository;
 import com.optiflow.platform.notification.infrastructure.persistence.jpa.mappers.NotificationMapper;
 import java.util.List;
 import java.util.Optional;

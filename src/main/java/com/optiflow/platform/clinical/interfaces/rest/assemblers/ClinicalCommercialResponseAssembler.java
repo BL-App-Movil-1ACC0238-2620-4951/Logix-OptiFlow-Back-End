@@ -1,11 +1,11 @@
 package com.optiflow.platform.clinical.interfaces.rest.assemblers;
 
 import com.optiflow.platform.clinical.domain.model.aggregates.ClinicalRecord;
+import com.optiflow.platform.clinical.domain.model.aggregates.Quotation;
+import com.optiflow.platform.clinical.domain.model.aggregates.Sale;
 import com.optiflow.platform.clinical.domain.model.entities.ElectronicReceipt;
 import com.optiflow.platform.clinical.domain.model.entities.MedicalHistory;
-import com.optiflow.platform.clinical.domain.model.aggregates.Quotation;
 import com.optiflow.platform.clinical.domain.model.entities.QuotationItem;
-import com.optiflow.platform.clinical.domain.model.aggregates.Sale;
 import com.optiflow.platform.clinical.domain.model.valueobjects.Money;
 import com.optiflow.platform.clinical.domain.model.valueobjects.OpticalPrescription;
 import com.optiflow.platform.clinical.domain.model.valueobjects.Payment;

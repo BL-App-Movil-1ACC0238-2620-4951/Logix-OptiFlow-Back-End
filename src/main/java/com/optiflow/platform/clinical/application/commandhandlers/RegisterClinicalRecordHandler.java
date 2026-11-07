@@ -1,7 +1,9 @@
 package com.optiflow.platform.clinical.application.commandhandlers;
 
-import com.optiflow.platform.clinical.domain.model.commands.RegisterClinicalRecordCommand;
+import com.optiflow.platform.clinical.application.outboundservices.BookedAppointment;
+import com.optiflow.platform.clinical.application.outboundservices.ExternalAppointmentService;
 import com.optiflow.platform.clinical.domain.model.aggregates.ClinicalRecord;
+import com.optiflow.platform.clinical.domain.model.commands.RegisterClinicalRecordCommand;
 import com.optiflow.platform.clinical.domain.model.events.ClinicalRecordRegistered;
 import com.optiflow.platform.clinical.domain.model.events.PatientExamined;
 import com.optiflow.platform.clinical.domain.repositories.ClinicalRecordRepository;
@@ -12,8 +14,6 @@ import java.time.Instant;
 import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.optiflow.platform.clinical.application.outboundservices.BookedAppointment;
-import com.optiflow.platform.clinical.application.outboundservices.ExternalAppointmentService;
 
 /** Registers the examination of a patient, completing the record opened at booking time. */
 @Service

@@ -1,5 +1,6 @@
 package com.optiflow.platform.clinical.domain.model.aggregates;
 
+import com.optiflow.platform.clinical.domain.model.entities.QuotationItem;
 import com.optiflow.platform.clinical.domain.model.valueobjects.ClinicalRecordId;
 import com.optiflow.platform.clinical.domain.model.valueobjects.Discount;
 import com.optiflow.platform.clinical.domain.model.valueobjects.Money;
@@ -9,7 +10,6 @@ import com.optiflow.platform.shared.domain.exceptions.DomainException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import com.optiflow.platform.clinical.domain.model.entities.QuotationItem;
 
 public class Quotation {
 

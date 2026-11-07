@@ -1,9 +1,9 @@
 package com.optiflow.platform.searchbooking.infrastructure.persistence.jpa.repositories;
 
 import com.optiflow.platform.searchbooking.domain.model.entities.FavoriteStore;
-import com.optiflow.platform.searchbooking.domain.repositories.FavoriteStoreRepository;
 import com.optiflow.platform.searchbooking.domain.model.valueobjects.OpticalStoreId;
 import com.optiflow.platform.searchbooking.domain.model.valueobjects.PatientId;
+import com.optiflow.platform.searchbooking.domain.repositories.FavoriteStoreRepository;
 import com.optiflow.platform.searchbooking.infrastructure.persistence.jpa.entities.PatientStoreKey;
 import com.optiflow.platform.searchbooking.infrastructure.persistence.jpa.mappers.FavoriteStoreMapper;
 import java.util.Optional;

@@ -1,11 +1,11 @@
 package com.optiflow.platform.searchbooking.infrastructure.persistence.jpa.repositories;
 
 import com.optiflow.platform.searchbooking.domain.model.aggregates.Appointment;
-import com.optiflow.platform.searchbooking.domain.repositories.AppointmentRepository;
 import com.optiflow.platform.searchbooking.domain.model.valueobjects.AppointmentId;
 import com.optiflow.platform.searchbooking.domain.model.valueobjects.OpticalStoreId;
 import com.optiflow.platform.searchbooking.domain.model.valueobjects.PatientId;
 import com.optiflow.platform.searchbooking.domain.model.valueobjects.TimeSlotId;
+import com.optiflow.platform.searchbooking.domain.repositories.AppointmentRepository;
 import com.optiflow.platform.searchbooking.infrastructure.persistence.jpa.mappers.AppointmentMapper;
 import java.time.Instant;
 import java.util.List;

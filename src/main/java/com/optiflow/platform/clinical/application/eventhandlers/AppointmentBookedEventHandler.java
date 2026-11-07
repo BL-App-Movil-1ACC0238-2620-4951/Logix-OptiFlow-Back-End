@@ -1,7 +1,7 @@
 package com.optiflow.platform.clinical.application.eventhandlers;
 
-import com.optiflow.platform.clinical.domain.model.commands.ExaminePatientCommand;
 import com.optiflow.platform.clinical.application.commandhandlers.ExaminePatientHandler;
+import com.optiflow.platform.clinical.domain.model.commands.ExaminePatientCommand;
 import com.optiflow.platform.clinical.domain.model.valueobjects.AppointmentId;
 import com.optiflow.platform.clinical.domain.model.valueobjects.PatientId;
 import com.optiflow.platform.searchbooking.domain.model.events.AppointmentBooked;

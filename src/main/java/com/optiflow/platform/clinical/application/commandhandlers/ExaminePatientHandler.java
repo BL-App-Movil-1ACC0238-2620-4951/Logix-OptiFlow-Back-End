@@ -1,7 +1,7 @@
 package com.optiflow.platform.clinical.application.commandhandlers;
 
-import com.optiflow.platform.clinical.domain.model.commands.ExaminePatientCommand;
 import com.optiflow.platform.clinical.domain.model.aggregates.ClinicalRecord;
+import com.optiflow.platform.clinical.domain.model.commands.ExaminePatientCommand;
 import com.optiflow.platform.clinical.domain.model.events.ClinicalRecordRegistered;
 import com.optiflow.platform.clinical.domain.repositories.ClinicalRecordRepository;
 import com.optiflow.platform.shared.domain.events.DomainEventPublisher;

@@ -1,10 +1,10 @@
 package com.optiflow.platform.clinical.application.queryservices;
 
+import com.optiflow.platform.clinical.domain.exceptions.ClinicalRecordNotFoundException;
+import com.optiflow.platform.clinical.domain.model.aggregates.ClinicalRecord;
 import com.optiflow.platform.clinical.domain.model.queries.GetClinicalRecordByIdQuery;
 import com.optiflow.platform.clinical.domain.model.queries.GetClinicalRecordsByPatientIdQuery;
 import com.optiflow.platform.clinical.domain.model.queries.GetOpticalPrescriptionQuery;
-import com.optiflow.platform.clinical.domain.model.aggregates.ClinicalRecord;
-import com.optiflow.platform.clinical.domain.exceptions.ClinicalRecordNotFoundException;
 import com.optiflow.platform.clinical.domain.repositories.ClinicalRecordRepository;
 import com.optiflow.platform.shared.domain.exceptions.DomainException;
 import java.time.Instant;

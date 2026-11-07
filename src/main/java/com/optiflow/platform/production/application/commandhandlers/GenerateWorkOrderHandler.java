@@ -1,7 +1,9 @@
 package com.optiflow.platform.production.application.commandhandlers;
 
-import com.optiflow.platform.production.domain.model.commands.GenerateWorkOrderCommand;
+import com.optiflow.platform.production.application.outboundservices.ClosedSale;
+import com.optiflow.platform.production.application.outboundservices.ExternalSaleService;
 import com.optiflow.platform.production.domain.model.aggregates.WorkOrder;
+import com.optiflow.platform.production.domain.model.commands.GenerateWorkOrderCommand;
 import com.optiflow.platform.production.domain.model.events.EstimatedDeliveryDateCalculated;
 import com.optiflow.platform.production.domain.model.events.WorkOrderGenerated;
 import com.optiflow.platform.production.domain.repositories.WorkOrderRepository;
@@ -13,8 +15,6 @@ import java.time.LocalDate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import com.optiflow.platform.production.application.outboundservices.ClosedSale;
-import com.optiflow.platform.production.application.outboundservices.ExternalSaleService;
 
 /** Generates the work order of a closed sale and calculates its estimated delivery date. */
 @Service

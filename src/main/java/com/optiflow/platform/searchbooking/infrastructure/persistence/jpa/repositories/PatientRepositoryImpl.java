@@ -1,9 +1,9 @@
 package com.optiflow.platform.searchbooking.infrastructure.persistence.jpa.repositories;
 
 import com.optiflow.platform.searchbooking.domain.model.entities.Patient;
-import com.optiflow.platform.searchbooking.domain.repositories.PatientRepository;
 import com.optiflow.platform.searchbooking.domain.model.valueobjects.EmailAddress;
 import com.optiflow.platform.searchbooking.domain.model.valueobjects.PatientId;
+import com.optiflow.platform.searchbooking.domain.repositories.PatientRepository;
 import com.optiflow.platform.searchbooking.infrastructure.persistence.jpa.mappers.PatientMapper;
 import java.time.LocalDate;
 import java.util.List;

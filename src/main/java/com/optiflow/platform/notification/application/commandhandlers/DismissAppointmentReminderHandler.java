@@ -1,10 +1,10 @@
 package com.optiflow.platform.notification.application.commandhandlers;
 
-import com.optiflow.platform.notification.domain.model.commands.DismissAppointmentReminderCommand;
 import com.optiflow.platform.notification.domain.model.aggregates.Notification;
-import com.optiflow.platform.notification.domain.repositories.NotificationRepository;
+import com.optiflow.platform.notification.domain.model.commands.DismissAppointmentReminderCommand;
 import com.optiflow.platform.notification.domain.model.valueobjects.AppointmentId;
 import com.optiflow.platform.notification.domain.model.valueobjects.PatientId;
+import com.optiflow.platform.notification.domain.repositories.NotificationRepository;
 import java.time.Clock;
 import java.util.Optional;
 import org.springframework.stereotype.Service;

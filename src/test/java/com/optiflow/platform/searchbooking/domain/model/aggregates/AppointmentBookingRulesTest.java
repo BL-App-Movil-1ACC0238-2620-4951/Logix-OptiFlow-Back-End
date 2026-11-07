@@ -4,18 +4,18 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.optiflow.platform.searchbooking.domain.exceptions.TimeSlotUnavailableException;
-import com.optiflow.platform.searchbooking.domain.services.AppointmentAvailabilityService;
 import com.optiflow.platform.searchbooking.domain.factories.AppointmentFactory;
+import com.optiflow.platform.searchbooking.domain.model.entities.TimeSlot;
 import com.optiflow.platform.searchbooking.domain.model.valueobjects.AppointmentStatus;
 import com.optiflow.platform.searchbooking.domain.model.valueobjects.OpticalStoreId;
 import com.optiflow.platform.searchbooking.domain.model.valueobjects.PatientId;
 import com.optiflow.platform.searchbooking.domain.model.valueobjects.TimeSlotId;
 import com.optiflow.platform.searchbooking.domain.model.valueobjects.TimeSlotStatus;
+import com.optiflow.platform.searchbooking.domain.services.AppointmentAvailabilityService;
 import com.optiflow.platform.shared.domain.exceptions.DomainException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import org.junit.jupiter.api.Test;
-import com.optiflow.platform.searchbooking.domain.model.entities.TimeSlot;
 
 class AppointmentBookingRulesTest {
 

@@ -1,5 +1,6 @@
 package com.optiflow.platform.clinical.domain.model.aggregates;
 
+import com.optiflow.platform.clinical.domain.model.entities.MedicalHistory;
 import com.optiflow.platform.clinical.domain.model.valueobjects.AppointmentId;
 import com.optiflow.platform.clinical.domain.model.valueobjects.ClinicalRecordId;
 import com.optiflow.platform.clinical.domain.model.valueobjects.ClinicalRecordStatus;
@@ -9,7 +10,6 @@ import com.optiflow.platform.shared.domain.exceptions.DomainException;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
-import com.optiflow.platform.clinical.domain.model.entities.MedicalHistory;
 
 public class ClinicalRecord {
 

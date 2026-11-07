@@ -6,10 +6,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.optiflow.platform.shared.interfaces.rest.ApiV1;
-import com.optiflow.platform.notification.domain.model.queries.GetNotificationsByPatientQuery;
 import com.optiflow.platform.notification.application.services.NotificationApplicationService;
+import com.optiflow.platform.notification.domain.model.queries.GetNotificationsByPatientQuery;
 import com.optiflow.platform.notification.domain.model.valueobjects.NotificationType;
+import com.optiflow.platform.shared.interfaces.rest.ApiV1;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;

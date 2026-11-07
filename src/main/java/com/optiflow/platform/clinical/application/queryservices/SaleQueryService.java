@@ -1,8 +1,8 @@
 package com.optiflow.platform.clinical.application.queryservices;
 
-import com.optiflow.platform.clinical.domain.model.queries.GetSaleByIdQuery;
-import com.optiflow.platform.clinical.domain.model.aggregates.Sale;
 import com.optiflow.platform.clinical.domain.exceptions.SaleNotFoundException;
+import com.optiflow.platform.clinical.domain.model.aggregates.Sale;
+import com.optiflow.platform.clinical.domain.model.queries.GetSaleByIdQuery;
 import com.optiflow.platform.clinical.domain.repositories.SaleRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

@@ -1,10 +1,10 @@
 package com.optiflow.platform.production.application.queryservices;
 
+import com.optiflow.platform.production.domain.exceptions.WorkOrderNotFoundException;
+import com.optiflow.platform.production.domain.model.aggregates.WorkOrder;
 import com.optiflow.platform.production.domain.model.queries.GetWorkOrderByIdQuery;
 import com.optiflow.platform.production.domain.model.queries.GetWorkOrdersByPatientIdQuery;
 import com.optiflow.platform.production.domain.model.queries.GetWorkOrdersQuery;
-import com.optiflow.platform.production.domain.model.aggregates.WorkOrder;
-import com.optiflow.platform.production.domain.exceptions.WorkOrderNotFoundException;
 import com.optiflow.platform.production.domain.repositories.WorkOrderRepository;
 import java.util.List;
 import org.springframework.stereotype.Service;

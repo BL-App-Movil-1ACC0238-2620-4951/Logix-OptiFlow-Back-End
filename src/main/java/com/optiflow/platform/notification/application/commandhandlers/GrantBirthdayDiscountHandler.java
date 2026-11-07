@@ -1,16 +1,16 @@
 package com.optiflow.platform.notification.application.commandhandlers;
 
-import com.optiflow.platform.notification.domain.model.commands.GrantBirthdayDiscountCommand;
 import com.optiflow.platform.notification.domain.model.aggregates.LoyaltyAccount;
 import com.optiflow.platform.notification.domain.model.aggregates.Notification;
+import com.optiflow.platform.notification.domain.model.commands.GrantBirthdayDiscountCommand;
 import com.optiflow.platform.notification.domain.model.events.BirthdayDiscountWasSent;
 import com.optiflow.platform.notification.domain.model.events.InAppNotificationSent;
-import com.optiflow.platform.notification.domain.repositories.LoyaltyAccountRepository;
-import com.optiflow.platform.notification.domain.repositories.NotificationRepository;
 import com.optiflow.platform.notification.domain.model.valueobjects.LoyaltyPoints;
 import com.optiflow.platform.notification.domain.model.valueobjects.NotificationId;
 import com.optiflow.platform.notification.domain.model.valueobjects.NotificationMessage;
 import com.optiflow.platform.notification.domain.model.valueobjects.PatientId;
+import com.optiflow.platform.notification.domain.repositories.LoyaltyAccountRepository;
+import com.optiflow.platform.notification.domain.repositories.NotificationRepository;
 import com.optiflow.platform.shared.domain.events.DomainEventPublisher;
 import java.time.Clock;
 import java.time.Instant;

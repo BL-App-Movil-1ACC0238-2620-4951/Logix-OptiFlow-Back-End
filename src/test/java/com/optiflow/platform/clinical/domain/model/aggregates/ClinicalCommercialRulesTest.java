@@ -3,6 +3,8 @@ package com.optiflow.platform.clinical.domain.model.aggregates;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import com.optiflow.platform.clinical.domain.model.entities.ElectronicReceipt;
+import com.optiflow.platform.clinical.domain.model.entities.QuotationItem;
 import com.optiflow.platform.clinical.domain.model.valueobjects.AppointmentId;
 import com.optiflow.platform.clinical.domain.model.valueobjects.ClinicalRecordId;
 import com.optiflow.platform.clinical.domain.model.valueobjects.ClinicalRecordStatus;
@@ -21,8 +23,6 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
 import org.junit.jupiter.api.Test;
-import com.optiflow.platform.clinical.domain.model.entities.ElectronicReceipt;
-import com.optiflow.platform.clinical.domain.model.entities.QuotationItem;
 
 class ClinicalCommercialRulesTest {
 

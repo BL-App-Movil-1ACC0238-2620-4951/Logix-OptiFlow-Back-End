@@ -1,7 +1,7 @@
 package com.optiflow.platform.clinical.infrastructure.persistence.jpa.mappers;
 
-import com.optiflow.platform.clinical.domain.model.entities.ElectronicReceipt;
 import com.optiflow.platform.clinical.domain.model.aggregates.Sale;
+import com.optiflow.platform.clinical.domain.model.entities.ElectronicReceipt;
 import com.optiflow.platform.clinical.domain.model.valueobjects.ElectronicReceiptId;
 import com.optiflow.platform.clinical.domain.model.valueobjects.Money;
 import com.optiflow.platform.clinical.domain.model.valueobjects.PatientId;

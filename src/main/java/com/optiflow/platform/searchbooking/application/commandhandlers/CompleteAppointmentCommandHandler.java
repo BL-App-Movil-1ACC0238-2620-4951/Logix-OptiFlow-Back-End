@@ -1,7 +1,8 @@
 package com.optiflow.platform.searchbooking.application.commandhandlers;
 
-import com.optiflow.platform.searchbooking.domain.model.commands.CompleteAppointmentCommand;
+import com.optiflow.platform.searchbooking.application.results.AppointmentDetails;
 import com.optiflow.platform.searchbooking.domain.model.aggregates.Appointment;
+import com.optiflow.platform.searchbooking.domain.model.commands.CompleteAppointmentCommand;
 import com.optiflow.platform.searchbooking.domain.model.entities.TimeSlot;
 import com.optiflow.platform.searchbooking.domain.model.events.AppointmentCompleted;
 import com.optiflow.platform.searchbooking.domain.repositories.AppointmentRepository;
@@ -12,7 +13,6 @@ import java.time.Clock;
 import java.time.Instant;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.optiflow.platform.searchbooking.application.results.AppointmentDetails;
 
 @Service
 public class CompleteAppointmentCommandHandler {

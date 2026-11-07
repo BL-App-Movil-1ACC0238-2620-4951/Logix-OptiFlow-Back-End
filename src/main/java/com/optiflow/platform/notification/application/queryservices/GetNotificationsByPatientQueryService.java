@@ -1,9 +1,9 @@
 package com.optiflow.platform.notification.application.queryservices;
 
-import com.optiflow.platform.notification.domain.model.queries.GetNotificationsByPatientQuery;
 import com.optiflow.platform.notification.domain.model.aggregates.Notification;
-import com.optiflow.platform.notification.domain.repositories.NotificationRepository;
+import com.optiflow.platform.notification.domain.model.queries.GetNotificationsByPatientQuery;
 import com.optiflow.platform.notification.domain.model.valueobjects.PatientId;
+import com.optiflow.platform.notification.domain.repositories.NotificationRepository;
 import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

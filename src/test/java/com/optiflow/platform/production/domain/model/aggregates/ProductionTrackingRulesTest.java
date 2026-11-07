@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.optiflow.platform.production.domain.model.entities.Laboratory;
 import com.optiflow.platform.production.domain.model.valueobjects.LaboratoryId;
 import com.optiflow.platform.production.domain.model.valueobjects.LensId;
 import com.optiflow.platform.production.domain.model.valueobjects.OpticalStoreId;
@@ -17,7 +18,6 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
 import org.junit.jupiter.api.Test;
-import com.optiflow.platform.production.domain.model.entities.Laboratory;
 
 class ProductionTrackingRulesTest {
 

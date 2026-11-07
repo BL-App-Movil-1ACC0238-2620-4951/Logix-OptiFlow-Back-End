@@ -1,18 +1,18 @@
 package com.optiflow.platform.searchbooking.application.commandhandlers;
 
+import com.optiflow.platform.searchbooking.application.outboundservices.AuthenticationPort;
+import com.optiflow.platform.searchbooking.domain.factories.PatientFactory;
 import com.optiflow.platform.searchbooking.domain.model.commands.RegisterPatientCommand;
 import com.optiflow.platform.searchbooking.domain.model.entities.Patient;
 import com.optiflow.platform.searchbooking.domain.model.events.PatientRegistered;
 import com.optiflow.platform.searchbooking.domain.repositories.PatientRepository;
 import com.optiflow.platform.searchbooking.domain.repositories.StaffMemberRepository;
-import com.optiflow.platform.searchbooking.domain.factories.PatientFactory;
 import com.optiflow.platform.shared.domain.events.DomainEventPublisher;
 import com.optiflow.platform.shared.domain.exceptions.DomainException;
 import java.time.Clock;
 import java.time.Instant;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.optiflow.platform.searchbooking.application.outboundservices.AuthenticationPort;
 
 @Service
 public class RegisterPatientCommandHandler {

@@ -1,7 +1,7 @@
 package com.optiflow.platform.searchbooking.application.queryservices;
 
-import com.optiflow.platform.searchbooking.domain.model.queries.GetStaffMembersQuery;
 import com.optiflow.platform.searchbooking.domain.model.entities.StaffMember;
+import com.optiflow.platform.searchbooking.domain.model.queries.GetStaffMembersQuery;
 import com.optiflow.platform.searchbooking.domain.repositories.StaffMemberRepository;
 import java.util.List;
 import org.springframework.stereotype.Service;

@@ -1,11 +1,11 @@
 package com.optiflow.platform.production.application.commandhandlers;
 
-import com.optiflow.platform.production.domain.model.commands.AssignWorkOrderToTechnicianCommand;
-import com.optiflow.platform.production.domain.model.entities.Technician;
-import com.optiflow.platform.production.domain.model.aggregates.WorkOrder;
-import com.optiflow.platform.production.domain.model.events.WorkOrderAssigned;
 import com.optiflow.platform.production.domain.exceptions.TechnicianNotFoundException;
 import com.optiflow.platform.production.domain.exceptions.WorkOrderNotFoundException;
+import com.optiflow.platform.production.domain.model.aggregates.WorkOrder;
+import com.optiflow.platform.production.domain.model.commands.AssignWorkOrderToTechnicianCommand;
+import com.optiflow.platform.production.domain.model.entities.Technician;
+import com.optiflow.platform.production.domain.model.events.WorkOrderAssigned;
 import com.optiflow.platform.production.domain.repositories.TechnicianRepository;
 import com.optiflow.platform.production.domain.repositories.WorkOrderRepository;
 import com.optiflow.platform.shared.domain.events.DomainEventPublisher;

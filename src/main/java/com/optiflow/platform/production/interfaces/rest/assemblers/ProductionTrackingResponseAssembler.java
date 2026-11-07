@@ -1,9 +1,9 @@
 package com.optiflow.platform.production.interfaces.rest.assemblers;
 
+import com.optiflow.platform.production.domain.model.aggregates.WorkOrder;
 import com.optiflow.platform.production.domain.model.entities.Laboratory;
 import com.optiflow.platform.production.domain.model.entities.Lenses;
 import com.optiflow.platform.production.domain.model.entities.Technician;
-import com.optiflow.platform.production.domain.model.aggregates.WorkOrder;
 import com.optiflow.platform.production.domain.model.valueobjects.DeliveryDelay;
 import com.optiflow.platform.production.domain.model.valueobjects.StatusChange;
 import com.optiflow.platform.production.interfaces.rest.resources.DeliveryDelayResponse;

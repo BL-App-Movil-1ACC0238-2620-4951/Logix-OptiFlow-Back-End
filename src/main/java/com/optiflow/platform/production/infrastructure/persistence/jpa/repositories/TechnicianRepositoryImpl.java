@@ -1,8 +1,8 @@
 package com.optiflow.platform.production.infrastructure.persistence.jpa.repositories;
 
 import com.optiflow.platform.production.domain.model.entities.Technician;
-import com.optiflow.platform.production.domain.repositories.TechnicianRepository;
 import com.optiflow.platform.production.domain.model.valueobjects.TechnicianId;
+import com.optiflow.platform.production.domain.repositories.TechnicianRepository;
 import com.optiflow.platform.production.infrastructure.persistence.jpa.mappers.ProductionCatalogMapper;
 import java.util.List;
 import java.util.Optional;

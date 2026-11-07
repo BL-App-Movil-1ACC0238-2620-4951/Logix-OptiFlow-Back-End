@@ -1,9 +1,9 @@
 package com.optiflow.platform.searchbooking.infrastructure.configuration;
 
-import com.optiflow.platform.searchbooking.domain.services.AppointmentAvailabilityService;
 import com.optiflow.platform.searchbooking.domain.factories.AppointmentFactory;
-import com.optiflow.platform.searchbooking.domain.services.OpticalStoreSearchService;
 import com.optiflow.platform.searchbooking.domain.factories.PatientFactory;
+import com.optiflow.platform.searchbooking.domain.services.AppointmentAvailabilityService;
+import com.optiflow.platform.searchbooking.domain.services.OpticalStoreSearchService;
 import com.optiflow.platform.searchbooking.domain.services.StoreRatingService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
