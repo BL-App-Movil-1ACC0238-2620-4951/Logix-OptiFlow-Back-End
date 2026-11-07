@@ -82,12 +82,23 @@ class SearchAndBookingApiTest {
                 """))
         .andExpect(status().isCreated());
 
-    mockMvc.perform(post(ApiV1.path("/login"))
+    mockMvc.perform(post(ApiV1.path("/auth/tokens"))
             .contentType(MediaType.APPLICATION_JSON)
             .content("""
                 {"email":"luis.ramos@optiflow.test","password":"wrong-password"}
                 """))
         .andExpect(status().isUnauthorized());
+
+    mockMvc.perform(post(ApiV1.path("/auth/tokens"))
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("""
+                {"email":"luis.ramos@optiflow.test","password":"secret12"}
+                """))
+        .andExpect(status().isCreated())
+        .andExpect(jsonPath("$.token").isNotEmpty())
+        .andExpect(jsonPath("$.expiresAt").isNotEmpty())
+        .andExpect(jsonPath("$.role").value("PATIENT"))
+        .andExpect(jsonPath("$.userId").isNotEmpty());
   }
   @Test
   void rejectsPhoneLettersWithoutCreatingThePatient() throws Exception {

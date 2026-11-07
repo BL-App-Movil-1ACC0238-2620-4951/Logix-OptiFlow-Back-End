@@ -1,6 +1,7 @@
 package com.optiflow.platform.searchbooking.application.services;
 
-import com.optiflow.platform.searchbooking.domain.entities.Patient;
+import java.time.Instant;
+import java.util.UUID;
 
-public record LoginResult(String token, Patient patient) {
+public record LoginResult(String token, Instant expiresAt, UUID userId, String role) {
 }

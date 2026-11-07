@@ -6,6 +6,7 @@ import com.optiflow.platform.searchbooking.domain.events.PatientLoggedIn;
 import com.optiflow.platform.searchbooking.domain.repositories.PatientRepository;
 import com.optiflow.platform.shared.domain.events.DomainEventPublisher;
 import com.optiflow.platform.shared.exceptions.DomainException;
+import com.optiflow.platform.shared.security.IssuedJwt;
 import java.time.Clock;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,8 +39,9 @@ public class LoginCommandHandler {
     if (!authenticationPort.matches(command.password(), passwordHash)) {
       throw new DomainException("The credentials are invalid.", 401);
     }
-    String token = authenticationPort.issueToken(patient.id());
+    IssuedJwt issued = authenticationPort.issueToken(patient.id(), "PATIENT");
     eventPublisher.publish(new PatientLoggedIn(patient.id(), clock.instant()));
-    return new LoginResult(token, patient);
+    return new LoginResult(
+        issued.token(), issued.expiresAt(), patient.id().value(), "PATIENT");
   }
 }

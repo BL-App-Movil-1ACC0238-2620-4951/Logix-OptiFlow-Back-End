@@ -6,6 +6,7 @@ package com.optiflow.platform.shared.documentation.openapi.configuration;
  */
 public final class OpenApiTags {
 
+  public static final String AUTHENTICATION = "Search & Booking - Authentication";
   public static final String PATIENTS = "Search & Booking - Patients";
   public static final String OPTICAL_STORES = "Search & Booking - Optical Stores";
   public static final String AVAILABILITY = "Search & Booking - Availability";

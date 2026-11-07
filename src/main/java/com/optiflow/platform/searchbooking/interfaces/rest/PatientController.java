@@ -4,12 +4,9 @@ import com.optiflow.platform.searchbooking.application.queries.GetPatientAppoint
 import com.optiflow.platform.searchbooking.application.services.AppointmentApplicationService;
 import com.optiflow.platform.searchbooking.application.services.PatientApplicationService;
 import com.optiflow.platform.searchbooking.domain.valueobjects.PatientId;
-import com.optiflow.platform.searchbooking.interfaces.rest.assemblers.FromLoginRequestAssembler;
 import com.optiflow.platform.searchbooking.interfaces.rest.assemblers.FromRegisterPatientRequestAssembler;
 import com.optiflow.platform.searchbooking.interfaces.rest.assemblers.SearchBookingResponseAssembler;
 import com.optiflow.platform.searchbooking.interfaces.rest.resources.AppointmentResponse;
-import com.optiflow.platform.searchbooking.interfaces.rest.resources.LoginRequest;
-import com.optiflow.platform.searchbooking.interfaces.rest.resources.LoginResponse;
 import com.optiflow.platform.searchbooking.interfaces.rest.resources.PatientResponse;
 import com.optiflow.platform.searchbooking.interfaces.rest.resources.RegisterPatientRequest;
 import com.optiflow.platform.shared.documentation.openapi.configuration.OpenApiTags;
@@ -35,19 +32,16 @@ public class PatientController {
   private final PatientApplicationService patientApplicationService;
   private final AppointmentApplicationService appointmentApplicationService;
   private final FromRegisterPatientRequestAssembler registerAssembler;
-  private final FromLoginRequestAssembler loginAssembler;
   private final SearchBookingResponseAssembler responseAssembler;
 
   public PatientController(
       PatientApplicationService patientApplicationService,
       AppointmentApplicationService appointmentApplicationService,
       FromRegisterPatientRequestAssembler registerAssembler,
-      FromLoginRequestAssembler loginAssembler,
       SearchBookingResponseAssembler responseAssembler) {
     this.patientApplicationService = patientApplicationService;
     this.appointmentApplicationService = appointmentApplicationService;
     this.registerAssembler = registerAssembler;
-    this.loginAssembler = loginAssembler;
     this.responseAssembler = responseAssembler;
   }
 
@@ -56,12 +50,6 @@ public class PatientController {
     PatientResponse response = responseAssembler.toPatientResponse(
         patientApplicationService.register(registerAssembler.toCommand(request)));
     return CreatedResourceResponses.at("/patients/{id}", response, response.id());
-  }
-
-  @PostMapping("/login")
-  public LoginResponse login(@Valid @RequestBody LoginRequest request) {
-    return responseAssembler.toLoginResponse(
-        patientApplicationService.login(loginAssembler.toCommand(request)));
   }
 
   @GetMapping("/patients/{id}/appointments")

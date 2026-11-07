@@ -18,7 +18,8 @@ public class OpenApiConfiguration {
             .version("0.1.0")
             .description("RESTful services for the OptiFlow bounded contexts."))
         .tags(List.of(
-            tag(OpenApiTags.PATIENTS, "Patient registration, login and appointment history."),
+            tag(OpenApiTags.AUTHENTICATION, "Issue JWT access tokens for patients and staff."),
+            tag(OpenApiTags.PATIENTS, "Patient registration and appointment history."),
             tag(OpenApiTags.OPTICAL_STORES, "Search and filter optical stores."),
             tag(OpenApiTags.AVAILABILITY, "Available time slots of an optical store."),
             tag(OpenApiTags.APPOINTMENTS, "Book and consult appointments."),
