@@ -11,6 +11,7 @@ public final class OpenApiTags {
   public static final String OPTICAL_STORES = "Search & Booking - Optical Stores";
   public static final String AVAILABILITY = "Search & Booking - Availability";
   public static final String APPOINTMENTS = "Search & Booking - Appointments";
+  public static final String STAFF_MEMBERS = "Search & Booking - Staff Members";
   public static final String FAVORITES = "Search & Booking - Favorites";
   public static final String RATINGS = "Search & Booking - Ratings";
   public static final String CLINICAL_RECORDS = "Clinical & Commercial - Clinical Records";

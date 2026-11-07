@@ -2,10 +2,15 @@ package com.optiflow.platform.shared.configuration;
 
 import com.optiflow.platform.searchbooking.application.commands.PublishAvailableTimeSlotsCommand.SlotDraft;
 import com.optiflow.platform.searchbooking.application.commands.PublishAvailableTimeSlotsCommand;
+import com.optiflow.platform.searchbooking.application.commands.RegisterStaffMemberCommand;
 import com.optiflow.platform.searchbooking.application.services.OpticalStoreApplicationService;
+import com.optiflow.platform.searchbooking.application.services.StaffMemberApplicationService;
 import com.optiflow.platform.searchbooking.domain.entities.OpticalStore;
 import com.optiflow.platform.searchbooking.domain.repositories.OpticalStoreRepository;
+import com.optiflow.platform.searchbooking.domain.valueobjects.EmailAddress;
+import com.optiflow.platform.searchbooking.domain.valueobjects.Name;
 import com.optiflow.platform.searchbooking.domain.valueobjects.OpticalStoreId;
+import com.optiflow.platform.searchbooking.domain.valueobjects.UserRole;
 import com.optiflow.platform.searchbooking.domain.valueobjects.PhoneNumber;
 import com.optiflow.platform.searchbooking.domain.valueobjects.StoreAddress;
 import com.optiflow.platform.searchbooking.domain.valueobjects.StoreName;

@@ -23,6 +23,7 @@ public class OpenApiConfiguration {
             tag(OpenApiTags.OPTICAL_STORES, "Search and filter optical stores."),
             tag(OpenApiTags.AVAILABILITY, "Available time slots of an optical store."),
             tag(OpenApiTags.APPOINTMENTS, "Book and consult appointments."),
+            tag(OpenApiTags.STAFF_MEMBERS, "Staff registration, listing and role assignment."),
             tag(OpenApiTags.FAVORITES, "Optical stores saved as favorites by a patient."),
             tag(OpenApiTags.RATINGS, "Patient ratings of optical stores."),
             tag(OpenApiTags.CLINICAL_RECORDS,

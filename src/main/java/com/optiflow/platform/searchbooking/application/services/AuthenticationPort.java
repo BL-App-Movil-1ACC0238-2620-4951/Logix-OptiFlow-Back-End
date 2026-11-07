@@ -1,11 +1,11 @@
 package com.optiflow.platform.searchbooking.application.services;
 
-import com.optiflow.platform.searchbooking.domain.valueobjects.PatientId;
 import com.optiflow.platform.shared.security.IssuedJwt;
+import java.util.UUID;
 
 public interface AuthenticationPort {
 
-  IssuedJwt issueToken(PatientId patientId, String role);
+  IssuedJwt issueToken(UUID userId, String role);
 
   boolean matches(String rawPassword, String passwordHash);
 

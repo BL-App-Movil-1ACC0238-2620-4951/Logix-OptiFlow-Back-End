@@ -1,8 +1,8 @@
 package com.optiflow.platform.searchbooking.infrastructure.security;
 
 import com.optiflow.platform.searchbooking.application.services.AuthenticationPort;
-import com.optiflow.platform.searchbooking.domain.valueobjects.PatientId;
 import com.optiflow.platform.shared.security.IssuedJwt;
+import java.util.UUID;
 import com.optiflow.platform.shared.security.JwtTokenService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -18,8 +18,8 @@ public class AuthenticationAdapter implements AuthenticationPort {
   }
 
   @Override
-  public IssuedJwt issueToken(PatientId patientId, String role) {
-    return jwtTokenService.issue(patientId.value(), role);
+  public IssuedJwt issueToken(UUID userId, String role) {
+    return jwtTokenService.issue(userId, role);
   }
 
   @Override
