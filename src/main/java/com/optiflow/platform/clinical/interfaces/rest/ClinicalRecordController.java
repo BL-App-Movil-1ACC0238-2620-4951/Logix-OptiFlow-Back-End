@@ -20,16 +20,16 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
 import java.util.UUID;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import com.optiflow.platform.shared.interfaces.rest.ApiV1;
+import com.optiflow.platform.shared.interfaces.rest.CreatedResourceResponses;
 
 @Tag(name = OpenApiTags.CLINICAL_RECORDS)
 @RestController
@@ -56,11 +56,11 @@ public class ClinicalRecordController {
   }
 
   @PostMapping("/clinical-records")
-  @ResponseStatus(HttpStatus.CREATED)
-  public ClinicalRecordResponse register(
+  public ResponseEntity<ClinicalRecordResponse> register(
       @Valid @RequestBody RegisterClinicalRecordRequest request) {
-    return responseAssembler.toClinicalRecordResponse(
+    ClinicalRecordResponse response = responseAssembler.toClinicalRecordResponse(
         clinicalRecordApplicationService.register(registerAssembler.toCommand(request)));
+    return CreatedResourceResponses.at("/clinical-records/{id}", response, response.id());
   }
 
   @GetMapping("/clinical-records/{id}")
@@ -87,12 +87,13 @@ public class ClinicalRecordController {
   }
 
   @PostMapping("/clinical-records/{id}/prescription")
-  @ResponseStatus(HttpStatus.CREATED)
-  public OpticalPrescriptionResponse generatePrescription(
+  public ResponseEntity<OpticalPrescriptionResponse> generatePrescription(
       @PathVariable UUID id, @Valid @RequestBody GenerateOpticalPrescriptionRequest request) {
-    return responseAssembler.toPrescriptionResponse(
+    OpticalPrescriptionResponse response = responseAssembler.toPrescriptionResponse(
         clinicalRecordApplicationService.generatePrescription(
             prescriptionAssembler.toCommand(id, request)));
+    return CreatedResourceResponses.at(
+        "/clinical-records/{id}/prescription", response, id);
   }
 
   @GetMapping("/clinical-records/{id}/prescription")

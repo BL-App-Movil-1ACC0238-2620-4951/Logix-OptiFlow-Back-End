@@ -11,15 +11,15 @@ import com.optiflow.platform.shared.documentation.openapi.configuration.OpenApiT
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.UUID;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.optiflow.platform.shared.interfaces.rest.ApiV1;
+import com.optiflow.platform.shared.interfaces.rest.CreatedResourceResponses;
 
 @Tag(name = OpenApiTags.APPOINTMENTS)
 @RestController
@@ -40,10 +40,10 @@ public class AppointmentController {
   }
 
   @PostMapping("/appointments")
-  @ResponseStatus(HttpStatus.CREATED)
-  public AppointmentResponse book(@Valid @RequestBody BookAppointmentRequest request) {
-    return responseAssembler.toAppointmentResponse(
+  public ResponseEntity<AppointmentResponse> book(@Valid @RequestBody BookAppointmentRequest request) {
+    AppointmentResponse response = responseAssembler.toAppointmentResponse(
         appointmentApplicationService.book(bookAssembler.toCommand(request)));
+    return CreatedResourceResponses.at("/appointments/{id}", response, response.id());
   }
 
   @GetMapping("/appointments/{id}")

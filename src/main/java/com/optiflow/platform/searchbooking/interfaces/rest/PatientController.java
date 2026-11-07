@@ -17,15 +17,15 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
 import java.util.UUID;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.optiflow.platform.shared.interfaces.rest.ApiV1;
+import com.optiflow.platform.shared.interfaces.rest.CreatedResourceResponses;
 
 @Tag(name = OpenApiTags.PATIENTS)
 @RestController
@@ -52,10 +52,10 @@ public class PatientController {
   }
 
   @PostMapping("/patients")
-  @ResponseStatus(HttpStatus.CREATED)
-  public PatientResponse register(@Valid @RequestBody RegisterPatientRequest request) {
-    return responseAssembler.toPatientResponse(
+  public ResponseEntity<PatientResponse> register(@Valid @RequestBody RegisterPatientRequest request) {
+    PatientResponse response = responseAssembler.toPatientResponse(
         patientApplicationService.register(registerAssembler.toCommand(request)));
+    return CreatedResourceResponses.at("/patients/{id}", response, response.id());
   }
 
   @PostMapping("/login")

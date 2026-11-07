@@ -30,7 +30,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
 import java.util.UUID;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -38,9 +38,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import com.optiflow.platform.shared.interfaces.rest.ApiV1;
+import com.optiflow.platform.shared.interfaces.rest.CreatedResourceResponses;
 
 @Tag(name = OpenApiTags.WORK_ORDERS)
 @RestController
@@ -91,10 +91,10 @@ public class WorkOrderController {
   }
 
   @PostMapping("/work-orders")
-  @ResponseStatus(HttpStatus.CREATED)
-  public WorkOrderResponse generate(@Valid @RequestBody GenerateWorkOrderRequest request) {
-    return responseAssembler.toWorkOrderResponse(
+  public ResponseEntity<WorkOrderResponse> generate(@Valid @RequestBody GenerateWorkOrderRequest request) {
+    WorkOrderResponse response = responseAssembler.toWorkOrderResponse(
         workOrderApplicationService.generate(generateAssembler.toCommand(request)));
+    return CreatedResourceResponses.at("/work-orders/{id}", response, response.id());
   }
 
   @GetMapping("/work-orders/{id}")
@@ -142,11 +142,11 @@ public class WorkOrderController {
   }
 
   @PostMapping("/work-orders/{id}/delays")
-  @ResponseStatus(HttpStatus.CREATED)
-  public WorkOrderResponse notifyDeliveryDelay(
+  public ResponseEntity<WorkOrderResponse> notifyDeliveryDelay(
       @PathVariable UUID id, @Valid @RequestBody NotifyDeliveryDelayRequest request) {
-    return responseAssembler.toWorkOrderResponse(
+    WorkOrderResponse response = responseAssembler.toWorkOrderResponse(
         workOrderApplicationService.notifyDeliveryDelay(delayAssembler.toCommand(id, request)));
+    return CreatedResourceResponses.at("/work-orders/{id}", response, id);
   }
 
   @PatchMapping("/work-orders/{id}/deliver")
