@@ -9,7 +9,7 @@ import com.optiflow.platform.searchbooking.interfaces.rest.assemblers.FromRegist
 import com.optiflow.platform.searchbooking.interfaces.rest.assemblers.SearchBookingResponseAssembler;
 import com.optiflow.platform.searchbooking.interfaces.rest.resources.RegisterStaffMemberRequest;
 import com.optiflow.platform.searchbooking.interfaces.rest.resources.StaffMemberResponse;
-import com.optiflow.platform.searchbooking.interfaces.rest.resources.UpdateStaffMemberRoleRequest;
+import com.optiflow.platform.searchbooking.interfaces.rest.resources.AssignStaffRoleRequest;
 import com.optiflow.platform.shared.infrastructure.documentation.openapi.configuration.OpenApiTags;
 import com.optiflow.platform.shared.interfaces.rest.ApiV1;
 import com.optiflow.platform.shared.interfaces.rest.CreatedResourceResponses;
@@ -65,7 +65,7 @@ public class StaffMemberController {
 
   @PatchMapping("/staff-members/{id}/role")
   public StaffMemberResponse updateRole(
-      @PathVariable UUID id, @Valid @RequestBody UpdateStaffMemberRoleRequest request) {
+      @PathVariable UUID id, @Valid @RequestBody AssignStaffRoleRequest request) {
     return responseAssembler.toStaffMemberResponse(staffMemberApplicationService.assignRole(
         new AssignStaffRoleCommand(
             StaffMemberId.of(id),
