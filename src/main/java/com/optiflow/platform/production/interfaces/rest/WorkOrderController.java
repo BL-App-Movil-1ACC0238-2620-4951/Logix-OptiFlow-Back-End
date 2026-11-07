@@ -129,11 +129,15 @@ public class WorkOrderController {
   @PatchMapping("/work-orders/{id}/status")
   public WorkOrderStatusResponse updateStatus(
       @PathVariable UUID id, @Valid @RequestBody UpdateWorkOrderStatusRequest request) {
+    if (WorkOrderStatus.from(request.status()) == WorkOrderStatus.DELIVERED) {
+      return responseAssembler.toStatusResponse(workOrderApplicationService.markAsDelivered(
+          new MarkOrderAsDeliveredCommand(WorkOrderId.of(id))));
+    }
     return responseAssembler.toStatusResponse(
         workOrderApplicationService.updateStatus(statusAssembler.toCommand(id, request)));
   }
 
-  @PatchMapping("/work-orders/{id}/lenses/complete")
+  @PatchMapping("/work-orders/{id}/lenses")
   public WorkOrderResponse completeLenses(
       @PathVariable UUID id,
       @Valid @RequestBody(required = false) CompleteLensesRequest request) {
@@ -147,11 +151,5 @@ public class WorkOrderController {
     WorkOrderResponse response = responseAssembler.toWorkOrderResponse(
         workOrderApplicationService.notifyDeliveryDelay(delayAssembler.toCommand(id, request)));
     return CreatedResourceResponses.at("/work-orders/{id}", response, id);
-  }
-
-  @PatchMapping("/work-orders/{id}/deliver")
-  public WorkOrderStatusResponse markAsDelivered(@PathVariable UUID id) {
-    return responseAssembler.toStatusResponse(workOrderApplicationService.markAsDelivered(
-        new MarkOrderAsDeliveredCommand(WorkOrderId.of(id))));
   }
 }

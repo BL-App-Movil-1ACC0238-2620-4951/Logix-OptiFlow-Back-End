@@ -105,7 +105,7 @@ class ProductionTrackingApiTest {
         .andExpect(status().isConflict())
         .andExpect(jsonPath("$.message")
             .value("All lenses must be completed before quality control."));
-    mockMvc.perform(patch(base + "/lenses/complete"))
+    mockMvc.perform(patch(base + "/lenses"))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.lenses[0].completed").value(true))
         .andExpect(jsonPath("$.lenses[1].completed").value(true));
@@ -125,15 +125,15 @@ class ProductionTrackingApiTest {
         .andExpect(jsonPath("$.deliveryDelay.reason").value("Falta de stock de lunas"))
         .andExpect(jsonPath("$.estimatedDeliveryDate").value(today.plusDays(10).toString()));
 
-    mockMvc.perform(patch(base + "/deliver")).andExpect(status().isConflict());
+    perform(patch(base + "/status"), "{\"status\":\"DELIVERED\"}")
+        .andExpect(status().isConflict());
     perform(patch(base + "/status"), "{\"status\":\"READY_FOR_DELIVERY\"}")
         .andExpect(status().isOk());
     perform(patch(base + "/status"), "{\"status\":\"DELIVERED\"}")
-        .andExpect(status().isBadRequest());
-    mockMvc.perform(patch(base + "/deliver"))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.status").value("DELIVERED"));
-    mockMvc.perform(patch(base + "/deliver")).andExpect(status().isConflict());
+    perform(patch(base + "/status"), "{\"status\":\"DELIVERED\"}")
+        .andExpect(status().isConflict());
 
     mockMvc.perform(get(base))
         .andExpect(status().isOk())
