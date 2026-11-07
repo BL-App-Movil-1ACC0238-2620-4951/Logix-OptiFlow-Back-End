@@ -9,7 +9,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import org.flywaydb.core.api.Location;
 import org.flywaydb.core.api.ResourceProvider;
 import org.flywaydb.core.api.configuration.FluentConfiguration;
@@ -22,15 +24,27 @@ import org.springframework.stereotype.Component;
 /**
  * Test-only adaptation that lets the real Flyway migrations run on H2.
  *
- * <p>H2 does not support partial indexes, so the {@code WHERE} clause of a {@code CREATE UNIQUE
- * INDEX} is removed before the script runs. The result is equivalent: a unique index already
- * accepts several rows with {@code NULL}. The migrations used in production are not modified.
+ * <p>Two PostgreSQL features that H2 does not accept are rewritten in memory before each script
+ * runs; the result is the same schema:
+ *
+ * <ul>
+ *   <li>The {@code WHERE} clause of a partial {@code CREATE UNIQUE INDEX} is removed: a unique
+ *       index already accepts several rows with {@code NULL}.
+ *   <li>An {@code ALTER TABLE} with several {@code ADD COLUMN} clauses is split into one
+ *       {@code ALTER TABLE} per column.
+ * </ul>
+ *
+ * <p>The migration files used in production are not modified.
  */
 @Component
 class H2MigrationCompatibility implements FlywayConfigurationCustomizer {
 
-  private static final Pattern PARTIAL_INDEX =
-      Pattern.compile("(CREATE\s+UNIQUE\s+INDEX[^;]*?)\s+WHERE[^;]*;", Pattern.CASE_INSENSITIVE);
+  private static final Pattern PARTIAL_INDEX = Pattern.compile(
+      "(CREATE\\s+UNIQUE\\s+INDEX[^;]*?)\\s+WHERE[^;]*;", Pattern.CASE_INSENSITIVE);
+  private static final Pattern MULTI_ADD_COLUMN = Pattern.compile(
+      "ALTER\\s+TABLE\\s+(\\w+)\\s+(ADD\\s+COLUMN\\s[^;]*);", Pattern.CASE_INSENSITIVE);
+  private static final Pattern NEXT_ADD_COLUMN =
+      Pattern.compile(",\\s*(?=ADD\\s+COLUMN\\s)", Pattern.CASE_INSENSITIVE);
 
   @Override
   public void customize(FluentConfiguration configuration) {
@@ -86,10 +100,21 @@ class H2MigrationCompatibility implements FlywayConfigurationCustomizer {
     public Reader read() {
       try {
         String sql = resource.getContentAsString(StandardCharsets.UTF_8);
-        return new StringReader(PARTIAL_INDEX.matcher(sql).replaceAll("$1;"));
+        return new StringReader(toH2(sql));
       } catch (IOException exception) {
         throw new UncheckedIOException(exception);
       }
+    }
+
+    private static String toH2(String sql) {
+      String withoutPartialIndexes = PARTIAL_INDEX.matcher(sql).replaceAll("$1;");
+      return MULTI_ADD_COLUMN.matcher(withoutPartialIndexes).replaceAll(statement -> {
+        String table = statement.group(1);
+        String statements = NEXT_ADD_COLUMN.splitAsStream(statement.group(2))
+            .map(column -> "ALTER TABLE " + table + " " + column.trim() + ";")
+            .collect(Collectors.joining(System.lineSeparator()));
+        return Matcher.quoteReplacement(statements);
+      });
     }
 
     @Override
