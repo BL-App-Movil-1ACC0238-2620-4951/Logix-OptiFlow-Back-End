@@ -1,8 +1,9 @@
 package com.optiflow.platform.notification.application.services;
 
-import com.optiflow.platform.notification.application.queries.GetLoyaltyAccountByPatientQuery;
-import com.optiflow.platform.notification.domain.entities.LoyaltyAccount;
+import com.optiflow.platform.notification.domain.model.queries.GetLoyaltyAccountByPatientQuery;
+import com.optiflow.platform.notification.domain.model.aggregates.LoyaltyAccount;
 import org.springframework.stereotype.Service;
+import com.optiflow.platform.notification.application.queryservices.GetLoyaltyAccountByPatientQueryService;
 
 @Service
 public class LoyaltyApplicationService {

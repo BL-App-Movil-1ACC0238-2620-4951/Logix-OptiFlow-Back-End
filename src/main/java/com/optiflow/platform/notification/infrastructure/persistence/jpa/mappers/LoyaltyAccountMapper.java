@@ -1,8 +1,8 @@
 package com.optiflow.platform.notification.infrastructure.persistence.jpa.mappers;
 
-import com.optiflow.platform.notification.domain.entities.LoyaltyAccount;
-import com.optiflow.platform.notification.domain.valueobjects.LoyaltyPoints;
-import com.optiflow.platform.notification.domain.valueobjects.PatientId;
+import com.optiflow.platform.notification.domain.model.aggregates.LoyaltyAccount;
+import com.optiflow.platform.notification.domain.model.valueobjects.LoyaltyPoints;
+import com.optiflow.platform.notification.domain.model.valueobjects.PatientId;
 import com.optiflow.platform.notification.infrastructure.persistence.jpa.entities.LoyaltyAccountEntity;
 import org.springframework.stereotype.Component;
 

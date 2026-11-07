@@ -1,7 +1,7 @@
 package com.optiflow.platform.notification.domain.repositories;
 
-import com.optiflow.platform.notification.domain.entities.LoyaltyAccount;
-import com.optiflow.platform.notification.domain.valueobjects.PatientId;
+import com.optiflow.platform.notification.domain.model.aggregates.LoyaltyAccount;
+import com.optiflow.platform.notification.domain.model.valueobjects.PatientId;
 import java.util.Optional;
 
 public interface LoyaltyAccountRepository {
