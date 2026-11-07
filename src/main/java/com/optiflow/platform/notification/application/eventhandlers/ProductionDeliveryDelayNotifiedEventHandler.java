@@ -2,7 +2,7 @@ package com.optiflow.platform.notification.application.eventhandlers;
 
 import com.optiflow.platform.notification.application.commands.SendDeliveryDelayNotificationCommand;
 import com.optiflow.platform.notification.application.services.SendDeliveryDelayNotificationHandler;
-import com.optiflow.platform.production.domain.events.DeliveryDelayNotified;
+import com.optiflow.platform.production.domain.model.events.DeliveryDelayNotified;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;

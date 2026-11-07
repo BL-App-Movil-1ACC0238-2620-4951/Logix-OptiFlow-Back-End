@@ -1,8 +1,8 @@
 package com.optiflow.platform.production.infrastructure.persistence.jpa.repositories;
 
-import com.optiflow.platform.production.domain.entities.Laboratory;
+import com.optiflow.platform.production.domain.model.entities.Laboratory;
 import com.optiflow.platform.production.domain.repositories.LaboratoryRepository;
-import com.optiflow.platform.production.domain.valueobjects.LaboratoryId;
+import com.optiflow.platform.production.domain.model.valueobjects.LaboratoryId;
 import com.optiflow.platform.production.infrastructure.persistence.jpa.mappers.ProductionCatalogMapper;
 import java.util.List;
 import java.util.Optional;

@@ -1,15 +1,15 @@
 package com.optiflow.platform.production.interfaces.rest;
 
-import com.optiflow.platform.production.application.commands.MarkOrderAsDeliveredCommand;
-import com.optiflow.platform.production.application.queries.GetWorkOrderByIdQuery;
-import com.optiflow.platform.production.application.queries.GetWorkOrdersByPatientIdQuery;
-import com.optiflow.platform.production.application.queries.GetWorkOrdersQuery;
+import com.optiflow.platform.production.domain.model.commands.MarkOrderAsDeliveredCommand;
+import com.optiflow.platform.production.domain.model.queries.GetWorkOrderByIdQuery;
+import com.optiflow.platform.production.domain.model.queries.GetWorkOrdersByPatientIdQuery;
+import com.optiflow.platform.production.domain.model.queries.GetWorkOrdersQuery;
 import com.optiflow.platform.production.application.services.WorkOrderApplicationService;
-import com.optiflow.platform.production.domain.valueobjects.OpticalStoreId;
-import com.optiflow.platform.production.domain.valueobjects.PatientId;
-import com.optiflow.platform.production.domain.valueobjects.TechnicianId;
-import com.optiflow.platform.production.domain.valueobjects.WorkOrderId;
-import com.optiflow.platform.production.domain.valueobjects.WorkOrderStatus;
+import com.optiflow.platform.production.domain.model.valueobjects.OpticalStoreId;
+import com.optiflow.platform.production.domain.model.valueobjects.PatientId;
+import com.optiflow.platform.production.domain.model.valueobjects.TechnicianId;
+import com.optiflow.platform.production.domain.model.valueobjects.WorkOrderId;
+import com.optiflow.platform.production.domain.model.valueobjects.WorkOrderStatus;
 import com.optiflow.platform.production.interfaces.rest.assemblers.FromAssignWorkOrderToTechnicianRequestAssembler;
 import com.optiflow.platform.production.interfaces.rest.assemblers.FromCompleteLensesRequestAssembler;
 import com.optiflow.platform.production.interfaces.rest.assemblers.FromGenerateWorkOrderRequestAssembler;

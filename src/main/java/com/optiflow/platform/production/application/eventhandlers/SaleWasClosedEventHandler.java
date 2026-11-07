@@ -1,9 +1,9 @@
 package com.optiflow.platform.production.application.eventhandlers;
 
 import com.optiflow.platform.clinical.domain.model.events.SaleWasClosed;
-import com.optiflow.platform.production.application.commands.GenerateWorkOrderCommand;
-import com.optiflow.platform.production.application.services.GenerateWorkOrderHandler;
-import com.optiflow.platform.production.domain.valueobjects.SaleId;
+import com.optiflow.platform.production.domain.model.commands.GenerateWorkOrderCommand;
+import com.optiflow.platform.production.application.commandhandlers.GenerateWorkOrderHandler;
+import com.optiflow.platform.production.domain.model.valueobjects.SaleId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;

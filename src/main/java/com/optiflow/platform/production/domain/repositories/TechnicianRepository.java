@@ -1,7 +1,7 @@
 package com.optiflow.platform.production.domain.repositories;
 
-import com.optiflow.platform.production.domain.entities.Technician;
-import com.optiflow.platform.production.domain.valueobjects.TechnicianId;
+import com.optiflow.platform.production.domain.model.entities.Technician;
+import com.optiflow.platform.production.domain.model.valueobjects.TechnicianId;
 import java.util.List;
 import java.util.Optional;
 

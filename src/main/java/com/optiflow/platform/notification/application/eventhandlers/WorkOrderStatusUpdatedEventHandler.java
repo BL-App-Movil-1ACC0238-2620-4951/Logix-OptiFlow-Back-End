@@ -2,8 +2,8 @@ package com.optiflow.platform.notification.application.eventhandlers;
 
 import com.optiflow.platform.notification.application.commands.NotifyLensOrderProgressCommand;
 import com.optiflow.platform.notification.application.services.NotifyLensOrderProgressHandler;
-import com.optiflow.platform.production.domain.events.WorkOrderStatusUpdated;
-import com.optiflow.platform.production.domain.valueobjects.WorkOrderStatus;
+import com.optiflow.platform.production.domain.model.events.WorkOrderStatusUpdated;
+import com.optiflow.platform.production.domain.model.valueobjects.WorkOrderStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;

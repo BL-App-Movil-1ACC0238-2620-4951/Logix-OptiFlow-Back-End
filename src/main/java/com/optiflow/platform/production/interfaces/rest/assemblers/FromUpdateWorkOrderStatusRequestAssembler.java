@@ -1,8 +1,8 @@
 package com.optiflow.platform.production.interfaces.rest.assemblers;
 
-import com.optiflow.platform.production.application.commands.UpdateWorkOrderStatusCommand;
-import com.optiflow.platform.production.domain.valueobjects.WorkOrderId;
-import com.optiflow.platform.production.domain.valueobjects.WorkOrderStatus;
+import com.optiflow.platform.production.domain.model.commands.UpdateWorkOrderStatusCommand;
+import com.optiflow.platform.production.domain.model.valueobjects.WorkOrderId;
+import com.optiflow.platform.production.domain.model.valueobjects.WorkOrderStatus;
 import com.optiflow.platform.production.interfaces.rest.resources.UpdateWorkOrderStatusRequest;
 import java.util.UUID;
 import org.springframework.stereotype.Component;

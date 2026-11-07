@@ -1,7 +1,7 @@
 package com.optiflow.platform.production.domain.repositories;
 
-import com.optiflow.platform.production.domain.entities.Laboratory;
-import com.optiflow.platform.production.domain.valueobjects.LaboratoryId;
+import com.optiflow.platform.production.domain.model.entities.Laboratory;
+import com.optiflow.platform.production.domain.model.valueobjects.LaboratoryId;
 import java.util.List;
 import java.util.Optional;
 
