@@ -9,8 +9,8 @@ import com.optiflow.platform.searchbooking.domain.model.entities.Patient;
 import com.optiflow.platform.searchbooking.domain.model.entities.StaffMember;
 import com.optiflow.platform.searchbooking.domain.model.entities.TimeSlot;
 import com.optiflow.platform.searchbooking.interfaces.rest.resources.AppointmentResponse;
-import com.optiflow.platform.searchbooking.interfaces.rest.resources.AuthTokenResponse;
 import com.optiflow.platform.searchbooking.interfaces.rest.resources.FavoriteStoreResponse;
+import com.optiflow.platform.searchbooking.interfaces.rest.resources.LoginResponse;
 import com.optiflow.platform.searchbooking.interfaces.rest.resources.OpticalStoreResponse;
 import com.optiflow.platform.searchbooking.interfaces.rest.resources.PatientResponse;
 import com.optiflow.platform.searchbooking.interfaces.rest.resources.StaffMemberResponse;
@@ -32,8 +32,8 @@ public class SearchBookingResponseAssembler {
         patient.createdAt());
   }
 
-  public AuthTokenResponse toAuthTokenResponse(LoginResult result) {
-    return new AuthTokenResponse(result.token(), result.expiresAt(), result.userId(), result.role());
+  public LoginResponse toLoginResponse(LoginResult result) {
+    return new LoginResponse(result.token(), result.expiresAt(), result.userId(), result.role());
   }
 
   public StaffMemberResponse toStaffMemberResponse(StaffMember staffMember) {

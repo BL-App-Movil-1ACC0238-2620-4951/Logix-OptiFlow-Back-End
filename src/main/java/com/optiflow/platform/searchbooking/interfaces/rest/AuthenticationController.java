@@ -3,8 +3,8 @@ package com.optiflow.platform.searchbooking.interfaces.rest;
 import com.optiflow.platform.searchbooking.application.services.PatientApplicationService;
 import com.optiflow.platform.searchbooking.interfaces.rest.assemblers.FromLoginRequestAssembler;
 import com.optiflow.platform.searchbooking.interfaces.rest.assemblers.SearchBookingResponseAssembler;
-import com.optiflow.platform.searchbooking.interfaces.rest.resources.AuthTokenResponse;
 import com.optiflow.platform.searchbooking.interfaces.rest.resources.LoginRequest;
+import com.optiflow.platform.searchbooking.interfaces.rest.resources.LoginResponse;
 import com.optiflow.platform.shared.infrastructure.documentation.openapi.configuration.OpenApiTags;
 import com.optiflow.platform.shared.interfaces.rest.ApiV1;
 import com.optiflow.platform.shared.interfaces.rest.CreatedResourceResponses;
@@ -35,8 +35,8 @@ public class AuthenticationController {
   }
 
   @PostMapping("/auth/tokens")
-  public ResponseEntity<AuthTokenResponse> create(@Valid @RequestBody LoginRequest request) {
-    AuthTokenResponse response = responseAssembler.toAuthTokenResponse(
+  public ResponseEntity<LoginResponse> create(@Valid @RequestBody LoginRequest request) {
+    LoginResponse response = responseAssembler.toLoginResponse(
         patientApplicationService.login(loginAssembler.toCommand(request)));
     return CreatedResourceResponses.at("/auth/tokens", response);
   }
