@@ -29,6 +29,12 @@ public class OpticalStoreEntity {
   @Column(nullable = false, length = 20)
   private String status;
 
+  @Column(precision = 9, scale = 6)
+  private BigDecimal latitude;
+
+  @Column(precision = 9, scale = 6)
+  private BigDecimal longitude;
+
   public UUID getId() {
     return id;
   }
@@ -75,5 +81,21 @@ public class OpticalStoreEntity {
 
   public void setStatus(String status) {
     this.status = status;
+  }
+
+  public BigDecimal getLatitude() {
+    return latitude;
+  }
+
+  public void setLatitude(BigDecimal latitude) {
+    this.latitude = latitude;
+  }
+
+  public BigDecimal getLongitude() {
+    return longitude;
+  }
+
+  public void setLongitude(BigDecimal longitude) {
+    this.longitude = longitude;
   }
 }

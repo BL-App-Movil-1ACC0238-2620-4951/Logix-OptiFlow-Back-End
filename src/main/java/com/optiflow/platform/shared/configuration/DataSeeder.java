@@ -8,6 +8,7 @@ import com.optiflow.platform.searchbooking.application.services.StaffMemberAppli
 import com.optiflow.platform.searchbooking.domain.entities.OpticalStore;
 import com.optiflow.platform.searchbooking.domain.repositories.OpticalStoreRepository;
 import com.optiflow.platform.searchbooking.domain.repositories.StaffMemberRepository;
+import com.optiflow.platform.searchbooking.domain.valueobjects.GeoLocation;
 import com.optiflow.platform.searchbooking.domain.valueobjects.EmailAddress;
 import com.optiflow.platform.searchbooking.domain.valueobjects.Name;
 import com.optiflow.platform.searchbooking.domain.valueobjects.UserRole;
@@ -60,13 +61,15 @@ public class DataSeeder implements ApplicationRunner {
         "OptiFlow Miraflores",
         "Av. Larco 123, Miraflores, Lima",
         "014441111",
-        "4.60");
+        "4.60",
+        new GeoLocation(new BigDecimal("-12.121037"), new BigDecimal("-77.028240")));
     saveStore(
         SAN_ISIDRO_ID,
         "OptiFlow San Isidro",
         "Av. Javier Prado 456, San Isidro, Lima",
         "014442222",
-        "4.20");
+        "4.20",
+        new GeoLocation(new BigDecimal("-12.099000"), new BigDecimal("-77.034000")));
     LocalDate tomorrow = LocalDate.now(LIMA).plusDays(1);
     publishSlots(MIRAFLORES_ID, tomorrow);
     publishSlots(SAN_ISIDRO_ID, tomorrow);
@@ -85,14 +88,16 @@ public class DataSeeder implements ApplicationRunner {
         UserRole.ADMIN));
   }
 
-  private void saveStore(UUID id, String name, String address, String phone, String rating) {
+  private void saveStore(
+      UUID id, String name, String address, String phone, String rating, GeoLocation location) {
     opticalStoreRepository.save(OpticalStore.reconstitute(
         OpticalStoreId.of(id),
         new StoreName(name),
         new StoreAddress(address),
         new PhoneNumber(phone),
         StoreRating.of(new BigDecimal(rating)),
-        StoreStatus.ACTIVE));
+        StoreStatus.ACTIVE,
+        location));
   }
 
   private void publishSlots(UUID storeId, LocalDate day) {

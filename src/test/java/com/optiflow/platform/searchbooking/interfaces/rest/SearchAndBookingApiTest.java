@@ -177,6 +177,34 @@ class SearchAndBookingApiTest {
   }
 
   @Test
+  void listsNearbyOpticalStoresWithinRadius() throws Exception {
+    mockMvc.perform(get(ApiV1.path("/optical-stores"))
+            .param("lat", "-12.110000")
+            .param("lng", "-77.031000")
+            .param("radiusKm", "5"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.length()").value(2))
+        .andExpect(jsonPath("$[0].latitude").isNumber())
+        .andExpect(jsonPath("$[0].longitude").isNumber());
+
+    mockMvc.perform(get(ApiV1.path("/optical-stores"))
+            .param("lat", "-12.121037")
+            .param("lng", "-77.028240")
+            .param("radiusKm", "0.5"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.length()").value(1))
+        .andExpect(jsonPath("$[0].name").value("OptiFlow Miraflores"));
+  }
+
+  @Test
+  void rejectsIncompleteNearbySearchParameters() throws Exception {
+    mockMvc.perform(get(ApiV1.path("/optical-stores")).param("lat", "-12.110000"))
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.status").value(400))
+        .andExpect(jsonPath("$.message").value("lat, lng and radiusKm are required for a nearby search."));
+  }
+
+  @Test
   void acceptsAndNormalizesInternationalPhoneFormatting() throws Exception {
     mockMvc.perform(post(ApiV1.path("/patients"))
             .contentType(MediaType.APPLICATION_JSON)
