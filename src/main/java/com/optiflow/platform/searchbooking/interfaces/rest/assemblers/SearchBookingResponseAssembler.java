@@ -6,12 +6,14 @@ import com.optiflow.platform.searchbooking.application.services.RatingResult;
 import com.optiflow.platform.searchbooking.domain.entities.FavoriteStore;
 import com.optiflow.platform.searchbooking.domain.entities.OpticalStore;
 import com.optiflow.platform.searchbooking.domain.entities.Patient;
+import com.optiflow.platform.searchbooking.domain.entities.StaffMember;
 import com.optiflow.platform.searchbooking.domain.entities.TimeSlot;
 import com.optiflow.platform.searchbooking.interfaces.rest.resources.AppointmentResponse;
 import com.optiflow.platform.searchbooking.interfaces.rest.resources.FavoriteStoreResponse;
-import com.optiflow.platform.searchbooking.interfaces.rest.resources.LoginResponse;
+import com.optiflow.platform.searchbooking.interfaces.rest.resources.AuthTokenResponse;
 import com.optiflow.platform.searchbooking.interfaces.rest.resources.OpticalStoreResponse;
 import com.optiflow.platform.searchbooking.interfaces.rest.resources.PatientResponse;
+import com.optiflow.platform.searchbooking.interfaces.rest.resources.StaffMemberResponse;
 import com.optiflow.platform.searchbooking.interfaces.rest.resources.StoreRatingResponse;
 import com.optiflow.platform.searchbooking.interfaces.rest.resources.TimeSlotResponse;
 import java.util.List;
@@ -26,11 +28,23 @@ public class SearchBookingResponseAssembler {
         patient.name().value(),
         patient.email().value(),
         patient.phone().value(),
+        patient.birthDate().orElse(null),
         patient.createdAt());
   }
 
-  public LoginResponse toLoginResponse(LoginResult result) {
-    return new LoginResponse(result.token(), toPatientResponse(result.patient()));
+  public AuthTokenResponse toAuthTokenResponse(LoginResult result) {
+    return new AuthTokenResponse(result.token(), result.expiresAt(), result.userId(), result.role());
+  }
+
+  public StaffMemberResponse toStaffMemberResponse(StaffMember staffMember) {
+    return new StaffMemberResponse(
+        staffMember.id().value(),
+        staffMember.opticalStoreId().value(),
+        staffMember.name().value(),
+        staffMember.email().value(),
+        staffMember.role().name(),
+        staffMember.active(),
+        staffMember.createdAt());
   }
 
   public OpticalStoreResponse toStoreResponse(OpticalStore store) {

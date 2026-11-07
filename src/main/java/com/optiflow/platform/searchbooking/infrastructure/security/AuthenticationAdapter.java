@@ -1,10 +1,9 @@
 package com.optiflow.platform.searchbooking.infrastructure.security;
 
 import com.optiflow.platform.searchbooking.application.services.AuthenticationPort;
-import com.optiflow.platform.searchbooking.domain.valueobjects.PatientId;
-import java.util.Map;
+import com.optiflow.platform.shared.security.IssuedJwt;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
+import com.optiflow.platform.shared.security.JwtTokenService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -12,13 +11,15 @@ import org.springframework.stereotype.Component;
 public class AuthenticationAdapter implements AuthenticationPort {
 
   private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-  private final Map<String, PatientId> tokens = new ConcurrentHashMap<>();
+  private final JwtTokenService jwtTokenService;
+
+  public AuthenticationAdapter(JwtTokenService jwtTokenService) {
+    this.jwtTokenService = jwtTokenService;
+  }
 
   @Override
-  public String issueToken(PatientId patientId) {
-    String token = UUID.randomUUID().toString();
-    tokens.put(token, patientId);
-    return token;
+  public IssuedJwt issueToken(UUID userId, String role) {
+    return jwtTokenService.issue(userId, role);
   }
 
   @Override

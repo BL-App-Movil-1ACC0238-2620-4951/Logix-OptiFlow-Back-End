@@ -5,6 +5,8 @@ import com.optiflow.platform.searchbooking.domain.valueobjects.Name;
 import com.optiflow.platform.searchbooking.domain.valueobjects.PatientId;
 import com.optiflow.platform.searchbooking.domain.valueobjects.PhoneNumber;
 import java.time.Instant;
+import java.time.LocalDate;
+import java.util.Optional;
 
 public class Patient {
 
@@ -12,25 +14,42 @@ public class Patient {
   private final Name name;
   private final EmailAddress email;
   private final PhoneNumber phone;
+  private final LocalDate birthDate;
   private final Instant createdAt;
 
   private Patient(
-      PatientId id, Name name, EmailAddress email, PhoneNumber phone, Instant createdAt) {
+      PatientId id,
+      Name name,
+      EmailAddress email,
+      PhoneNumber phone,
+      LocalDate birthDate,
+      Instant createdAt) {
     this.id = id;
     this.name = name;
     this.email = email;
     this.phone = phone;
+    this.birthDate = birthDate;
     this.createdAt = createdAt;
   }
 
   public static Patient register(
-      PatientId id, Name name, EmailAddress email, PhoneNumber phone, Instant createdAt) {
-    return new Patient(id, name, email, phone, createdAt);
+      PatientId id,
+      Name name,
+      EmailAddress email,
+      PhoneNumber phone,
+      LocalDate birthDate,
+      Instant createdAt) {
+    return new Patient(id, name, email, phone, birthDate, createdAt);
   }
 
   public static Patient reconstitute(
-      PatientId id, Name name, EmailAddress email, PhoneNumber phone, Instant createdAt) {
-    return new Patient(id, name, email, phone, createdAt);
+      PatientId id,
+      Name name,
+      EmailAddress email,
+      PhoneNumber phone,
+      LocalDate birthDate,
+      Instant createdAt) {
+    return new Patient(id, name, email, phone, birthDate, createdAt);
   }
 
   public PatientId id() {
@@ -47,6 +66,10 @@ public class Patient {
 
   public PhoneNumber phone() {
     return phone;
+  }
+
+  public Optional<LocalDate> birthDate() {
+    return Optional.ofNullable(birthDate);
   }
 
   public Instant createdAt() {

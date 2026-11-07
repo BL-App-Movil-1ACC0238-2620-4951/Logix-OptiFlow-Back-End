@@ -4,6 +4,7 @@ import com.optiflow.platform.searchbooking.application.commands.RegisterPatientC
 import com.optiflow.platform.searchbooking.domain.entities.Patient;
 import com.optiflow.platform.searchbooking.domain.events.PatientRegistered;
 import com.optiflow.platform.searchbooking.domain.repositories.PatientRepository;
+import com.optiflow.platform.searchbooking.domain.repositories.StaffMemberRepository;
 import com.optiflow.platform.searchbooking.domain.services.PatientFactory;
 import com.optiflow.platform.shared.domain.events.DomainEventPublisher;
 import com.optiflow.platform.shared.exceptions.DomainException;
@@ -16,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class RegisterPatientCommandHandler {
 
   private final PatientRepository patientRepository;
+  private final StaffMemberRepository staffMemberRepository;
   private final PatientFactory patientFactory;
   private final AuthenticationPort authenticationPort;
   private final DomainEventPublisher eventPublisher;
@@ -23,11 +25,13 @@ public class RegisterPatientCommandHandler {
 
   public RegisterPatientCommandHandler(
       PatientRepository patientRepository,
+      StaffMemberRepository staffMemberRepository,
       PatientFactory patientFactory,
       AuthenticationPort authenticationPort,
       DomainEventPublisher eventPublisher,
       Clock clock) {
     this.patientRepository = patientRepository;
+    this.staffMemberRepository = staffMemberRepository;
     this.patientFactory = patientFactory;
     this.authenticationPort = authenticationPort;
     this.eventPublisher = eventPublisher;
@@ -39,8 +43,16 @@ public class RegisterPatientCommandHandler {
     patientRepository.findByEmail(command.email()).ifPresent(existing -> {
       throw new DomainException("A patient with this email is already registered.", 409);
     });
+    staffMemberRepository.findByEmail(command.email()).ifPresent(existing -> {
+      throw new DomainException("This email is already registered as staff.", 409);
+    });
     Instant now = clock.instant();
-    Patient patient = patientFactory.create(command.name(), command.email(), command.phone(), now);
+    Patient patient = patientFactory.create(
+        command.name(),
+        command.email(),
+        command.phone(),
+        command.birthDate().orElse(null),
+        now);
     patientRepository.save(patient, authenticationPort.hash(command.password()));
     eventPublisher.publish(new PatientRegistered(patient.id(), patient.email(), now));
     return patient;

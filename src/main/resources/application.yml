@@ -24,3 +24,9 @@ springdoc:
     operations-sorter: alpha
   api-docs:
     path: /v3/api-docs
+
+optiflow:
+  security:
+    jwt:
+      secret: ${JWT_SECRET:optiflow-local-jwt-secret-key-32chars!!}
+      expiration: PT24H

@@ -5,6 +5,7 @@ import com.optiflow.platform.searchbooking.domain.valueobjects.EmailAddress;
 import com.optiflow.platform.searchbooking.domain.valueobjects.Name;
 import com.optiflow.platform.searchbooking.domain.valueobjects.PhoneNumber;
 import com.optiflow.platform.searchbooking.interfaces.rest.resources.RegisterPatientRequest;
+import java.util.Optional;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -15,6 +16,7 @@ public class FromRegisterPatientRequestAssembler {
         new Name(request.name()),
         new EmailAddress(request.email()),
         new PhoneNumber(request.phone()),
-        request.password());
+        request.password(),
+        Optional.ofNullable(request.birthDate()));
   }
 }
