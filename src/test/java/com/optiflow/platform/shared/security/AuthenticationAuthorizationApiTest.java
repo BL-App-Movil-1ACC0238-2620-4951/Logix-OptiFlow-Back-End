@@ -79,8 +79,8 @@ class AuthenticationAuthorizationApiTest {
             .content(booking))
         .andExpect(status().isCreated());
 
-    mockMvc.perform(get(ApiV1.path("/staff-members")))
-        .header(HttpHeaders.AUTHORIZATION, bearer(patientToken))
+    mockMvc.perform(get(ApiV1.path("/staff-members"))
+            .header(HttpHeaders.AUTHORIZATION, bearer(patientToken)))
         .andExpect(status().isForbidden())
         .andExpect(jsonPath("$.status").value(403));
   }
@@ -128,8 +128,8 @@ class AuthenticationAuthorizationApiTest {
   void allowsAdminToListStaffMembers() throws Exception {
     String adminToken = issueTokenFor("admin@optiflow.test");
 
-    mockMvc.perform(get(ApiV1.path("/staff-members")))
-        .header(HttpHeaders.AUTHORIZATION, bearer(adminToken))
+    mockMvc.perform(get(ApiV1.path("/staff-members"))
+            .header(HttpHeaders.AUTHORIZATION, bearer(adminToken)))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.length()").value(1))
         .andExpect(jsonPath("$[0].role").value("ADMIN"));
