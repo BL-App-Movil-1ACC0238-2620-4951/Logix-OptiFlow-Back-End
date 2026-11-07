@@ -1,9 +1,7 @@
 package com.optiflow.platform.searchbooking.interfaces.rest;
 
 import com.optiflow.platform.searchbooking.application.services.OpticalStoreApplicationService;
-import com.optiflow.platform.searchbooking.domain.model.commands.SaveFavoriteOpticalStoreCommand;
-import com.optiflow.platform.searchbooking.domain.model.valueobjects.OpticalStoreId;
-import com.optiflow.platform.searchbooking.domain.model.valueobjects.PatientId;
+import com.optiflow.platform.searchbooking.interfaces.rest.assemblers.FromSaveFavoriteStoreRequestAssembler;
 import com.optiflow.platform.searchbooking.interfaces.rest.assemblers.SearchBookingResponseAssembler;
 import com.optiflow.platform.searchbooking.interfaces.rest.resources.FavoriteStoreResponse;
 import com.optiflow.platform.searchbooking.interfaces.rest.resources.SaveFavoriteStoreRequest;
@@ -26,12 +24,15 @@ import org.springframework.web.bind.annotation.RestController;
 public class FavoriteStoreController {
 
   private final OpticalStoreApplicationService opticalStoreApplicationService;
+  private final FromSaveFavoriteStoreRequestAssembler saveFavoriteAssembler;
   private final SearchBookingResponseAssembler responseAssembler;
 
   public FavoriteStoreController(
       OpticalStoreApplicationService opticalStoreApplicationService,
+      FromSaveFavoriteStoreRequestAssembler saveFavoriteAssembler,
       SearchBookingResponseAssembler responseAssembler) {
     this.opticalStoreApplicationService = opticalStoreApplicationService;
+    this.saveFavoriteAssembler = saveFavoriteAssembler;
     this.responseAssembler = responseAssembler;
   }
 
@@ -40,8 +41,7 @@ public class FavoriteStoreController {
       @PathVariable UUID patientId, @Valid @RequestBody SaveFavoriteStoreRequest request) {
     FavoriteStoreResponse response = responseAssembler.toFavoriteResponse(
         opticalStoreApplicationService.saveFavorite(
-            new SaveFavoriteOpticalStoreCommand(
-                PatientId.of(patientId), OpticalStoreId.of(request.opticalStoreId()))));
+            saveFavoriteAssembler.toCommand(patientId, request)));
     return CreatedResourceResponses.at(
         "/optical-stores/{id}", response, response.opticalStoreId());
   }

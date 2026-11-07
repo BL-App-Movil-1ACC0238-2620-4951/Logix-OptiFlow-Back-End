@@ -6,14 +6,13 @@ import com.optiflow.platform.searchbooking.domain.model.commands.CompleteAppoint
 import com.optiflow.platform.searchbooking.domain.model.queries.GetAppointmentQuery;
 import com.optiflow.platform.searchbooking.domain.model.queries.GetAppointmentsByOpticalStoreQuery;
 import com.optiflow.platform.searchbooking.domain.model.valueobjects.AppointmentId;
-import com.optiflow.platform.searchbooking.domain.model.valueobjects.AppointmentStatus;
 import com.optiflow.platform.searchbooking.domain.model.valueobjects.OpticalStoreId;
 import com.optiflow.platform.searchbooking.interfaces.rest.assemblers.FromBookAppointmentRequestAssembler;
+import com.optiflow.platform.searchbooking.interfaces.rest.assemblers.FromUpdateAppointmentStatusRequestAssembler;
 import com.optiflow.platform.searchbooking.interfaces.rest.assemblers.SearchBookingResponseAssembler;
 import com.optiflow.platform.searchbooking.interfaces.rest.resources.AppointmentResponse;
 import com.optiflow.platform.searchbooking.interfaces.rest.resources.BookAppointmentRequest;
 import com.optiflow.platform.searchbooking.interfaces.rest.resources.UpdateAppointmentStatusRequest;
-import com.optiflow.platform.shared.domain.exceptions.DomainException;
 import com.optiflow.platform.shared.infrastructure.documentation.openapi.configuration.OpenApiTags;
 import com.optiflow.platform.shared.interfaces.rest.ApiV1;
 import com.optiflow.platform.shared.interfaces.rest.CreatedResourceResponses;
@@ -40,14 +39,17 @@ public class AppointmentController {
 
   private final AppointmentApplicationService appointmentApplicationService;
   private final FromBookAppointmentRequestAssembler bookAssembler;
+  private final FromUpdateAppointmentStatusRequestAssembler statusAssembler;
   private final SearchBookingResponseAssembler responseAssembler;
 
   public AppointmentController(
       AppointmentApplicationService appointmentApplicationService,
       FromBookAppointmentRequestAssembler bookAssembler,
+      FromUpdateAppointmentStatusRequestAssembler statusAssembler,
       SearchBookingResponseAssembler responseAssembler) {
     this.appointmentApplicationService = appointmentApplicationService;
     this.bookAssembler = bookAssembler;
+    this.statusAssembler = statusAssembler;
     this.responseAssembler = responseAssembler;
   }
 
@@ -79,21 +81,10 @@ public class AppointmentController {
   @PatchMapping("/appointments/{id}/status")
   public AppointmentResponse updateStatus(
       @PathVariable UUID id, @Valid @RequestBody UpdateAppointmentStatusRequest request) {
-    AppointmentId appointmentId = AppointmentId.of(id);
-    AppointmentStatus status = parseAppointmentStatus(request.status());
-    return responseAssembler.toAppointmentResponse(switch (status) {
-      case CANCELLED -> appointmentApplicationService.cancel(new CancelAppointmentCommand(appointmentId));
-      case COMPLETED -> appointmentApplicationService.complete(new CompleteAppointmentCommand(appointmentId));
-      case PENDING, CONFIRMED ->
-          throw new DomainException("Appointment status cannot be changed to " + status + ".", 400);
-    });
-  }
-
-  private static AppointmentStatus parseAppointmentStatus(String status) {
-    try {
-      return AppointmentStatus.valueOf(status.trim().toUpperCase());
-    } catch (IllegalArgumentException exception) {
-      throw new DomainException("Appointment status must be CANCELLED or COMPLETED.", 400);
-    }
+    return responseAssembler.toAppointmentResponse(
+        switch (statusAssembler.toCommand(id, request)) {
+          case CancelAppointmentCommand command -> appointmentApplicationService.cancel(command);
+          case CompleteAppointmentCommand command -> appointmentApplicationService.complete(command);
+        });
   }
 }

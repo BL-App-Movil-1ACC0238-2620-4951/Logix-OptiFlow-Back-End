@@ -2,13 +2,12 @@ package com.optiflow.platform.clinical.interfaces.rest;
 
 import com.optiflow.platform.clinical.application.services.SaleApplicationService;
 import com.optiflow.platform.clinical.domain.model.commands.CloseSaleCommand;
-import com.optiflow.platform.clinical.domain.model.commands.RegisterSaleCommand;
 import com.optiflow.platform.clinical.domain.model.queries.GetSaleByIdQuery;
-import com.optiflow.platform.clinical.domain.model.valueobjects.QuotationId;
 import com.optiflow.platform.clinical.domain.model.valueobjects.SaleId;
 import com.optiflow.platform.clinical.domain.model.valueobjects.SaleStatus;
 import com.optiflow.platform.clinical.interfaces.rest.assemblers.ClinicalCommercialResponseAssembler;
 import com.optiflow.platform.clinical.interfaces.rest.assemblers.FromRecordPaymentRequestAssembler;
+import com.optiflow.platform.clinical.interfaces.rest.assemblers.FromRegisterSaleRequestAssembler;
 import com.optiflow.platform.clinical.interfaces.rest.resources.RecordPaymentRequest;
 import com.optiflow.platform.clinical.interfaces.rest.resources.RegisterSaleRequest;
 import com.optiflow.platform.clinical.interfaces.rest.resources.SaleResponse;
@@ -35,22 +34,25 @@ import org.springframework.web.bind.annotation.RestController;
 public class SaleController {
 
   private final SaleApplicationService saleApplicationService;
+  private final FromRegisterSaleRequestAssembler registerAssembler;
   private final FromRecordPaymentRequestAssembler paymentAssembler;
   private final ClinicalCommercialResponseAssembler responseAssembler;
 
   public SaleController(
       SaleApplicationService saleApplicationService,
+      FromRegisterSaleRequestAssembler registerAssembler,
       FromRecordPaymentRequestAssembler paymentAssembler,
       ClinicalCommercialResponseAssembler responseAssembler) {
     this.saleApplicationService = saleApplicationService;
+    this.registerAssembler = registerAssembler;
     this.paymentAssembler = paymentAssembler;
     this.responseAssembler = responseAssembler;
   }
 
   @PostMapping("/sales")
   public ResponseEntity<SaleResponse> register(@Valid @RequestBody RegisterSaleRequest request) {
-    SaleResponse response = responseAssembler.toSaleResponse(saleApplicationService.register(
-        new RegisterSaleCommand(QuotationId.of(request.quotationId()))));
+    SaleResponse response = responseAssembler.toSaleResponse(
+        saleApplicationService.register(registerAssembler.toCommand(request)));
     return CreatedResourceResponses.at("/sales/{id}", response, response.id());
   }
 

@@ -5,15 +5,14 @@ import com.optiflow.platform.clinical.domain.model.commands.ApproveQuotationComm
 import com.optiflow.platform.clinical.domain.model.commands.RejectQuotationCommand;
 import com.optiflow.platform.clinical.domain.model.queries.GetQuotationByIdQuery;
 import com.optiflow.platform.clinical.domain.model.valueobjects.QuotationId;
-import com.optiflow.platform.clinical.domain.model.valueobjects.QuotationStatus;
 import com.optiflow.platform.clinical.interfaces.rest.assemblers.ClinicalCommercialResponseAssembler;
 import com.optiflow.platform.clinical.interfaces.rest.assemblers.FromApplyPromotionOrDiscountRequestAssembler;
 import com.optiflow.platform.clinical.interfaces.rest.assemblers.FromGenerateQuotationRequestAssembler;
+import com.optiflow.platform.clinical.interfaces.rest.assemblers.FromUpdateQuotationStatusRequestAssembler;
 import com.optiflow.platform.clinical.interfaces.rest.resources.ApplyPromotionOrDiscountRequest;
 import com.optiflow.platform.clinical.interfaces.rest.resources.GenerateQuotationRequest;
 import com.optiflow.platform.clinical.interfaces.rest.resources.QuotationResponse;
 import com.optiflow.platform.clinical.interfaces.rest.resources.UpdateQuotationStatusRequest;
-import com.optiflow.platform.shared.domain.exceptions.DomainException;
 import com.optiflow.platform.shared.infrastructure.documentation.openapi.configuration.OpenApiTags;
 import com.optiflow.platform.shared.interfaces.rest.ApiV1;
 import com.optiflow.platform.shared.interfaces.rest.CreatedResourceResponses;
@@ -37,16 +36,19 @@ public class QuotationController {
   private final QuotationApplicationService quotationApplicationService;
   private final FromGenerateQuotationRequestAssembler generateAssembler;
   private final FromApplyPromotionOrDiscountRequestAssembler discountAssembler;
+  private final FromUpdateQuotationStatusRequestAssembler statusAssembler;
   private final ClinicalCommercialResponseAssembler responseAssembler;
 
   public QuotationController(
       QuotationApplicationService quotationApplicationService,
       FromGenerateQuotationRequestAssembler generateAssembler,
       FromApplyPromotionOrDiscountRequestAssembler discountAssembler,
+      FromUpdateQuotationStatusRequestAssembler statusAssembler,
       ClinicalCommercialResponseAssembler responseAssembler) {
     this.quotationApplicationService = quotationApplicationService;
     this.generateAssembler = generateAssembler;
     this.discountAssembler = discountAssembler;
+    this.statusAssembler = statusAssembler;
     this.responseAssembler = responseAssembler;
   }
 
@@ -74,26 +76,10 @@ public class QuotationController {
   @PatchMapping("/quotations/{id}/status")
   public QuotationResponse updateStatus(
       @PathVariable UUID id, @Valid @RequestBody UpdateQuotationStatusRequest request) {
-    QuotationId quotationId = QuotationId.of(id);
-    QuotationStatus status = parseQuotationStatus(request.status());
-    return responseAssembler.toQuotationResponse(switch (status) {
-      case APPROVED -> quotationApplicationService.approve(new ApproveQuotationCommand(quotationId));
-      case REJECTED -> {
-        String reason = request.reason();
-        if (reason == null || reason.isBlank()) {
-          throw new DomainException("A rejection reason is required.", 400);
-        }
-        yield quotationApplicationService.reject(new RejectQuotationCommand(quotationId, reason));
-      }
-      case DRAFT -> throw new DomainException("Quotation status cannot be changed to DRAFT.", 400);
-    });
-  }
-
-  private static QuotationStatus parseQuotationStatus(String status) {
-    try {
-      return QuotationStatus.valueOf(status.trim().toUpperCase());
-    } catch (IllegalArgumentException exception) {
-      throw new DomainException("Quotation status must be APPROVED or REJECTED.", 400);
-    }
+    return responseAssembler.toQuotationResponse(
+        switch (statusAssembler.toCommand(id, request)) {
+          case ApproveQuotationCommand command -> quotationApplicationService.approve(command);
+          case RejectQuotationCommand command -> quotationApplicationService.reject(command);
+        });
   }
 }
