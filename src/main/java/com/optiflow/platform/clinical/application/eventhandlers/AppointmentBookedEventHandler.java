@@ -4,17 +4,15 @@ import com.optiflow.platform.clinical.application.commandhandlers.ExaminePatient
 import com.optiflow.platform.clinical.domain.model.commands.ExaminePatientCommand;
 import com.optiflow.platform.clinical.domain.model.valueobjects.AppointmentId;
 import com.optiflow.platform.clinical.domain.model.valueobjects.PatientId;
-import com.optiflow.platform.searchbooking.domain.model.events.AppointmentBooked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.event.TransactionalEventListener;
 
 /**
- * Translates the Search & Booking {@link AppointmentBooked} event into the internal
- * {@code ExaminePatient} command (anti-corruption layer described in the context map).
+ * Reacts to a booked appointment received by the {@code AppointmentBookedConsumer} and opens the
+ * clinical record by running the {@code ExaminePatient} command.
  *
- * <p>It runs after the booking commits, so a failure here never rolls back the appointment.
+ * <p>A failure is logged and never rolls back the appointment.
  */
 @Component("clinicalAppointmentBookedEventHandler")
 public class AppointmentBookedEventHandler {
@@ -28,16 +26,13 @@ public class AppointmentBookedEventHandler {
     this.examinePatientHandler = examinePatientHandler;
   }
 
-  @TransactionalEventListener(fallbackExecution = true)
-  public void onAppointmentBooked(AppointmentBooked event) {
+  public void handle(AppointmentId appointmentId, PatientId patientId) {
     try {
-      examinePatientHandler.handle(new ExaminePatientCommand(
-          AppointmentId.of(event.appointmentId().value()),
-          PatientId.of(event.patientId().value())));
+      examinePatientHandler.handle(new ExaminePatientCommand(appointmentId, patientId));
     } catch (RuntimeException exception) {
       LOGGER.error(
           "Could not open the clinical record for appointment {}.",
-          event.appointmentId().value(),
+          appointmentId.value(),
           exception);
     }
   }
