@@ -190,7 +190,7 @@ class ProductionTrackingApiTest {
 
   private String examinedPatientWithPrescription(String patientId, String storeId, int slot)
       throws Exception {
-    String timeSlotId = read(mockMvc.perform(get(ApiV1.path("/optical-stores/" + storeId + "/availability")))
+    String timeSlotId = read(mockMvc.perform(get(ApiV1.path("/optical-stores/" + storeId + "/time-slots")))
         .andExpect(status().isOk())).get(slot).get("id").asText();
     String appointmentId = read(perform(post(ApiV1.path("/appointments")), """
         {"patientId":"%s","opticalStoreId":"%s","timeSlotId":"%s"}

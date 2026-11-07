@@ -57,7 +57,7 @@ public class OpticalStoreApplicationService {
     return rateOpticalStoreCommandHandler.handle(command);
   }
 
-  public void publishTimeSlots(PublishAvailableTimeSlotsCommand command) {
-    publishAvailableTimeSlotsCommandHandler.handle(command);
+  public List<TimeSlot> publishTimeSlots(PublishAvailableTimeSlotsCommand command) {
+    return publishAvailableTimeSlotsCommandHandler.handle(command);
   }
 }

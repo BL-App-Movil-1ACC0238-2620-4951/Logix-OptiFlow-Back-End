@@ -41,7 +41,7 @@ class NotificationPersistenceIntegrationTest {
     String storeId = objectMapper.readTree(stores.getResponse().getContentAsString())
         .get(0).get("id").asText();
 
-    MvcResult availability = mockMvc.perform(get(ApiV1.path("/optical-stores/" + storeId + "/availability")))
+    MvcResult availability = mockMvc.perform(get(ApiV1.path("/optical-stores/" + storeId + "/time-slots")))
         .andExpect(status().isOk())
         .andReturn();
     String timeSlotId = objectMapper.readTree(availability.getResponse().getContentAsString())

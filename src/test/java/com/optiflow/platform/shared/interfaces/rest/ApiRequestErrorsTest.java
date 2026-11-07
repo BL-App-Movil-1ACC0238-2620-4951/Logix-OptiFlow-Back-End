@@ -25,7 +25,7 @@ class ApiRequestErrorsTest {
   private MockMvc mockMvc;
 
   @ParameterizedTest
-  @ValueSource(strings = {"/appointments/abc", "/patients/abc/appointments", "/optical-stores/abc/availability"})
+  @ValueSource(strings = {"/appointments/abc", "/patients/abc/appointments", "/optical-stores/abc/time-slots"})
   void explainsInvalidUuidParameters(String url) throws Exception {
     mockMvc.perform(get(ApiV1.path(url)))
         .andExpect(status().isBadRequest())

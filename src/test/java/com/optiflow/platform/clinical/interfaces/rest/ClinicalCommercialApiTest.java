@@ -187,7 +187,7 @@ class ClinicalCommercialApiTest {
     JsonNode stores = read(mockMvc.perform(get(ApiV1.path("/optical-stores"))).andExpect(status().isOk()));
     String storeId = stores.get(0).get("id").asText();
     JsonNode availability = read(mockMvc.perform(
-        get(ApiV1.path("/optical-stores/" + storeId + "/availability"))).andExpect(status().isOk()));
+        get(ApiV1.path("/optical-stores/" + storeId + "/time-slots"))).andExpect(status().isOk()));
     String timeSlotId = availability.get(0).get("id").asText();
     return read(perform(post(ApiV1.path("/appointments")), """
         {"patientId":"%s","opticalStoreId":"%s","timeSlotId":"%s"}

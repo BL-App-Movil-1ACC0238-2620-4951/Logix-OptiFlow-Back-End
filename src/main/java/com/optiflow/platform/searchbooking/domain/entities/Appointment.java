@@ -73,12 +73,12 @@ public class Appointment {
     updatedAt = now;
   }
 
-  public void reschedule(TimeSlotId newTimeSlotId, Instant now) {
-    if (status == AppointmentStatus.CANCELLED || status == AppointmentStatus.COMPLETED) {
-      throw new DomainException("This appointment can no longer be rescheduled.", 409);
+  public void complete(Instant now) {
+    if (status != AppointmentStatus.CONFIRMED) {
+      throw new DomainException("Only a confirmed appointment can be completed.", 409);
     }
-    this.timeSlotId = newTimeSlotId;
-    this.updatedAt = now;
+    status = AppointmentStatus.COMPLETED;
+    updatedAt = now;
   }
 
   public boolean isAvailable() {

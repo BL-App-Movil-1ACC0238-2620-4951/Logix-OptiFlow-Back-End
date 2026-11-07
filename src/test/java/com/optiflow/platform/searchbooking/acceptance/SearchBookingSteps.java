@@ -62,7 +62,7 @@ public class SearchBookingSteps {
 
   @Entonces("puede consultar los horarios disponibles de una óptica")
   public void checksAvailability() throws Exception {
-    MvcResult availability = mockMvc.perform(get(ApiV1.path("/optical-stores/" + storeId + "/availability")))
+    MvcResult availability = mockMvc.perform(get(ApiV1.path("/optical-stores/" + storeId + "/time-slots")))
         .andExpect(status().isOk()).andReturn();
     JsonNode slots = json(availability);
     assertTrue(slots.isArray() && !slots.isEmpty());
@@ -145,7 +145,7 @@ public class SearchBookingSteps {
 
   @Entonces("el horario deja de estar disponible")
   public void checksSlotIsNoLongerAvailable() throws Exception {
-    MvcResult availability = mockMvc.perform(get(ApiV1.path("/optical-stores/" + storeId + "/availability")))
+    MvcResult availability = mockMvc.perform(get(ApiV1.path("/optical-stores/" + storeId + "/time-slots")))
         .andExpect(status().isOk()).andReturn();
     for (JsonNode slot : json(availability)) {
       assertFalse(timeSlotId.equals(slot.get("id").asText()));

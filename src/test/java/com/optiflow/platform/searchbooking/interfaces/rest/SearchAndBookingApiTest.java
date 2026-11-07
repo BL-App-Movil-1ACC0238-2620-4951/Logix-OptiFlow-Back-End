@@ -1,12 +1,15 @@
 package com.optiflow.platform.searchbooking.interfaces.rest;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.optiflow.platform.shared.interfaces.rest.ApiV1;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -36,7 +39,7 @@ class SearchAndBookingApiTest {
     String storeId = objectMapper.readTree(stores.getResponse().getContentAsString())
         .get(0).get("id").asText();
 
-    MvcResult availability = mockMvc.perform(get(ApiV1.path("/optical-stores/" + storeId + "/availability")))
+    MvcResult availability = mockMvc.perform(get(ApiV1.path("/optical-stores/" + storeId + "/time-slots")))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.length()").value(3))
         .andReturn();
@@ -106,6 +109,60 @@ class SearchAndBookingApiTest {
                 """))
         .andExpect(status().isCreated())
         .andExpect(jsonPath("$.phone").value("999888777"));
+  }
+
+  @Test
+  void updatesAppointmentStatusAndListsStoreAgenda() throws Exception {
+    LocalDate agendaDay = LocalDate.now(ZoneId.of("America/Lima")).plusDays(1);
+    MvcResult stores = mockMvc.perform(get(ApiV1.path("/optical-stores")))
+        .andExpect(status().isOk())
+        .andReturn();
+    String storeId = objectMapper.readTree(stores.getResponse().getContentAsString())
+        .get(0).get("id").asText();
+
+    MvcResult availability = mockMvc.perform(get(ApiV1.path("/optical-stores/" + storeId + "/time-slots")))
+        .andExpect(status().isOk())
+        .andReturn();
+    String timeSlotId = objectMapper.readTree(availability.getResponse().getContentAsString())
+        .get(0).get("id").asText();
+
+    MvcResult patient = mockMvc.perform(post(ApiV1.path("/patients"))
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("""
+                {"name":"Agenda Test","email":"agenda.test@optiflow.test","phone":"999777666","password":"secret12"}
+                """))
+        .andExpect(status().isCreated())
+        .andReturn();
+    String patientId = objectMapper.readTree(patient.getResponse().getContentAsString())
+        .get("id").asText();
+
+    MvcResult booking = mockMvc.perform(post(ApiV1.path("/appointments"))
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("""
+                {"patientId":"%s","opticalStoreId":"%s","timeSlotId":"%s"}
+                """.formatted(patientId, storeId, timeSlotId)))
+        .andExpect(status().isCreated())
+        .andReturn();
+    String appointmentId = objectMapper.readTree(booking.getResponse().getContentAsString())
+        .get("id").asText();
+
+    mockMvc.perform(get(ApiV1.path("/appointments"))
+            .param("opticalStoreId", storeId)
+            .param("date", agendaDay.toString()))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.length()").value(1))
+        .andExpect(jsonPath("$[0].id").value(appointmentId));
+
+    mockMvc.perform(patch(ApiV1.path("/appointments/" + appointmentId + "/status"))
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{\"status\":\"COMPLETED\"}"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.status").value("COMPLETED"));
+
+    mockMvc.perform(patch(ApiV1.path("/appointments/" + appointmentId + "/status"))
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{\"status\":\"CANCELLED\"}"))
+        .andExpect(status().isConflict());
   }
 
   @Test
