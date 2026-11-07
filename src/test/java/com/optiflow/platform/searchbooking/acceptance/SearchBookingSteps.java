@@ -51,7 +51,7 @@ public class SearchBookingSteps {
   @Entonces("obtiene la información y las direcciones de los establecimientos")
   public void checksStoreDetails() throws Exception {
     assertEquals(200, response.getResponse().getStatus());
-    JsonNode stores = responseJson().get("opticalStores");
+    JsonNode stores = responseJson();
     assertTrue(stores.isArray() && !stores.isEmpty());
     for (JsonNode store : stores) {
       UUID.fromString(store.get("id").asText());
@@ -64,7 +64,7 @@ public class SearchBookingSteps {
   public void checksAvailability() throws Exception {
     MvcResult availability = mockMvc.perform(get(ApiV1.path("/optical-stores/" + storeId + "/availability")))
         .andExpect(status().isOk()).andReturn();
-    JsonNode slots = json(availability).get("timeSlots");
+    JsonNode slots = json(availability);
     assertTrue(slots.isArray() && !slots.isEmpty());
     for (JsonNode slot : slots) {
       assertEquals(storeId, slot.get("opticalStoreId").asText());
@@ -81,16 +81,15 @@ public class SearchBookingSteps {
 
   @Cuando("el paciente realiza la búsqueda")
   public void searchesStores() throws Exception {
-    response = mockMvc.perform(get(ApiV1.path("/optical-stores/search"))
+    response = mockMvc.perform(get(ApiV1.path("/optical-stores"))
         .param("name", missingStoreName)).andReturn();
   }
 
-  @Entonces("obtiene una lista vacía y un mensaje informativo")
+  @Entonces("obtiene una lista vacía de establecimientos")
   public void checksEmptySearch() throws Exception {
     assertEquals(200, response.getResponse().getStatus());
-    assertEquals(0, responseJson().get("opticalStores").size());
-    assertEquals("No optical stores match the search criteria.",
-        responseJson().get("message").asText());
+    assertTrue(responseJson().isArray());
+    assertEquals(0, responseJson().size());
   }
 
   @Dado("que existe un paciente registrado")
@@ -148,7 +147,7 @@ public class SearchBookingSteps {
   public void checksSlotIsNoLongerAvailable() throws Exception {
     MvcResult availability = mockMvc.perform(get(ApiV1.path("/optical-stores/" + storeId + "/availability")))
         .andExpect(status().isOk()).andReturn();
-    for (JsonNode slot : json(availability).get("timeSlots")) {
+    for (JsonNode slot : json(availability)) {
       assertFalse(timeSlotId.equals(slot.get("id").asText()));
     }
   }
@@ -172,7 +171,7 @@ public class SearchBookingSteps {
   private String firstStoreId() throws Exception {
     MvcResult stores = mockMvc.perform(get(ApiV1.path("/optical-stores")))
         .andExpect(status().isOk()).andReturn();
-    JsonNode list = json(stores).get("opticalStores");
+    JsonNode list = json(stores);
     assertTrue(list.isArray() && !list.isEmpty());
     return list.get(0).get("id").asText();
   }

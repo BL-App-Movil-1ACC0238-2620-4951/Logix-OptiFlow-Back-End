@@ -185,13 +185,13 @@ class ProductionTrackingApiTest {
 
   private String firstStoreId() throws Exception {
     return read(mockMvc.perform(get(ApiV1.path("/optical-stores"))).andExpect(status().isOk()))
-        .get("opticalStores").get(0).get("id").asText();
+        .get(0).get("id").asText();
   }
 
   private String examinedPatientWithPrescription(String patientId, String storeId, int slot)
       throws Exception {
     String timeSlotId = read(mockMvc.perform(get(ApiV1.path("/optical-stores/" + storeId + "/availability")))
-        .andExpect(status().isOk())).get("timeSlots").get(slot).get("id").asText();
+        .andExpect(status().isOk())).get(slot).get("id").asText();
     String appointmentId = read(perform(post(ApiV1.path("/appointments")), """
         {"patientId":"%s","opticalStoreId":"%s","timeSlotId":"%s"}
         """.formatted(patientId, storeId, timeSlotId))

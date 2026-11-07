@@ -14,4 +14,4 @@ Característica: Búsqueda de ópticas y disponibilidad de atención
   Escenario: Búsqueda sin establecimientos coincidentes
     Dado que ninguna óptica coincide con los criterios de búsqueda
     Cuando el paciente realiza la búsqueda
-    Entonces obtiene una lista vacía y un mensaje informativo
+    Entonces obtiene una lista vacía de establecimientos

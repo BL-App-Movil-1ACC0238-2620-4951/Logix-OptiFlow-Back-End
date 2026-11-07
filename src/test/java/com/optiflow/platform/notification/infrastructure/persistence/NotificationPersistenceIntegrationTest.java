@@ -39,13 +39,13 @@ class NotificationPersistenceIntegrationTest {
         .andExpect(status().isOk())
         .andReturn();
     String storeId = objectMapper.readTree(stores.getResponse().getContentAsString())
-        .get("opticalStores").get(0).get("id").asText();
+        .get(0).get("id").asText();
 
     MvcResult availability = mockMvc.perform(get(ApiV1.path("/optical-stores/" + storeId + "/availability")))
         .andExpect(status().isOk())
         .andReturn();
     String timeSlotId = objectMapper.readTree(availability.getResponse().getContentAsString())
-        .get("timeSlots").get(0).get("id").asText();
+        .get(0).get("id").asText();
 
     MvcResult patient = mockMvc.perform(post(ApiV1.path("/patients"))
             .contentType(MediaType.APPLICATION_JSON)

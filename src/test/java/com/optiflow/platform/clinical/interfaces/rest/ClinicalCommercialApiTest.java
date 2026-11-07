@@ -178,10 +178,10 @@ class ClinicalCommercialApiTest {
 
   private String bookAppointment(String patientId) throws Exception {
     JsonNode stores = read(mockMvc.perform(get(ApiV1.path("/optical-stores"))).andExpect(status().isOk()));
-    String storeId = stores.get("opticalStores").get(0).get("id").asText();
+    String storeId = stores.get(0).get("id").asText();
     JsonNode availability = read(mockMvc.perform(
         get(ApiV1.path("/optical-stores/" + storeId + "/availability"))).andExpect(status().isOk()));
-    String timeSlotId = availability.get("timeSlots").get(0).get("id").asText();
+    String timeSlotId = availability.get(0).get("id").asText();
     return read(perform(post(ApiV1.path("/appointments")), """
         {"patientId":"%s","opticalStoreId":"%s","timeSlotId":"%s"}
         """.formatted(patientId, storeId, timeSlotId))

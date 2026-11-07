@@ -31,17 +31,17 @@ class SearchAndBookingApiTest {
   void searchesStoresAndRejectsASecondBookingForTheSameSlot() throws Exception {
     MvcResult stores = mockMvc.perform(get(ApiV1.path("/optical-stores")))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.opticalStores.length()").value(2))
+        .andExpect(jsonPath("$.length()").value(2))
         .andReturn();
     String storeId = objectMapper.readTree(stores.getResponse().getContentAsString())
-        .get("opticalStores").get(0).get("id").asText();
+        .get(0).get("id").asText();
 
     MvcResult availability = mockMvc.perform(get(ApiV1.path("/optical-stores/" + storeId + "/availability")))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.timeSlots.length()").value(3))
+        .andExpect(jsonPath("$.length()").value(3))
         .andReturn();
     String timeSlotId = objectMapper.readTree(availability.getResponse().getContentAsString())
-        .get("timeSlots").get(0).get("id").asText();
+        .get(0).get("id").asText();
 
     MvcResult patient = mockMvc.perform(post(ApiV1.path("/patients"))
             .contentType(MediaType.APPLICATION_JSON)
@@ -65,10 +65,9 @@ class SearchAndBookingApiTest {
         .andExpect(status().isConflict())
         .andExpect(jsonPath("$.message").value("The selected time slot is no longer available."));
 
-    mockMvc.perform(get(ApiV1.path("/optical-stores/search")).param("name", "does-not-exist"))
+    mockMvc.perform(get(ApiV1.path("/optical-stores")).param("name", "does-not-exist"))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.message").value("No optical stores match the search criteria."))
-        .andExpect(jsonPath("$.opticalStores.length()").value(0));
+        .andExpect(jsonPath("$.length()").value(0));
   }
 
   @Test
