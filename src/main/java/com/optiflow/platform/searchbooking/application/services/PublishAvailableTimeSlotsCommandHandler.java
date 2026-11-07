@@ -9,6 +9,8 @@ import com.optiflow.platform.searchbooking.domain.valueobjects.TimeSlotId;
 import com.optiflow.platform.shared.domain.events.DomainEventPublisher;
 import com.optiflow.platform.shared.exceptions.DomainException;
 import java.time.Clock;
+import java.util.ArrayList;
+import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,9 +34,10 @@ public class PublishAvailableTimeSlotsCommandHandler {
   }
 
   @Transactional
-  public void handle(PublishAvailableTimeSlotsCommand command) {
+  public List<TimeSlot> handle(PublishAvailableTimeSlotsCommand command) {
     opticalStoreRepository.findById(command.opticalStoreId())
         .orElseThrow(() -> new DomainException("Optical store was not found.", 404));
+    List<TimeSlot> published = new ArrayList<>();
     for (PublishAvailableTimeSlotsCommand.SlotDraft draft : command.slots()) {
       TimeSlot timeSlot = TimeSlot.publish(
           TimeSlotId.generate(),
@@ -42,7 +45,9 @@ public class PublishAvailableTimeSlotsCommandHandler {
           draft.startDateTime(),
           draft.endDateTime());
       timeSlotRepository.save(timeSlot);
+      published.add(timeSlot);
     }
     eventPublisher.publish(new OpticalStoresPublished(command.opticalStoreId(), clock.instant()));
+    return published;
   }
 }

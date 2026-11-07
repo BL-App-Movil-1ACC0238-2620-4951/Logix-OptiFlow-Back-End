@@ -3,9 +3,11 @@ package com.optiflow.platform.searchbooking.infrastructure.persistence.jpa.repos
 import com.optiflow.platform.searchbooking.domain.entities.Appointment;
 import com.optiflow.platform.searchbooking.domain.repositories.AppointmentRepository;
 import com.optiflow.platform.searchbooking.domain.valueobjects.AppointmentId;
+import com.optiflow.platform.searchbooking.domain.valueobjects.OpticalStoreId;
 import com.optiflow.platform.searchbooking.domain.valueobjects.PatientId;
 import com.optiflow.platform.searchbooking.domain.valueobjects.TimeSlotId;
 import com.optiflow.platform.searchbooking.infrastructure.persistence.jpa.mappers.AppointmentMapper;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Repository;
@@ -43,5 +45,16 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
   public Optional<Appointment> findActiveByTimeSlot(TimeSlotId timeSlotId) {
     return appointmentJpaRepository.findActiveByTimeSlot(timeSlotId.value())
         .map(appointmentMapper::toDomain);
+  }
+
+  @Override
+  public List<Appointment> findByOpticalStoreAndTimeSlotStartBetween(
+      OpticalStoreId opticalStoreId, Instant startInclusive, Instant endExclusive) {
+    return appointmentJpaRepository
+        .findByOpticalStoreAndTimeSlotStartBetween(
+            opticalStoreId.value(), startInclusive, endExclusive)
+        .stream()
+        .map(appointmentMapper::toDomain)
+        .toList();
   }
 }

@@ -25,9 +25,9 @@ class ApiRequestErrorsTest {
   private MockMvc mockMvc;
 
   @ParameterizedTest
-  @ValueSource(strings = {"/appointments/abc", "/patients/abc/appointments", "/optical-stores/abc/availability"})
+  @ValueSource(strings = {"/appointments/abc", "/patients/abc/appointments", "/optical-stores/abc/time-slots"})
   void explainsInvalidUuidParameters(String url) throws Exception {
-    mockMvc.perform(get(url))
+    mockMvc.perform(get(ApiV1.path(url)))
         .andExpect(status().isBadRequest())
         .andExpect(jsonPath("$.status").value(400))
         .andExpect(jsonPath("$.error").value("Bad Request"))
@@ -38,7 +38,7 @@ class ApiRequestErrorsTest {
   @EmptySource
   @ValueSource(strings = {"{", "{\"patientId\":\"abc\"}", "{\"patientId\":[]}"})
   void explainsMissingMalformedAndWrongTypeBodies(String body) throws Exception {
-    mockMvc.perform(post("/appointments").contentType(MediaType.APPLICATION_JSON).content(body))
+    mockMvc.perform(post(ApiV1.path("/appointments")).contentType(MediaType.APPLICATION_JSON).content(body))
         .andExpect(status().isBadRequest())
         .andExpect(jsonPath("$.status").value(400))
         .andExpect(jsonPath("$.error").value("Bad Request"))
@@ -48,7 +48,7 @@ class ApiRequestErrorsTest {
 
   @Test
   void keepsFieldValidationForReadableJson() throws Exception {
-    mockMvc.perform(post("/appointments").contentType(MediaType.APPLICATION_JSON).content("{}"))
+    mockMvc.perform(post(ApiV1.path("/appointments")).contentType(MediaType.APPLICATION_JSON).content("{}"))
         .andExpect(status().isBadRequest())
         .andExpect(jsonPath("$.status").value(400))
         .andExpect(jsonPath("$.error").value("Bad Request"))

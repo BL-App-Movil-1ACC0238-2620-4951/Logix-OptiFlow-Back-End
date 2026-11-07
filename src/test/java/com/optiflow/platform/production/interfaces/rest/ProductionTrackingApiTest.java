@@ -9,6 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.optiflow.platform.shared.interfaces.rest.ApiV1;
 import com.optiflow.platform.production.domain.events.OrderWasMarkedAsDelivered;
 import com.optiflow.platform.production.domain.events.WorkOrderGenerated;
 import com.optiflow.platform.production.domain.events.WorkOrderStatusUpdated;
@@ -62,7 +63,7 @@ class ProductionTrackingApiTest {
     String saleId = closedSale(clinicalRecordId);
 
     // Closing the sale generated the work order (SaleWasClosed -> GenerateWorkOrder).
-    JsonNode orders = read(mockMvc.perform(get("/patients/" + patientId + "/work-orders"))
+    JsonNode orders = read(mockMvc.perform(get(ApiV1.path("/patients/" + patientId + "/work-orders")))
         .andExpect(status().isOk()));
     assertEquals(1, orders.size());
     JsonNode order = orders.get(0);
@@ -77,17 +78,17 @@ class ProductionTrackingApiTest {
         order.get("estimatedDeliveryDate").asText());
     assertEquals(1, applicationEvents.stream(WorkOrderGenerated.class).count());
 
-    perform(post("/work-orders"), "{\"saleId\":\"%s\"}".formatted(saleId))
+    perform(post(ApiV1.path("/work-orders")), "{\"saleId\":\"%s\"}".formatted(saleId))
         .andExpect(status().isConflict());
 
-    mockMvc.perform(get("/technicians"))
+    mockMvc.perform(get(ApiV1.path("/technicians")))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.length()").value(2));
-    mockMvc.perform(get("/laboratories"))
+    mockMvc.perform(get(ApiV1.path("/laboratories")))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.length()").value(2));
 
-    String base = "/work-orders/" + workOrderId;
+    String base = ApiV1.path("/work-orders/" + workOrderId);
     perform(patch(base + "/status"), "{\"status\":\"QUALITY_CONTROL\"}")
         .andExpect(status().isConflict());
     perform(patch(base + "/technician"), "{\"technicianId\":\"%s\"}".formatted(UNKNOWN_ID))
@@ -104,7 +105,7 @@ class ProductionTrackingApiTest {
         .andExpect(status().isConflict())
         .andExpect(jsonPath("$.message")
             .value("All lenses must be completed before quality control."));
-    mockMvc.perform(patch(base + "/lenses/complete"))
+    mockMvc.perform(patch(base + "/lenses"))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.lenses[0].completed").value(true))
         .andExpect(jsonPath("$.lenses[1].completed").value(true));
@@ -124,31 +125,31 @@ class ProductionTrackingApiTest {
         .andExpect(jsonPath("$.deliveryDelay.reason").value("Falta de stock de lunas"))
         .andExpect(jsonPath("$.estimatedDeliveryDate").value(today.plusDays(10).toString()));
 
-    mockMvc.perform(patch(base + "/deliver")).andExpect(status().isConflict());
+    perform(patch(base + "/status"), "{\"status\":\"DELIVERED\"}")
+        .andExpect(status().isConflict());
     perform(patch(base + "/status"), "{\"status\":\"READY_FOR_DELIVERY\"}")
         .andExpect(status().isOk());
     perform(patch(base + "/status"), "{\"status\":\"DELIVERED\"}")
-        .andExpect(status().isBadRequest());
-    mockMvc.perform(patch(base + "/deliver"))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.status").value("DELIVERED"));
-    mockMvc.perform(patch(base + "/deliver")).andExpect(status().isConflict());
+    perform(patch(base + "/status"), "{\"status\":\"DELIVERED\"}")
+        .andExpect(status().isConflict());
 
     mockMvc.perform(get(base))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.statusHistory.length()").value(5))
         .andExpect(jsonPath("$.statusHistory[4].status").value("DELIVERED"))
         .andExpect(jsonPath("$.deliveredAt").isNotEmpty());
-    mockMvc.perform(get("/work-orders").param("status", "DELIVERED"))
+    mockMvc.perform(get(ApiV1.path("/work-orders")).param("status", "DELIVERED"))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$[0].id").value(workOrderId));
-    mockMvc.perform(get("/work-orders").param("technicianId", TECHNICIAN_ID))
+    mockMvc.perform(get(ApiV1.path("/work-orders")).param("technicianId", TECHNICIAN_ID))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.length()").value(1));
-    mockMvc.perform(get("/work-orders").param("status", "PENDING"))
+    mockMvc.perform(get(ApiV1.path("/work-orders")).param("status", "PENDING"))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.length()").value(0));
-    mockMvc.perform(get("/work-orders").param("status", "BROKEN"))
+    mockMvc.perform(get(ApiV1.path("/work-orders")).param("status", "BROKEN"))
         .andExpect(status().isBadRequest());
 
     assertEquals(4, applicationEvents.stream(WorkOrderStatusUpdated.class).count());
@@ -160,46 +161,46 @@ class ProductionTrackingApiTest {
     String patientId = createPatient("luis.ramos@optiflow.test");
     String clinicalRecordId = examinedPatientWithPrescription(patientId, firstStoreId(), 1);
     String quotationId = approvedQuotation(clinicalRecordId);
-    String saleId = read(perform(post("/sales"), "{\"quotationId\":\"%s\"}".formatted(quotationId))
+    String saleId = read(perform(post(ApiV1.path("/sales")), "{\"quotationId\":\"%s\"}".formatted(quotationId))
         .andExpect(status().isCreated())).get("id").asText();
 
-    perform(post("/work-orders"), "{\"saleId\":\"%s\"}".formatted(saleId))
+    perform(post(ApiV1.path("/work-orders")), "{\"saleId\":\"%s\"}".formatted(saleId))
         .andExpect(status().isConflict())
         .andExpect(jsonPath("$.message").value("Only a closed sale can generate a work order."));
-    perform(post("/work-orders"), "{\"saleId\":\"%s\"}".formatted(UNKNOWN_ID))
+    perform(post(ApiV1.path("/work-orders")), "{\"saleId\":\"%s\"}".formatted(UNKNOWN_ID))
         .andExpect(status().isNotFound());
-    mockMvc.perform(get("/work-orders/" + UNKNOWN_ID))
+    mockMvc.perform(get(ApiV1.path("/work-orders/" + UNKNOWN_ID)))
         .andExpect(status().isNotFound())
         .andExpect(jsonPath("$.message").value("Work order was not found."));
-    mockMvc.perform(get("/patients/" + patientId + "/work-orders"))
+    mockMvc.perform(get(ApiV1.path("/patients/" + patientId + "/work-orders")))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.length()").value(0));
   }
 
   private String createPatient(String email) throws Exception {
-    return read(perform(post("/patients"), """
+    return read(perform(post(ApiV1.path("/patients")), """
         {"name":"Paciente Producción","email":"%s","phone":"987654321","password":"secret12"}
         """.formatted(email)).andExpect(status().isCreated())).get("id").asText();
   }
 
   private String firstStoreId() throws Exception {
-    return read(mockMvc.perform(get("/optical-stores")).andExpect(status().isOk()))
-        .get("opticalStores").get(0).get("id").asText();
+    return read(mockMvc.perform(get(ApiV1.path("/optical-stores"))).andExpect(status().isOk()))
+        .get(0).get("id").asText();
   }
 
   private String examinedPatientWithPrescription(String patientId, String storeId, int slot)
       throws Exception {
-    String timeSlotId = read(mockMvc.perform(get("/optical-stores/" + storeId + "/availability"))
-        .andExpect(status().isOk())).get("timeSlots").get(slot).get("id").asText();
-    String appointmentId = read(perform(post("/appointments"), """
+    String timeSlotId = read(mockMvc.perform(get(ApiV1.path("/optical-stores/" + storeId + "/time-slots")))
+        .andExpect(status().isOk())).get(slot).get("id").asText();
+    String appointmentId = read(perform(post(ApiV1.path("/appointments")), """
         {"patientId":"%s","opticalStoreId":"%s","timeSlotId":"%s"}
         """.formatted(patientId, storeId, timeSlotId))
         .andExpect(status().isCreated())).get("id").asText();
-    String clinicalRecordId = read(perform(post("/clinical-records"), """
+    String clinicalRecordId = read(perform(post(ApiV1.path("/clinical-records")), """
         {"patientId":"%s","appointmentId":"%s"}
         """.formatted(patientId, appointmentId))
         .andExpect(status().isCreated())).get("id").asText();
-    perform(post("/clinical-records/" + clinicalRecordId + "/prescription"), """
+    perform(post(ApiV1.path("/clinical-records/" + clinicalRecordId + "/prescription")), """
         {"sphereOD":-1.25,"cylinderOD":-0.50,"axisOD":90,"sphereOS":-1.00,"cylinderOS":-0.75,
          "axisOS":85,"treatment":"Antirreflejo"}
         """).andExpect(status().isCreated());
@@ -207,23 +208,24 @@ class ProductionTrackingApiTest {
   }
 
   private String approvedQuotation(String clinicalRecordId) throws Exception {
-    String quotationId = read(perform(post("/quotations"), """
+    String quotationId = read(perform(post(ApiV1.path("/quotations")), """
         {"clinicalRecordId":"%s","items":[
           {"itemType":"FRAME","description":"Montura Ray-Ban","unitPrice":320.00,"quantity":1},
           {"itemType":"LENS","description":"Lunas antirreflejo","unitPrice":169.00,"quantity":1}]}
         """.formatted(clinicalRecordId)).andExpect(status().isCreated())).get("id").asText();
-    mockMvc.perform(patch("/quotations/" + quotationId + "/approve"))
+    perform(patch(ApiV1.path("/quotations/" + quotationId + "/status")), "{\"status\":\"APPROVED\"}")
         .andExpect(status().isOk());
     return quotationId;
   }
 
   private String closedSale(String clinicalRecordId) throws Exception {
     String quotationId = approvedQuotation(clinicalRecordId);
-    String saleId = read(perform(post("/sales"), "{\"quotationId\":\"%s\"}".formatted(quotationId))
+    String saleId = read(perform(post(ApiV1.path("/sales")), "{\"quotationId\":\"%s\"}".formatted(quotationId))
         .andExpect(status().isCreated())).get("id").asText();
-    perform(post("/sales/" + saleId + "/payments"), "{\"method\":\"CASH\",\"amount\":489.00}")
+    perform(post(ApiV1.path("/sales/" + saleId + "/payments")), "{\"method\":\"CASH\",\"amount\":489.00}")
         .andExpect(status().isCreated());
-    mockMvc.perform(patch("/sales/" + saleId + "/close")).andExpect(status().isOk());
+    perform(patch(ApiV1.path("/sales/" + saleId + "/status")), "{\"status\":\"CLOSED\"}")
+        .andExpect(status().isOk());
     return saleId;
   }
 

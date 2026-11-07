@@ -8,10 +8,13 @@ import com.optiflow.platform.shared.documentation.openapi.configuration.OpenApiT
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import com.optiflow.platform.shared.interfaces.rest.ApiV1;
 
 @Tag(name = OpenApiTags.TECHNICIANS_AND_LABORATORIES)
 @RestController
+@RequestMapping(ApiV1.BASE_PATH)
 public class ProductionCatalogController {
 
   private final WorkOrderApplicationService workOrderApplicationService;

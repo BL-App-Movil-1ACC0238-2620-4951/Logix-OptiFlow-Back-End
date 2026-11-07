@@ -3,6 +3,8 @@ spring:
     name: optiflow-platform
   profiles:
     default: local
+  flyway:
+    out-of-order: true
   jpa:
     open-in-view: false
     properties:

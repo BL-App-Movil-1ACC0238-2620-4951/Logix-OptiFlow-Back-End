@@ -6,6 +6,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.optiflow.platform.shared.interfaces.rest.ApiV1;
 import com.optiflow.platform.notification.application.queries.GetNotificationsByPatientQuery;
 import com.optiflow.platform.notification.application.services.NotificationApplicationService;
 import com.optiflow.platform.notification.domain.valueobjects.NotificationType;
@@ -34,19 +35,19 @@ class NotificationPersistenceIntegrationTest {
 
   @Test
   void persistsAppointmentReminderWhenAnAppointmentIsBooked() throws Exception {
-    MvcResult stores = mockMvc.perform(get("/optical-stores"))
+    MvcResult stores = mockMvc.perform(get(ApiV1.path("/optical-stores")))
         .andExpect(status().isOk())
         .andReturn();
     String storeId = objectMapper.readTree(stores.getResponse().getContentAsString())
-        .get("opticalStores").get(0).get("id").asText();
+        .get(0).get("id").asText();
 
-    MvcResult availability = mockMvc.perform(get("/optical-stores/" + storeId + "/availability"))
+    MvcResult availability = mockMvc.perform(get(ApiV1.path("/optical-stores/" + storeId + "/time-slots")))
         .andExpect(status().isOk())
         .andReturn();
     String timeSlotId = objectMapper.readTree(availability.getResponse().getContentAsString())
-        .get("timeSlots").get(0).get("id").asText();
+        .get(0).get("id").asText();
 
-    MvcResult patient = mockMvc.perform(post("/patients")
+    MvcResult patient = mockMvc.perform(post(ApiV1.path("/patients"))
             .contentType(MediaType.APPLICATION_JSON)
             .content("""
                 {"name":"Nora Vega","email":"nora.vega@optiflow.test","phone":"999777666","password":"secret12"}
@@ -56,7 +57,7 @@ class NotificationPersistenceIntegrationTest {
     String patientId = objectMapper.readTree(patient.getResponse().getContentAsString())
         .get("id").asText();
 
-    mockMvc.perform(post("/appointments")
+    mockMvc.perform(post(ApiV1.path("/appointments"))
             .contentType(MediaType.APPLICATION_JSON)
             .content("""
                 {"patientId":"%s","opticalStoreId":"%s","timeSlotId":"%s"}

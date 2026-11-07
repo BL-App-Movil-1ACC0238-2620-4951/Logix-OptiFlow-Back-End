@@ -10,11 +10,9 @@ import com.optiflow.platform.searchbooking.domain.entities.TimeSlot;
 import com.optiflow.platform.searchbooking.interfaces.rest.resources.AppointmentResponse;
 import com.optiflow.platform.searchbooking.interfaces.rest.resources.FavoriteStoreResponse;
 import com.optiflow.platform.searchbooking.interfaces.rest.resources.LoginResponse;
-import com.optiflow.platform.searchbooking.interfaces.rest.resources.OpticalStoreListResponse;
 import com.optiflow.platform.searchbooking.interfaces.rest.resources.OpticalStoreResponse;
 import com.optiflow.platform.searchbooking.interfaces.rest.resources.PatientResponse;
 import com.optiflow.platform.searchbooking.interfaces.rest.resources.StoreRatingResponse;
-import com.optiflow.platform.searchbooking.interfaces.rest.resources.TimeSlotListResponse;
 import com.optiflow.platform.searchbooking.interfaces.rest.resources.TimeSlotResponse;
 import java.util.List;
 import org.springframework.stereotype.Component;
@@ -45,12 +43,8 @@ public class SearchBookingResponseAssembler {
         store.status().name());
   }
 
-  public OpticalStoreListResponse toStoreList(List<OpticalStore> stores, String emptyMessage) {
-    if (stores.isEmpty()) {
-      return new OpticalStoreListResponse(emptyMessage, List.of());
-    }
-    return new OpticalStoreListResponse(
-        null, stores.stream().map(this::toStoreResponse).toList());
+  public List<OpticalStoreResponse> toStoreResponses(List<OpticalStore> stores) {
+    return stores.stream().map(this::toStoreResponse).toList();
   }
 
   public TimeSlotResponse toTimeSlotResponse(TimeSlot timeSlot) {
@@ -62,11 +56,8 @@ public class SearchBookingResponseAssembler {
         timeSlot.status().name());
   }
 
-  public TimeSlotListResponse toTimeSlotList(List<TimeSlot> timeSlots) {
-    if (timeSlots.isEmpty()) {
-      return new TimeSlotListResponse("No time slots are available for this optical store.", List.of());
-    }
-    return new TimeSlotListResponse(null, timeSlots.stream().map(this::toTimeSlotResponse).toList());
+  public List<TimeSlotResponse> toTimeSlotResponses(List<TimeSlot> timeSlots) {
+    return timeSlots.stream().map(this::toTimeSlotResponse).toList();
   }
 
   public AppointmentResponse toAppointmentResponse(AppointmentDetails details) {

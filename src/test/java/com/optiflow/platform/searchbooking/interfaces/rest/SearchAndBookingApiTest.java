@@ -1,11 +1,15 @@
 package com.optiflow.platform.searchbooking.interfaces.rest;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.optiflow.platform.shared.interfaces.rest.ApiV1;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -28,21 +32,21 @@ class SearchAndBookingApiTest {
 
   @Test
   void searchesStoresAndRejectsASecondBookingForTheSameSlot() throws Exception {
-    MvcResult stores = mockMvc.perform(get("/optical-stores"))
+    MvcResult stores = mockMvc.perform(get(ApiV1.path("/optical-stores")))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.opticalStores.length()").value(2))
+        .andExpect(jsonPath("$.length()").value(2))
         .andReturn();
     String storeId = objectMapper.readTree(stores.getResponse().getContentAsString())
-        .get("opticalStores").get(0).get("id").asText();
+        .get(0).get("id").asText();
 
-    MvcResult availability = mockMvc.perform(get("/optical-stores/" + storeId + "/availability"))
+    MvcResult availability = mockMvc.perform(get(ApiV1.path("/optical-stores/" + storeId + "/time-slots")))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.timeSlots.length()").value(3))
+        .andExpect(jsonPath("$.length()").value(3))
         .andReturn();
     String timeSlotId = objectMapper.readTree(availability.getResponse().getContentAsString())
-        .get("timeSlots").get(0).get("id").asText();
+        .get(0).get("id").asText();
 
-    MvcResult patient = mockMvc.perform(post("/patients")
+    MvcResult patient = mockMvc.perform(post(ApiV1.path("/patients"))
             .contentType(MediaType.APPLICATION_JSON)
             .content("""
                 {"name":"Ana Perez","email":"ana.perez@optiflow.test","phone":"999888777","password":"secret12"}
@@ -56,30 +60,29 @@ class SearchAndBookingApiTest {
         {"patientId":"%s","opticalStoreId":"%s","timeSlotId":"%s"}
         """.formatted(patientId, storeId, timeSlotId);
 
-    mockMvc.perform(post("/appointments").contentType(MediaType.APPLICATION_JSON).content(booking))
+    mockMvc.perform(post(ApiV1.path("/appointments")).contentType(MediaType.APPLICATION_JSON).content(booking))
         .andExpect(status().isCreated())
         .andExpect(jsonPath("$.status").value("CONFIRMED"));
 
-    mockMvc.perform(post("/appointments").contentType(MediaType.APPLICATION_JSON).content(booking))
+    mockMvc.perform(post(ApiV1.path("/appointments")).contentType(MediaType.APPLICATION_JSON).content(booking))
         .andExpect(status().isConflict())
         .andExpect(jsonPath("$.message").value("The selected time slot is no longer available."));
 
-    mockMvc.perform(get("/optical-stores/search").param("name", "does-not-exist"))
+    mockMvc.perform(get(ApiV1.path("/optical-stores")).param("name", "does-not-exist"))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.message").value("No optical stores match the search criteria."))
-        .andExpect(jsonPath("$.opticalStores.length()").value(0));
+        .andExpect(jsonPath("$.length()").value(0));
   }
 
   @Test
   void rejectsInvalidLoginCredentials() throws Exception {
-    mockMvc.perform(post("/patients")
+    mockMvc.perform(post(ApiV1.path("/patients"))
             .contentType(MediaType.APPLICATION_JSON)
             .content("""
                 {"name":"Luis Ramos","email":"luis.ramos@optiflow.test","phone":"999111222","password":"secret12"}
                 """))
         .andExpect(status().isCreated());
 
-    mockMvc.perform(post("/login")
+    mockMvc.perform(post(ApiV1.path("/login"))
             .contentType(MediaType.APPLICATION_JSON)
             .content("""
                 {"email":"luis.ramos@optiflow.test","password":"wrong-password"}
@@ -88,7 +91,7 @@ class SearchAndBookingApiTest {
   }
   @Test
   void rejectsPhoneLettersWithoutCreatingThePatient() throws Exception {
-    mockMvc.perform(post("/patients")
+    mockMvc.perform(post(ApiV1.path("/patients"))
             .contentType(MediaType.APPLICATION_JSON)
             .content("""
                 {"name":"Phone Test","email":"phone.invalid@optiflow.test","phone":"abc999888777","password":"secret12"}
@@ -99,7 +102,7 @@ class SearchAndBookingApiTest {
             "Phone number must contain 7 to 15 digits, with an optional leading +, spaces or hyphens."));
 
     // The rejected request must not consume the email or persist a patient.
-    mockMvc.perform(post("/patients")
+    mockMvc.perform(post(ApiV1.path("/patients"))
             .contentType(MediaType.APPLICATION_JSON)
             .content("""
                 {"name":"Phone Test","email":"phone.invalid@optiflow.test","phone":"999888777","password":"secret12"}
@@ -109,8 +112,62 @@ class SearchAndBookingApiTest {
   }
 
   @Test
+  void updatesAppointmentStatusAndListsStoreAgenda() throws Exception {
+    LocalDate agendaDay = LocalDate.now(ZoneId.of("America/Lima")).plusDays(1);
+    MvcResult stores = mockMvc.perform(get(ApiV1.path("/optical-stores")))
+        .andExpect(status().isOk())
+        .andReturn();
+    String storeId = objectMapper.readTree(stores.getResponse().getContentAsString())
+        .get(0).get("id").asText();
+
+    MvcResult availability = mockMvc.perform(get(ApiV1.path("/optical-stores/" + storeId + "/time-slots")))
+        .andExpect(status().isOk())
+        .andReturn();
+    String timeSlotId = objectMapper.readTree(availability.getResponse().getContentAsString())
+        .get(0).get("id").asText();
+
+    MvcResult patient = mockMvc.perform(post(ApiV1.path("/patients"))
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("""
+                {"name":"Agenda Test","email":"agenda.test@optiflow.test","phone":"999777666","password":"secret12"}
+                """))
+        .andExpect(status().isCreated())
+        .andReturn();
+    String patientId = objectMapper.readTree(patient.getResponse().getContentAsString())
+        .get("id").asText();
+
+    MvcResult booking = mockMvc.perform(post(ApiV1.path("/appointments"))
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("""
+                {"patientId":"%s","opticalStoreId":"%s","timeSlotId":"%s"}
+                """.formatted(patientId, storeId, timeSlotId)))
+        .andExpect(status().isCreated())
+        .andReturn();
+    String appointmentId = objectMapper.readTree(booking.getResponse().getContentAsString())
+        .get("id").asText();
+
+    mockMvc.perform(get(ApiV1.path("/appointments"))
+            .param("opticalStoreId", storeId)
+            .param("date", agendaDay.toString()))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.length()").value(1))
+        .andExpect(jsonPath("$[0].id").value(appointmentId));
+
+    mockMvc.perform(patch(ApiV1.path("/appointments/" + appointmentId + "/status"))
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{\"status\":\"COMPLETED\"}"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.status").value("COMPLETED"));
+
+    mockMvc.perform(patch(ApiV1.path("/appointments/" + appointmentId + "/status"))
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{\"status\":\"CANCELLED\"}"))
+        .andExpect(status().isConflict());
+  }
+
+  @Test
   void acceptsAndNormalizesInternationalPhoneFormatting() throws Exception {
-    mockMvc.perform(post("/patients")
+    mockMvc.perform(post(ApiV1.path("/patients"))
             .contentType(MediaType.APPLICATION_JSON)
             .content("""
                 {"name":"Formatted Phone","email":"phone.formatted@optiflow.test","phone":"+51 999-888-777","password":"secret12"}

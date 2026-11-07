@@ -11,15 +11,18 @@ import com.optiflow.platform.shared.documentation.openapi.configuration.OpenApiT
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.UUID;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import com.optiflow.platform.shared.interfaces.rest.ApiV1;
+import com.optiflow.platform.shared.interfaces.rest.CreatedResourceResponses;
 
 @Tag(name = OpenApiTags.FAVORITES)
 @RestController
+@RequestMapping(ApiV1.BASE_PATH)
 public class FavoriteStoreController {
 
   private final OpticalStoreApplicationService opticalStoreApplicationService;
@@ -33,11 +36,13 @@ public class FavoriteStoreController {
   }
 
   @PostMapping("/patients/{id}/favorites")
-  @ResponseStatus(HttpStatus.CREATED)
-  public FavoriteStoreResponse save(
+  public ResponseEntity<FavoriteStoreResponse> save(
       @PathVariable UUID id, @Valid @RequestBody SaveFavoriteStoreRequest request) {
-    return responseAssembler.toFavoriteResponse(opticalStoreApplicationService.saveFavorite(
-        new SaveFavoriteOpticalStoreCommand(
-            PatientId.of(id), OpticalStoreId.of(request.opticalStoreId()))));
+    FavoriteStoreResponse response = responseAssembler.toFavoriteResponse(
+        opticalStoreApplicationService.saveFavorite(
+            new SaveFavoriteOpticalStoreCommand(
+                PatientId.of(id), OpticalStoreId.of(request.opticalStoreId()))));
+    return CreatedResourceResponses.at(
+        "/optical-stores/{id}", response, response.opticalStoreId());
   }
 }

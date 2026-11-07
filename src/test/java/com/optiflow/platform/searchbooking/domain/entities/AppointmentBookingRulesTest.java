@@ -11,6 +11,7 @@ import com.optiflow.platform.searchbooking.domain.valueobjects.OpticalStoreId;
 import com.optiflow.platform.searchbooking.domain.valueobjects.PatientId;
 import com.optiflow.platform.searchbooking.domain.valueobjects.TimeSlotId;
 import com.optiflow.platform.searchbooking.domain.valueobjects.TimeSlotStatus;
+import com.optiflow.platform.shared.exceptions.DomainException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import org.junit.jupiter.api.Test;
@@ -37,12 +38,55 @@ class AppointmentBookingRulesTest {
   }
 
   @Test
+  void cancelsAConfirmedAppointmentAndReleasesTheTimeSlot() {
+    Instant now = Instant.parse("2026-10-06T15:00:00Z");
+    TimeSlot timeSlot = availableSlot(now.plus(1, ChronoUnit.DAYS));
+    timeSlot.reserve(now);
+    Appointment appointment = confirmedAppointment(timeSlot, now);
+
+    appointment.cancel(now);
+    timeSlot.release();
+
+    assertEquals(AppointmentStatus.CANCELLED, appointment.status());
+    assertEquals(TimeSlotStatus.AVAILABLE, timeSlot.status());
+  }
+
+  @Test
+  void completesOnlyAConfirmedAppointment() {
+    Instant now = Instant.parse("2026-10-06T15:00:00Z");
+    TimeSlot timeSlot = availableSlot(now.plus(1, ChronoUnit.DAYS));
+    Appointment appointment = confirmedAppointment(timeSlot, now);
+
+    appointment.complete(now);
+
+    assertEquals(AppointmentStatus.COMPLETED, appointment.status());
+  }
+
+  @Test
+  void rejectsCompletingAPendingAppointment() {
+    Instant now = Instant.parse("2026-10-06T15:00:00Z");
+    TimeSlot timeSlot = availableSlot(now.plus(1, ChronoUnit.DAYS));
+    Appointment appointment = appointmentFactory.book(
+        PatientId.generate(), timeSlot.opticalStoreId(), timeSlot, now);
+
+    assertThrows(DomainException.class, () -> appointment.complete(now));
+  }
+
+  @Test
   void rejectsATimeSlotThatWasAlreadyReserved() {
     Instant now = Instant.parse("2026-10-06T15:00:00Z");
     TimeSlot timeSlot = availableSlot(now.plus(1, ChronoUnit.DAYS));
     timeSlot.reserve(now);
 
     assertThrows(TimeSlotUnavailableException.class, () -> timeSlot.reserve(now));
+  }
+
+  private Appointment confirmedAppointment(TimeSlot timeSlot, Instant now) {
+    timeSlot.reserve(now);
+    Appointment appointment = appointmentFactory.book(
+        PatientId.generate(), timeSlot.opticalStoreId(), timeSlot, now);
+    appointment.confirm(now);
+    return appointment;
   }
 
   private TimeSlot availableSlot(Instant start) {
