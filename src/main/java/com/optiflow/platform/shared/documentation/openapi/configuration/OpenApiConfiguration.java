@@ -1,7 +1,10 @@
 package com.optiflow.platform.shared.documentation.openapi.configuration;
 
+import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.tags.Tag;
 import java.util.List;
 import org.springframework.context.annotation.Bean;
@@ -10,6 +13,8 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class OpenApiConfiguration {
 
+  public static final String BEARER_SCHEME = "bearerAuth";
+
   @Bean
   OpenAPI optiFlowOpenApi() {
     return new OpenAPI()
@@ -17,6 +22,8 @@ public class OpenApiConfiguration {
             .title("OptiFlow Platform API")
             .version("0.1.0")
             .description("RESTful services for the OptiFlow bounded contexts."))
+        .components(new Components().addSecuritySchemes(BEARER_SCHEME, bearerSecurityScheme()))
+        .addSecurityItem(new SecurityRequirement().addList(BEARER_SCHEME))
         .tags(List.of(
             tag(OpenApiTags.AUTHENTICATION, "Issue JWT access tokens for patients and staff."),
             tag(OpenApiTags.PATIENTS, "Patient registration and appointment history."),
@@ -38,5 +45,14 @@ public class OpenApiConfiguration {
 
   private static Tag tag(String name, String description) {
     return new Tag().name(name).description(description);
+  }
+
+  private static SecurityScheme bearerSecurityScheme() {
+    return new SecurityScheme()
+        .type(SecurityScheme.Type.HTTP)
+        .scheme("bearer")
+        .bearerFormat("JWT")
+        .description(
+            "JWT obtained from POST /api/v1/auth/tokens. Send as: Authorization: Bearer <token>");
   }
 }
