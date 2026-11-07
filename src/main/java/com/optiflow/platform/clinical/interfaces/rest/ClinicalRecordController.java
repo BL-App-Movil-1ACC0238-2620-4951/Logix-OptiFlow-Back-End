@@ -26,11 +26,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import com.optiflow.platform.shared.interfaces.rest.ApiV1;
 
 @Tag(name = OpenApiTags.CLINICAL_RECORDS)
 @RestController
+@RequestMapping(ApiV1.BASE_PATH)
 public class ClinicalRecordController {
 
   private final ClinicalRecordApplicationService clinicalRecordApplicationService;

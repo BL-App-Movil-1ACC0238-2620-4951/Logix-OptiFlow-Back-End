@@ -9,6 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.optiflow.platform.shared.interfaces.rest.ApiV1;
 import com.optiflow.platform.searchbooking.domain.entities.TimeSlot;
 import com.optiflow.platform.searchbooking.domain.repositories.TimeSlotRepository;
 import com.optiflow.platform.searchbooking.domain.valueobjects.OpticalStoreId;
@@ -44,7 +45,7 @@ public class SearchBookingSteps {
 
   @Cuando("el paciente consulta los establecimientos disponibles")
   public void listsStores() throws Exception {
-    response = mockMvc.perform(get("/optical-stores")).andReturn();
+    response = mockMvc.perform(get(ApiV1.path("/optical-stores"))).andReturn();
   }
 
   @Entonces("obtiene la información y las direcciones de los establecimientos")
@@ -61,7 +62,7 @@ public class SearchBookingSteps {
 
   @Entonces("puede consultar los horarios disponibles de una óptica")
   public void checksAvailability() throws Exception {
-    MvcResult availability = mockMvc.perform(get("/optical-stores/" + storeId + "/availability"))
+    MvcResult availability = mockMvc.perform(get(ApiV1.path("/optical-stores/" + storeId + "/availability")))
         .andExpect(status().isOk()).andReturn();
     JsonNode slots = json(availability).get("timeSlots");
     assertTrue(slots.isArray() && !slots.isEmpty());
@@ -80,7 +81,7 @@ public class SearchBookingSteps {
 
   @Cuando("el paciente realiza la búsqueda")
   public void searchesStores() throws Exception {
-    response = mockMvc.perform(get("/optical-stores/search")
+    response = mockMvc.perform(get(ApiV1.path("/optical-stores/search"))
         .param("name", missingStoreName)).andReturn();
   }
 
@@ -111,13 +112,13 @@ public class SearchBookingSteps {
   @Dado("existe un horario reservado por otro paciente")
   public void reservesSlotForAnotherPatient() throws Exception {
     createsAvailableSlot();
-    mockMvc.perform(post("/appointments").contentType(MediaType.APPLICATION_JSON)
+    mockMvc.perform(post(ApiV1.path("/appointments")).contentType(MediaType.APPLICATION_JSON)
         .content(bookingJson(createPatient()))).andExpect(status().isCreated());
   }
 
   @Cuando("el paciente confirma la reserva de ese horario")
   public void booksSlot() throws Exception {
-    response = mockMvc.perform(post("/appointments").contentType(MediaType.APPLICATION_JSON)
+    response = mockMvc.perform(post(ApiV1.path("/appointments")).contentType(MediaType.APPLICATION_JSON)
         .content(bookingJson(patientId))).andReturn();
   }
 
@@ -136,7 +137,7 @@ public class SearchBookingSteps {
   @Entonces("la cita registrada puede consultarse")
   public void checksPersistedAppointment() throws Exception {
     String appointmentId = responseJson().get("id").asText();
-    MvcResult stored = mockMvc.perform(get("/appointments/" + appointmentId))
+    MvcResult stored = mockMvc.perform(get(ApiV1.path("/appointments/" + appointmentId)))
         .andExpect(status().isOk()).andReturn();
     assertEquals(appointmentId, json(stored).get("id").asText());
     assertEquals(patientId, json(stored).get("patientId").asText());
@@ -145,7 +146,7 @@ public class SearchBookingSteps {
 
   @Entonces("el horario deja de estar disponible")
   public void checksSlotIsNoLongerAvailable() throws Exception {
-    MvcResult availability = mockMvc.perform(get("/optical-stores/" + storeId + "/availability"))
+    MvcResult availability = mockMvc.perform(get(ApiV1.path("/optical-stores/" + storeId + "/availability")))
         .andExpect(status().isOk()).andReturn();
     for (JsonNode slot : json(availability).get("timeSlots")) {
       assertFalse(timeSlotId.equals(slot.get("id").asText()));
@@ -162,14 +163,14 @@ public class SearchBookingSteps {
     String request = objectMapper.writeValueAsString(Map.of(
         "name", "BDD Patient", "email", "bdd-" + UUID.randomUUID() + "@optiflow.test",
         "phone", "999888777", "password", "testpass12"));
-    MvcResult patient = mockMvc.perform(post("/patients")
+    MvcResult patient = mockMvc.perform(post(ApiV1.path("/patients"))
         .contentType(MediaType.APPLICATION_JSON).content(request))
         .andExpect(status().isCreated()).andReturn();
     return json(patient).get("id").asText();
   }
 
   private String firstStoreId() throws Exception {
-    MvcResult stores = mockMvc.perform(get("/optical-stores"))
+    MvcResult stores = mockMvc.perform(get(ApiV1.path("/optical-stores")))
         .andExpect(status().isOk()).andReturn();
     JsonNode list = json(stores).get("opticalStores");
     assertTrue(list.isArray() && !list.isEmpty());

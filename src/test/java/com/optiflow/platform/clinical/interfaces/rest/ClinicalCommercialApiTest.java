@@ -10,6 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.optiflow.platform.shared.interfaces.rest.ApiV1;
 import com.optiflow.platform.clinical.domain.events.SaleWasClosed;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,7 +54,7 @@ class ClinicalCommercialApiTest {
     String appointmentId = bookAppointment(patientId);
 
     // Booking the appointment opened a pending clinical record (AppointmentBooked -> ExaminePatient).
-    JsonNode records = read(mockMvc.perform(get("/patients/" + patientId + "/clinical-records"))
+    JsonNode records = read(mockMvc.perform(get(ApiV1.path("/patients/" + patientId + "/clinical-records")))
         .andExpect(status().isOk()));
     assertEquals(1, records.size());
     assertEquals("PENDING", records.get(0).get("status").asText());
@@ -62,14 +63,14 @@ class ClinicalCommercialApiTest {
     String registration = """
         {"patientId":"%s","appointmentId":"%s","observations":"Visión borrosa de lejos"}
         """.formatted(patientId, appointmentId);
-    String clinicalRecordId = read(perform(post("/clinical-records"), registration)
+    String clinicalRecordId = read(perform(post(ApiV1.path("/clinical-records")), registration)
         .andExpect(status().isCreated())
         .andExpect(jsonPath("$.status").value("OPEN")))
         .get("id").asText();
     assertEquals(pendingRecordId, clinicalRecordId);
-    perform(post("/clinical-records"), registration).andExpect(status().isConflict());
+    perform(post(ApiV1.path("/clinical-records")), registration).andExpect(status().isConflict());
 
-    perform(put("/clinical-records/" + clinicalRecordId + "/medical-history"), """
+    perform(put(ApiV1.path("/clinical-records/" + clinicalRecordId + "/medical-history")), """
         {"allergies":["Penicilina"],"previousConditions":["Miopía"],"familyOcularHistory":"Glaucoma"}
         """)
         .andExpect(status().isOk())
@@ -82,26 +83,26 @@ class ClinicalCommercialApiTest {
           {"itemType":"LENS","description":"Lunas policarbonato con antirreflejo",
            "unitPrice":169.00,"quantity":1}]}
         """.formatted(clinicalRecordId);
-    perform(post("/quotations"), quotationRequest).andExpect(status().isConflict());
+    perform(post(ApiV1.path("/quotations")), quotationRequest).andExpect(status().isConflict());
 
-    perform(post("/clinical-records/" + clinicalRecordId + "/prescription"), prescription(181))
+    perform(post(ApiV1.path("/clinical-records/" + clinicalRecordId + "/prescription")), prescription(181))
         .andExpect(status().isBadRequest())
         .andExpect(jsonPath("$.message").value("Axis OD must be between 0 and 180 degrees."));
-    perform(post("/clinical-records/" + clinicalRecordId + "/prescription"), prescription(90))
+    perform(post(ApiV1.path("/clinical-records/" + clinicalRecordId + "/prescription")), prescription(90))
         .andExpect(status().isCreated())
         .andExpect(jsonPath("$.axisOD").value(90));
-    mockMvc.perform(get("/clinical-records/" + clinicalRecordId + "/prescription"))
+    mockMvc.perform(get(ApiV1.path("/clinical-records/" + clinicalRecordId + "/prescription")))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.sphereOD").value(-1.25));
 
-    String quotationId = read(perform(post("/quotations"), quotationRequest)
+    String quotationId = read(perform(post(ApiV1.path("/quotations")), quotationRequest)
         .andExpect(status().isCreated())
         .andExpect(jsonPath("$.status").value("DRAFT"))
         .andExpect(jsonPath("$.total").value(489.00))
         .andExpect(jsonPath("$.currency").value("PEN")))
         .get("id").asText();
 
-    perform(patch("/quotations/" + quotationId + "/discount"), """
+    perform(patch(ApiV1.path("/quotations/" + quotationId + "/discount")), """
         {"type":"PERCENTAGE","value":10,"reason":"Campaña escolar"}
         """)
         .andExpect(status().isOk())
@@ -111,43 +112,43 @@ class ClinicalCommercialApiTest {
     String sale = """
         {"quotationId":"%s"}
         """.formatted(quotationId);
-    perform(post("/sales"), sale).andExpect(status().isConflict());
-    mockMvc.perform(patch("/quotations/" + quotationId + "/approve"))
+    perform(post(ApiV1.path("/sales")), sale).andExpect(status().isConflict());
+    mockMvc.perform(patch(ApiV1.path("/quotations/" + quotationId + "/approve")))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.status").value("APPROVED"));
 
-    String saleId = read(perform(post("/sales"), sale)
+    String saleId = read(perform(post(ApiV1.path("/sales")), sale)
         .andExpect(status().isCreated())
         .andExpect(jsonPath("$.status").value("PENDING_PAYMENT"))
         .andExpect(jsonPath("$.patientId").value(patientId)))
         .get("id").asText();
-    perform(post("/sales"), sale).andExpect(status().isConflict());
+    perform(post(ApiV1.path("/sales")), sale).andExpect(status().isConflict());
 
-    perform(post("/sales/" + saleId + "/payments"), """
+    perform(post(ApiV1.path("/sales/" + saleId + "/payments")), """
         {"method":"YAPE","amount":400.00}
         """).andExpect(status().isBadRequest());
-    perform(post("/sales/" + saleId + "/payments"), """
+    perform(post(ApiV1.path("/sales/" + saleId + "/payments")), """
         {"method":"BITCOIN","amount":440.10}
         """)
         .andExpect(status().isBadRequest())
         .andExpect(jsonPath("$.message").value("Payment method must be one of: CASH, CARD, YAPE, PLIN."));
-    perform(post("/sales/" + saleId + "/payments"), """
+    perform(post(ApiV1.path("/sales/" + saleId + "/payments")), """
         {"method":"YAPE","amount":440.10,"transactionReference":"YAPE-778899"}
         """)
         .andExpect(status().isCreated())
         .andExpect(jsonPath("$.status").value("PAID"))
         .andExpect(jsonPath("$.payment.transactionReference").value("YAPE-778899"));
 
-    mockMvc.perform(patch("/sales/" + saleId + "/close"))
+    mockMvc.perform(patch(ApiV1.path("/sales/" + saleId + "/close")))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.status").value("CLOSED"))
         .andExpect(jsonPath("$.receipt.receiptNumber").value("B001-00000001"))
         .andExpect(jsonPath("$.receipt.taxAmount").value(67.13))
         .andExpect(jsonPath("$.receipt.totalAmount").value(440.10));
-    mockMvc.perform(get("/sales/" + saleId))
+    mockMvc.perform(get(ApiV1.path("/sales/" + saleId)))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.receipt.receiptNumber").value("B001-00000001"));
-    mockMvc.perform(patch("/sales/" + saleId + "/close")).andExpect(status().isConflict());
+    mockMvc.perform(patch(ApiV1.path("/sales/" + saleId + "/close"))).andExpect(status().isConflict());
 
     assertEquals(1, applicationEvents.stream(SaleWasClosed.class).count());
   }
@@ -156,12 +157,12 @@ class ClinicalCommercialApiTest {
   void returnsNotFoundForUnknownResources() throws Exception {
     String unknownId = "00000000-0000-0000-0000-000000000000";
 
-    mockMvc.perform(get("/clinical-records/" + unknownId))
+    mockMvc.perform(get(ApiV1.path("/clinical-records/" + unknownId)))
         .andExpect(status().isNotFound())
         .andExpect(jsonPath("$.message").value("Clinical record was not found."));
-    mockMvc.perform(get("/quotations/" + unknownId)).andExpect(status().isNotFound());
-    mockMvc.perform(get("/sales/" + unknownId)).andExpect(status().isNotFound());
-    perform(post("/clinical-records"), """
+    mockMvc.perform(get(ApiV1.path("/quotations/" + unknownId))).andExpect(status().isNotFound());
+    mockMvc.perform(get(ApiV1.path("/sales/" + unknownId))).andExpect(status().isNotFound());
+    perform(post(ApiV1.path("/clinical-records")), """
         {"patientId":"%s","appointmentId":"%s"}
         """.formatted(unknownId, unknownId))
         .andExpect(status().isNotFound())
@@ -169,19 +170,19 @@ class ClinicalCommercialApiTest {
   }
 
   private String createPatient() throws Exception {
-    return read(perform(post("/patients"), """
+    return read(perform(post(ApiV1.path("/patients")), """
         {"name":"Valeria Morales","email":"valeria.morales@optiflow.test","phone":"987654321",
          "password":"secret12"}
         """).andExpect(status().isCreated())).get("id").asText();
   }
 
   private String bookAppointment(String patientId) throws Exception {
-    JsonNode stores = read(mockMvc.perform(get("/optical-stores")).andExpect(status().isOk()));
+    JsonNode stores = read(mockMvc.perform(get(ApiV1.path("/optical-stores"))).andExpect(status().isOk()));
     String storeId = stores.get("opticalStores").get(0).get("id").asText();
     JsonNode availability = read(mockMvc.perform(
-        get("/optical-stores/" + storeId + "/availability")).andExpect(status().isOk()));
+        get(ApiV1.path("/optical-stores/" + storeId + "/availability"))).andExpect(status().isOk()));
     String timeSlotId = availability.get("timeSlots").get(0).get("id").asText();
-    return read(perform(post("/appointments"), """
+    return read(perform(post(ApiV1.path("/appointments")), """
         {"patientId":"%s","opticalStoreId":"%s","timeSlotId":"%s"}
         """.formatted(patientId, storeId, timeSlotId))
         .andExpect(status().isCreated())).get("id").asText();

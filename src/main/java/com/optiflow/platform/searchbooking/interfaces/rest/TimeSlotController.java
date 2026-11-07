@@ -10,10 +10,13 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.UUID;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import com.optiflow.platform.shared.interfaces.rest.ApiV1;
 
 @Tag(name = OpenApiTags.AVAILABILITY)
 @RestController
+@RequestMapping(ApiV1.BASE_PATH)
 public class TimeSlotController {
 
   private final OpticalStoreApplicationService opticalStoreApplicationService;
