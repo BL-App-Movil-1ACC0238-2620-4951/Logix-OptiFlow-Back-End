@@ -1,11 +1,11 @@
 package com.optiflow.platform.clinical.interfaces.rest;
 
-import com.optiflow.platform.clinical.application.queries.GetClinicalRecordByIdQuery;
-import com.optiflow.platform.clinical.application.queries.GetClinicalRecordsByPatientIdQuery;
-import com.optiflow.platform.clinical.application.queries.GetOpticalPrescriptionQuery;
+import com.optiflow.platform.clinical.domain.model.queries.GetClinicalRecordByIdQuery;
+import com.optiflow.platform.clinical.domain.model.queries.GetClinicalRecordsByPatientIdQuery;
+import com.optiflow.platform.clinical.domain.model.queries.GetOpticalPrescriptionQuery;
 import com.optiflow.platform.clinical.application.services.ClinicalRecordApplicationService;
-import com.optiflow.platform.clinical.domain.valueobjects.ClinicalRecordId;
-import com.optiflow.platform.clinical.domain.valueobjects.PatientId;
+import com.optiflow.platform.clinical.domain.model.valueobjects.ClinicalRecordId;
+import com.optiflow.platform.clinical.domain.model.valueobjects.PatientId;
 import com.optiflow.platform.clinical.interfaces.rest.assemblers.ClinicalCommercialResponseAssembler;
 import com.optiflow.platform.clinical.interfaces.rest.assemblers.FromGenerateOpticalPrescriptionRequestAssembler;
 import com.optiflow.platform.clinical.interfaces.rest.assemblers.FromRecordMedicalHistoryRequestAssembler;

@@ -1,15 +1,15 @@
 package com.optiflow.platform.clinical.infrastructure.persistence.jpa.mappers;
 
-import com.optiflow.platform.clinical.domain.entities.Quotation;
-import com.optiflow.platform.clinical.domain.entities.QuotationItem;
-import com.optiflow.platform.clinical.domain.valueobjects.ClinicalRecordId;
-import com.optiflow.platform.clinical.domain.valueobjects.Discount;
-import com.optiflow.platform.clinical.domain.valueobjects.DiscountType;
-import com.optiflow.platform.clinical.domain.valueobjects.Money;
-import com.optiflow.platform.clinical.domain.valueobjects.QuotationId;
-import com.optiflow.platform.clinical.domain.valueobjects.QuotationItemId;
-import com.optiflow.platform.clinical.domain.valueobjects.QuotationItemType;
-import com.optiflow.platform.clinical.domain.valueobjects.QuotationStatus;
+import com.optiflow.platform.clinical.domain.model.aggregates.Quotation;
+import com.optiflow.platform.clinical.domain.model.entities.QuotationItem;
+import com.optiflow.platform.clinical.domain.model.valueobjects.ClinicalRecordId;
+import com.optiflow.platform.clinical.domain.model.valueobjects.Discount;
+import com.optiflow.platform.clinical.domain.model.valueobjects.DiscountType;
+import com.optiflow.platform.clinical.domain.model.valueobjects.Money;
+import com.optiflow.platform.clinical.domain.model.valueobjects.QuotationId;
+import com.optiflow.platform.clinical.domain.model.valueobjects.QuotationItemId;
+import com.optiflow.platform.clinical.domain.model.valueobjects.QuotationItemType;
+import com.optiflow.platform.clinical.domain.model.valueobjects.QuotationStatus;
 import com.optiflow.platform.clinical.infrastructure.persistence.jpa.entities.QuotationEntity;
 import com.optiflow.platform.clinical.infrastructure.persistence.jpa.entities.QuotationItemEntity;
 import java.util.List;

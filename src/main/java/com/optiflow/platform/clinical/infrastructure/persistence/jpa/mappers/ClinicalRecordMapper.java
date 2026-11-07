@@ -1,12 +1,12 @@
 package com.optiflow.platform.clinical.infrastructure.persistence.jpa.mappers;
 
-import com.optiflow.platform.clinical.domain.entities.ClinicalRecord;
-import com.optiflow.platform.clinical.domain.entities.MedicalHistory;
-import com.optiflow.platform.clinical.domain.valueobjects.AppointmentId;
-import com.optiflow.platform.clinical.domain.valueobjects.ClinicalRecordId;
-import com.optiflow.platform.clinical.domain.valueobjects.ClinicalRecordStatus;
-import com.optiflow.platform.clinical.domain.valueobjects.OpticalPrescription;
-import com.optiflow.platform.clinical.domain.valueobjects.PatientId;
+import com.optiflow.platform.clinical.domain.model.aggregates.ClinicalRecord;
+import com.optiflow.platform.clinical.domain.model.entities.MedicalHistory;
+import com.optiflow.platform.clinical.domain.model.valueobjects.AppointmentId;
+import com.optiflow.platform.clinical.domain.model.valueobjects.ClinicalRecordId;
+import com.optiflow.platform.clinical.domain.model.valueobjects.ClinicalRecordStatus;
+import com.optiflow.platform.clinical.domain.model.valueobjects.OpticalPrescription;
+import com.optiflow.platform.clinical.domain.model.valueobjects.PatientId;
 import com.optiflow.platform.clinical.infrastructure.persistence.jpa.entities.ClinicalRecordEntity;
 import com.optiflow.platform.clinical.infrastructure.persistence.jpa.entities.MedicalHistoryEntity;
 import com.optiflow.platform.clinical.infrastructure.persistence.jpa.entities.OpticalPrescriptionEntity;

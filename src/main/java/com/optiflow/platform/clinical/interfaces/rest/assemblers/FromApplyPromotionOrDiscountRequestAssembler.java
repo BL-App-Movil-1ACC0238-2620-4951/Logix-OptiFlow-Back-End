@@ -1,9 +1,9 @@
 package com.optiflow.platform.clinical.interfaces.rest.assemblers;
 
-import com.optiflow.platform.clinical.application.commands.ApplyPromotionOrDiscountCommand;
-import com.optiflow.platform.clinical.domain.valueobjects.Discount;
-import com.optiflow.platform.clinical.domain.valueobjects.DiscountType;
-import com.optiflow.platform.clinical.domain.valueobjects.QuotationId;
+import com.optiflow.platform.clinical.domain.model.commands.ApplyPromotionOrDiscountCommand;
+import com.optiflow.platform.clinical.domain.model.valueobjects.Discount;
+import com.optiflow.platform.clinical.domain.model.valueobjects.DiscountType;
+import com.optiflow.platform.clinical.domain.model.valueobjects.QuotationId;
 import com.optiflow.platform.clinical.interfaces.rest.resources.ApplyPromotionOrDiscountRequest;
 import java.util.UUID;
 import org.springframework.stereotype.Component;

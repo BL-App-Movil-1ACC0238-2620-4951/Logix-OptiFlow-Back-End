@@ -1,9 +1,9 @@
 package com.optiflow.platform.clinical.infrastructure.persistence.jpa.repositories;
 
-import com.optiflow.platform.clinical.domain.entities.Sale;
+import com.optiflow.platform.clinical.domain.model.aggregates.Sale;
 import com.optiflow.platform.clinical.domain.repositories.SaleRepository;
-import com.optiflow.platform.clinical.domain.valueobjects.QuotationId;
-import com.optiflow.platform.clinical.domain.valueobjects.SaleId;
+import com.optiflow.platform.clinical.domain.model.valueobjects.QuotationId;
+import com.optiflow.platform.clinical.domain.model.valueobjects.SaleId;
 import com.optiflow.platform.clinical.infrastructure.persistence.jpa.mappers.SaleMapper;
 import java.util.Optional;
 import org.springframework.stereotype.Repository;

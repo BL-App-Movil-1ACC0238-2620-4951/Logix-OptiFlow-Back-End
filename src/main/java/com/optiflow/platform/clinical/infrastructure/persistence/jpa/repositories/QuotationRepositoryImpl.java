@@ -1,8 +1,8 @@
 package com.optiflow.platform.clinical.infrastructure.persistence.jpa.repositories;
 
-import com.optiflow.platform.clinical.domain.entities.Quotation;
+import com.optiflow.platform.clinical.domain.model.aggregates.Quotation;
 import com.optiflow.platform.clinical.domain.repositories.QuotationRepository;
-import com.optiflow.platform.clinical.domain.valueobjects.QuotationId;
+import com.optiflow.platform.clinical.domain.model.valueobjects.QuotationId;
 import com.optiflow.platform.clinical.infrastructure.persistence.jpa.mappers.QuotationMapper;
 import java.util.Optional;
 import org.springframework.stereotype.Repository;

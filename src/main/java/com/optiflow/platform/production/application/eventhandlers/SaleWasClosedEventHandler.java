@@ -1,6 +1,6 @@
 package com.optiflow.platform.production.application.eventhandlers;
 
-import com.optiflow.platform.clinical.domain.events.SaleWasClosed;
+import com.optiflow.platform.clinical.domain.model.events.SaleWasClosed;
 import com.optiflow.platform.production.application.commands.GenerateWorkOrderCommand;
 import com.optiflow.platform.production.application.services.GenerateWorkOrderHandler;
 import com.optiflow.platform.production.domain.valueobjects.SaleId;

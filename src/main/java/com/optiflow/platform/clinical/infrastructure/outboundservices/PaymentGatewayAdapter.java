@@ -1,8 +1,8 @@
 package com.optiflow.platform.clinical.infrastructure.outboundservices;
 
-import com.optiflow.platform.clinical.application.services.PaymentGatewayService;
-import com.optiflow.platform.clinical.domain.valueobjects.Money;
-import com.optiflow.platform.clinical.domain.valueobjects.PaymentMethod;
+import com.optiflow.platform.clinical.application.outboundservices.PaymentGatewayService;
+import com.optiflow.platform.clinical.domain.model.valueobjects.Money;
+import com.optiflow.platform.clinical.domain.model.valueobjects.PaymentMethod;
 import java.util.Locale;
 import java.util.UUID;
 import org.slf4j.Logger;

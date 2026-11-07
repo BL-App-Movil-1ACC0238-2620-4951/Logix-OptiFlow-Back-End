@@ -1,9 +1,9 @@
 package com.optiflow.platform.clinical.domain.repositories;
 
-import com.optiflow.platform.clinical.domain.entities.ClinicalRecord;
-import com.optiflow.platform.clinical.domain.valueobjects.AppointmentId;
-import com.optiflow.platform.clinical.domain.valueobjects.ClinicalRecordId;
-import com.optiflow.platform.clinical.domain.valueobjects.PatientId;
+import com.optiflow.platform.clinical.domain.model.aggregates.ClinicalRecord;
+import com.optiflow.platform.clinical.domain.model.valueobjects.AppointmentId;
+import com.optiflow.platform.clinical.domain.model.valueobjects.ClinicalRecordId;
+import com.optiflow.platform.clinical.domain.model.valueobjects.PatientId;
 import java.util.List;
 import java.util.Optional;
 

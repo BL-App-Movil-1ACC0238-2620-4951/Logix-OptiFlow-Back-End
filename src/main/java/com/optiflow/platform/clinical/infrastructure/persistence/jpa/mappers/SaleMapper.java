@@ -1,15 +1,15 @@
 package com.optiflow.platform.clinical.infrastructure.persistence.jpa.mappers;
 
-import com.optiflow.platform.clinical.domain.entities.ElectronicReceipt;
-import com.optiflow.platform.clinical.domain.entities.Sale;
-import com.optiflow.platform.clinical.domain.valueobjects.ElectronicReceiptId;
-import com.optiflow.platform.clinical.domain.valueobjects.Money;
-import com.optiflow.platform.clinical.domain.valueobjects.PatientId;
-import com.optiflow.platform.clinical.domain.valueobjects.Payment;
-import com.optiflow.platform.clinical.domain.valueobjects.PaymentMethod;
-import com.optiflow.platform.clinical.domain.valueobjects.QuotationId;
-import com.optiflow.platform.clinical.domain.valueobjects.SaleId;
-import com.optiflow.platform.clinical.domain.valueobjects.SaleStatus;
+import com.optiflow.platform.clinical.domain.model.entities.ElectronicReceipt;
+import com.optiflow.platform.clinical.domain.model.aggregates.Sale;
+import com.optiflow.platform.clinical.domain.model.valueobjects.ElectronicReceiptId;
+import com.optiflow.platform.clinical.domain.model.valueobjects.Money;
+import com.optiflow.platform.clinical.domain.model.valueobjects.PatientId;
+import com.optiflow.platform.clinical.domain.model.valueobjects.Payment;
+import com.optiflow.platform.clinical.domain.model.valueobjects.PaymentMethod;
+import com.optiflow.platform.clinical.domain.model.valueobjects.QuotationId;
+import com.optiflow.platform.clinical.domain.model.valueobjects.SaleId;
+import com.optiflow.platform.clinical.domain.model.valueobjects.SaleStatus;
 import com.optiflow.platform.clinical.infrastructure.persistence.jpa.entities.ElectronicReceiptEntity;
 import com.optiflow.platform.clinical.infrastructure.persistence.jpa.entities.SaleEntity;
 import org.springframework.stereotype.Component;

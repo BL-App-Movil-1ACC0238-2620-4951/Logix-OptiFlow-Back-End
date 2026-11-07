@@ -1,12 +1,12 @@
 package com.optiflow.platform.clinical.interfaces.rest;
 
-import com.optiflow.platform.clinical.application.commands.CloseSaleCommand;
-import com.optiflow.platform.clinical.application.commands.RegisterSaleCommand;
-import com.optiflow.platform.clinical.application.queries.GetSaleByIdQuery;
+import com.optiflow.platform.clinical.domain.model.commands.CloseSaleCommand;
+import com.optiflow.platform.clinical.domain.model.commands.RegisterSaleCommand;
+import com.optiflow.platform.clinical.domain.model.queries.GetSaleByIdQuery;
 import com.optiflow.platform.clinical.application.services.SaleApplicationService;
-import com.optiflow.platform.clinical.domain.valueobjects.QuotationId;
-import com.optiflow.platform.clinical.domain.valueobjects.SaleId;
-import com.optiflow.platform.clinical.domain.valueobjects.SaleStatus;
+import com.optiflow.platform.clinical.domain.model.valueobjects.QuotationId;
+import com.optiflow.platform.clinical.domain.model.valueobjects.SaleId;
+import com.optiflow.platform.clinical.domain.model.valueobjects.SaleStatus;
 import com.optiflow.platform.clinical.interfaces.rest.assemblers.ClinicalCommercialResponseAssembler;
 import com.optiflow.platform.clinical.interfaces.rest.assemblers.FromRecordPaymentRequestAssembler;
 import com.optiflow.platform.clinical.interfaces.rest.resources.RecordPaymentRequest;

@@ -1,9 +1,9 @@
 package com.optiflow.platform.clinical.infrastructure.outboundservices;
 
-import com.optiflow.platform.clinical.application.services.BookedAppointment;
-import com.optiflow.platform.clinical.application.services.ExternalAppointmentService;
-import com.optiflow.platform.clinical.domain.valueobjects.AppointmentId;
-import com.optiflow.platform.clinical.domain.valueobjects.PatientId;
+import com.optiflow.platform.clinical.application.outboundservices.BookedAppointment;
+import com.optiflow.platform.clinical.application.outboundservices.ExternalAppointmentService;
+import com.optiflow.platform.clinical.domain.model.valueobjects.AppointmentId;
+import com.optiflow.platform.clinical.domain.model.valueobjects.PatientId;
 import com.optiflow.platform.searchbooking.domain.model.queries.GetAppointmentQuery;
 import com.optiflow.platform.searchbooking.application.services.AppointmentApplicationService;
 import com.optiflow.platform.searchbooking.domain.model.aggregates.Appointment;

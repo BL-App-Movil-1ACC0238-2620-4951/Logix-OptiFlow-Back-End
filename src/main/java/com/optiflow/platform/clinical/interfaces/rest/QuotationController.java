@@ -1,11 +1,11 @@
 package com.optiflow.platform.clinical.interfaces.rest;
 
-import com.optiflow.platform.clinical.application.commands.ApproveQuotationCommand;
-import com.optiflow.platform.clinical.application.commands.RejectQuotationCommand;
-import com.optiflow.platform.clinical.application.queries.GetQuotationByIdQuery;
+import com.optiflow.platform.clinical.domain.model.commands.ApproveQuotationCommand;
+import com.optiflow.platform.clinical.domain.model.commands.RejectQuotationCommand;
+import com.optiflow.platform.clinical.domain.model.queries.GetQuotationByIdQuery;
 import com.optiflow.platform.clinical.application.services.QuotationApplicationService;
-import com.optiflow.platform.clinical.domain.valueobjects.QuotationId;
-import com.optiflow.platform.clinical.domain.valueobjects.QuotationStatus;
+import com.optiflow.platform.clinical.domain.model.valueobjects.QuotationId;
+import com.optiflow.platform.clinical.domain.model.valueobjects.QuotationStatus;
 import com.optiflow.platform.clinical.interfaces.rest.assemblers.ClinicalCommercialResponseAssembler;
 import com.optiflow.platform.clinical.interfaces.rest.assemblers.FromApplyPromotionOrDiscountRequestAssembler;
 import com.optiflow.platform.clinical.interfaces.rest.assemblers.FromGenerateQuotationRequestAssembler;
