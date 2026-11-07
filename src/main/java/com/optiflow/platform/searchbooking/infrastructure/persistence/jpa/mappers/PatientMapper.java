@@ -17,6 +17,7 @@ public class PatientMapper {
         new Name(entity.getFullName()),
         new EmailAddress(entity.getEmail()),
         new PhoneNumber(entity.getPhone()),
+        entity.getBirthDate(),
         entity.getCreatedAt());
   }
 
@@ -27,6 +28,7 @@ public class PatientMapper {
     entity.setEmail(patient.email().value());
     entity.setPhone(patient.phone().value());
     entity.setPasswordHash(passwordHash);
+    entity.setBirthDate(patient.birthDate().orElse(null));
     entity.setCreatedAt(patient.createdAt());
     return entity;
   }

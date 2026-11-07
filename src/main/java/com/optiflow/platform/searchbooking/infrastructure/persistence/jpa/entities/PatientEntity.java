@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Entity
@@ -25,6 +26,9 @@ public class PatientEntity {
 
   @Column(name = "password_hash", nullable = false, length = 100)
   private String passwordHash;
+
+  @Column(name = "birth_date")
+  private LocalDate birthDate;
 
   @Column(name = "created_at", nullable = false)
   private Instant createdAt;
@@ -67,6 +71,14 @@ public class PatientEntity {
 
   public void setPasswordHash(String passwordHash) {
     this.passwordHash = passwordHash;
+  }
+
+  public LocalDate getBirthDate() {
+    return birthDate;
+  }
+
+  public void setBirthDate(LocalDate birthDate) {
+    this.birthDate = birthDate;
   }
 
   public Instant getCreatedAt() {

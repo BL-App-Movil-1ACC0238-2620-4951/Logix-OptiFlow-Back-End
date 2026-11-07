@@ -28,6 +28,7 @@ public class SearchBookingResponseAssembler {
         patient.name().value(),
         patient.email().value(),
         patient.phone().value(),
+        patient.birthDate().orElse(null),
         patient.createdAt());
   }
 

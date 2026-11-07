@@ -47,7 +47,12 @@ public class RegisterPatientCommandHandler {
       throw new DomainException("This email is already registered as staff.", 409);
     });
     Instant now = clock.instant();
-    Patient patient = patientFactory.create(command.name(), command.email(), command.phone(), now);
+    Patient patient = patientFactory.create(
+        command.name(),
+        command.email(),
+        command.phone(),
+        command.birthDate().orElse(null),
+        now);
     patientRepository.save(patient, authenticationPort.hash(command.password()));
     eventPublisher.publish(new PatientRegistered(patient.id(), patient.email(), now));
     return patient;
