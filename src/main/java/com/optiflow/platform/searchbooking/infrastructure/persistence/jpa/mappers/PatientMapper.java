@@ -1,10 +1,10 @@
 package com.optiflow.platform.searchbooking.infrastructure.persistence.jpa.mappers;
 
-import com.optiflow.platform.searchbooking.domain.entities.Patient;
-import com.optiflow.platform.searchbooking.domain.valueobjects.EmailAddress;
-import com.optiflow.platform.searchbooking.domain.valueobjects.Name;
-import com.optiflow.platform.searchbooking.domain.valueobjects.PatientId;
-import com.optiflow.platform.searchbooking.domain.valueobjects.PhoneNumber;
+import com.optiflow.platform.searchbooking.domain.model.entities.Patient;
+import com.optiflow.platform.searchbooking.domain.model.valueobjects.EmailAddress;
+import com.optiflow.platform.searchbooking.domain.model.valueobjects.Name;
+import com.optiflow.platform.searchbooking.domain.model.valueobjects.PatientId;
+import com.optiflow.platform.searchbooking.domain.model.valueobjects.PhoneNumber;
 import com.optiflow.platform.searchbooking.infrastructure.persistence.jpa.entities.PatientEntity;
 import org.springframework.stereotype.Component;
 

@@ -1,7 +1,7 @@
 package com.optiflow.platform.searchbooking.interfaces.rest.assemblers;
 
-import com.optiflow.platform.searchbooking.application.commands.LoginCommand;
-import com.optiflow.platform.searchbooking.domain.valueobjects.EmailAddress;
+import com.optiflow.platform.searchbooking.domain.model.commands.LoginCommand;
+import com.optiflow.platform.searchbooking.domain.model.valueobjects.EmailAddress;
 import com.optiflow.platform.searchbooking.interfaces.rest.resources.LoginRequest;
 import org.springframework.stereotype.Component;
 

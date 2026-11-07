@@ -1,9 +1,9 @@
 package com.optiflow.platform.searchbooking.domain.repositories;
 
-import com.optiflow.platform.searchbooking.domain.entities.StaffMember;
-import com.optiflow.platform.searchbooking.domain.valueobjects.EmailAddress;
-import com.optiflow.platform.searchbooking.domain.valueobjects.OpticalStoreId;
-import com.optiflow.platform.searchbooking.domain.valueobjects.StaffMemberId;
+import com.optiflow.platform.searchbooking.domain.model.entities.StaffMember;
+import com.optiflow.platform.searchbooking.domain.model.valueobjects.EmailAddress;
+import com.optiflow.platform.searchbooking.domain.model.valueobjects.OpticalStoreId;
+import com.optiflow.platform.searchbooking.domain.model.valueobjects.StaffMemberId;
 import java.util.List;
 import java.util.Optional;
 

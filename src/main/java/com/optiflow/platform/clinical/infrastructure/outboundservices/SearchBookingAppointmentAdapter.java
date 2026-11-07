@@ -4,10 +4,10 @@ import com.optiflow.platform.clinical.application.services.BookedAppointment;
 import com.optiflow.platform.clinical.application.services.ExternalAppointmentService;
 import com.optiflow.platform.clinical.domain.valueobjects.AppointmentId;
 import com.optiflow.platform.clinical.domain.valueobjects.PatientId;
-import com.optiflow.platform.searchbooking.application.queries.GetAppointmentQuery;
+import com.optiflow.platform.searchbooking.domain.model.queries.GetAppointmentQuery;
 import com.optiflow.platform.searchbooking.application.services.AppointmentApplicationService;
-import com.optiflow.platform.searchbooking.domain.entities.Appointment;
-import com.optiflow.platform.searchbooking.domain.valueobjects.AppointmentStatus;
+import com.optiflow.platform.searchbooking.domain.model.aggregates.Appointment;
+import com.optiflow.platform.searchbooking.domain.model.valueobjects.AppointmentStatus;
 import com.optiflow.platform.shared.domain.exceptions.DomainException;
 import java.util.Optional;
 import org.springframework.stereotype.Component;
@@ -30,7 +30,7 @@ public class SearchBookingAppointmentAdapter implements ExternalAppointmentServi
   public Optional<BookedAppointment> findById(AppointmentId appointmentId) {
     try {
       Appointment appointment = appointmentApplicationService.getById(new GetAppointmentQuery(
-          com.optiflow.platform.searchbooking.domain.valueobjects.AppointmentId.of(
+          com.optiflow.platform.searchbooking.domain.model.valueobjects.AppointmentId.of(
               appointmentId.value()))).appointment();
       return Optional.of(new BookedAppointment(
           appointmentId,

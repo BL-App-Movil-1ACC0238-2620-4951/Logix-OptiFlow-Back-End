@@ -2,7 +2,7 @@ package com.optiflow.platform.notification.application.eventhandlers;
 
 import com.optiflow.platform.notification.application.commands.ScheduleAppointmentReminderCommand;
 import com.optiflow.platform.notification.application.services.ScheduleAppointmentReminderHandler;
-import com.optiflow.platform.searchbooking.domain.events.AppointmentBooked;
+import com.optiflow.platform.searchbooking.domain.model.events.AppointmentBooked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;

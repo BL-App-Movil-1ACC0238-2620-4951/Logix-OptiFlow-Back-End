@@ -1,8 +1,8 @@
 package com.optiflow.platform.searchbooking.domain.repositories;
 
-import com.optiflow.platform.searchbooking.domain.entities.TimeSlot;
-import com.optiflow.platform.searchbooking.domain.valueobjects.OpticalStoreId;
-import com.optiflow.platform.searchbooking.domain.valueobjects.TimeSlotId;
+import com.optiflow.platform.searchbooking.domain.model.entities.TimeSlot;
+import com.optiflow.platform.searchbooking.domain.model.valueobjects.OpticalStoreId;
+import com.optiflow.platform.searchbooking.domain.model.valueobjects.TimeSlotId;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;

@@ -1,11 +1,11 @@
 package com.optiflow.platform.searchbooking.infrastructure.persistence.jpa.mappers;
 
-import com.optiflow.platform.searchbooking.domain.entities.Appointment;
-import com.optiflow.platform.searchbooking.domain.valueobjects.AppointmentId;
-import com.optiflow.platform.searchbooking.domain.valueobjects.AppointmentStatus;
-import com.optiflow.platform.searchbooking.domain.valueobjects.OpticalStoreId;
-import com.optiflow.platform.searchbooking.domain.valueobjects.PatientId;
-import com.optiflow.platform.searchbooking.domain.valueobjects.TimeSlotId;
+import com.optiflow.platform.searchbooking.domain.model.aggregates.Appointment;
+import com.optiflow.platform.searchbooking.domain.model.valueobjects.AppointmentId;
+import com.optiflow.platform.searchbooking.domain.model.valueobjects.AppointmentStatus;
+import com.optiflow.platform.searchbooking.domain.model.valueobjects.OpticalStoreId;
+import com.optiflow.platform.searchbooking.domain.model.valueobjects.PatientId;
+import com.optiflow.platform.searchbooking.domain.model.valueobjects.TimeSlotId;
 import com.optiflow.platform.searchbooking.infrastructure.persistence.jpa.entities.AppointmentEntity;
 import org.springframework.stereotype.Component;
 

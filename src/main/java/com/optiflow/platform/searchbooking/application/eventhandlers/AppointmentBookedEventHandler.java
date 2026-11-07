@@ -1,6 +1,6 @@
 package com.optiflow.platform.searchbooking.application.eventhandlers;
 
-import com.optiflow.platform.searchbooking.domain.events.AppointmentBooked;
+import com.optiflow.platform.searchbooking.domain.model.events.AppointmentBooked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.event.EventListener;

@@ -1,17 +1,25 @@
 package com.optiflow.platform.searchbooking.application.services;
 
-import com.optiflow.platform.searchbooking.application.commands.PublishAvailableTimeSlotsCommand;
-import com.optiflow.platform.searchbooking.application.commands.RateOpticalStoreCommand;
-import com.optiflow.platform.searchbooking.application.commands.SaveFavoriteOpticalStoreCommand;
-import com.optiflow.platform.searchbooking.application.queries.FilterOpticalStoresQuery;
-import com.optiflow.platform.searchbooking.application.queries.GetAvailableTimeSlotsQuery;
-import com.optiflow.platform.searchbooking.application.queries.GetNearbyOpticalStoresQuery;
-import com.optiflow.platform.searchbooking.application.queries.GetOpticalStoreQuery;
-import com.optiflow.platform.searchbooking.domain.entities.FavoriteStore;
-import com.optiflow.platform.searchbooking.domain.entities.OpticalStore;
-import com.optiflow.platform.searchbooking.domain.entities.TimeSlot;
+import com.optiflow.platform.searchbooking.domain.model.commands.PublishAvailableTimeSlotsCommand;
+import com.optiflow.platform.searchbooking.domain.model.commands.RateOpticalStoreCommand;
+import com.optiflow.platform.searchbooking.domain.model.commands.SaveFavoriteOpticalStoreCommand;
+import com.optiflow.platform.searchbooking.domain.model.queries.FilterOpticalStoresQuery;
+import com.optiflow.platform.searchbooking.domain.model.queries.GetAvailableTimeSlotsQuery;
+import com.optiflow.platform.searchbooking.domain.model.queries.GetNearbyOpticalStoresQuery;
+import com.optiflow.platform.searchbooking.domain.model.queries.GetOpticalStoreQuery;
+import com.optiflow.platform.searchbooking.domain.model.entities.FavoriteStore;
+import com.optiflow.platform.searchbooking.domain.model.entities.OpticalStore;
+import com.optiflow.platform.searchbooking.domain.model.entities.TimeSlot;
 import java.util.List;
 import org.springframework.stereotype.Service;
+import com.optiflow.platform.searchbooking.application.commandhandlers.PublishAvailableTimeSlotsCommandHandler;
+import com.optiflow.platform.searchbooking.application.commandhandlers.RateOpticalStoreCommandHandler;
+import com.optiflow.platform.searchbooking.application.commandhandlers.SaveFavoriteOpticalStoreCommandHandler;
+import com.optiflow.platform.searchbooking.application.queryservices.FilterOpticalStoresQueryService;
+import com.optiflow.platform.searchbooking.application.queryservices.GetAvailableTimeSlotsQueryService;
+import com.optiflow.platform.searchbooking.application.queryservices.GetNearbyOpticalStoresQueryService;
+import com.optiflow.platform.searchbooking.application.queryservices.GetOpticalStoreQueryService;
+import com.optiflow.platform.searchbooking.application.results.RatingResult;
 
 @Service
 public class OpticalStoreApplicationService {

@@ -17,9 +17,9 @@ import com.optiflow.platform.production.application.services.ExternalSaleService
 import com.optiflow.platform.production.domain.valueobjects.OpticalStoreId;
 import com.optiflow.platform.production.domain.valueobjects.PatientId;
 import com.optiflow.platform.production.domain.valueobjects.SaleId;
-import com.optiflow.platform.searchbooking.application.queries.GetAppointmentQuery;
+import com.optiflow.platform.searchbooking.domain.model.queries.GetAppointmentQuery;
 import com.optiflow.platform.searchbooking.application.services.AppointmentApplicationService;
-import com.optiflow.platform.searchbooking.domain.valueobjects.AppointmentId;
+import com.optiflow.platform.searchbooking.domain.model.valueobjects.AppointmentId;
 import com.optiflow.platform.shared.domain.exceptions.DomainException;
 import java.math.BigDecimal;
 import java.util.List;

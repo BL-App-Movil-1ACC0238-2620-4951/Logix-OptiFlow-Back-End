@@ -1,6 +1,6 @@
 package com.optiflow.platform.searchbooking.application.eventhandlers;
 
-import com.optiflow.platform.searchbooking.domain.events.AppointmentCompleted;
+import com.optiflow.platform.searchbooking.domain.model.events.AppointmentCompleted;
 import com.optiflow.platform.searchbooking.infrastructure.outboundservices.NotificationIntegrationAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

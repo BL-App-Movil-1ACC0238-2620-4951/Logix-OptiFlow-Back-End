@@ -1,9 +1,9 @@
 package com.optiflow.platform.searchbooking.interfaces.rest;
 
-import com.optiflow.platform.searchbooking.application.queries.GetPatientAppointmentsQuery;
+import com.optiflow.platform.searchbooking.domain.model.queries.GetPatientAppointmentsQuery;
 import com.optiflow.platform.searchbooking.application.services.AppointmentApplicationService;
 import com.optiflow.platform.searchbooking.application.services.PatientApplicationService;
-import com.optiflow.platform.searchbooking.domain.valueobjects.PatientId;
+import com.optiflow.platform.searchbooking.domain.model.valueobjects.PatientId;
 import com.optiflow.platform.searchbooking.interfaces.rest.assemblers.FromRegisterPatientRequestAssembler;
 import com.optiflow.platform.searchbooking.interfaces.rest.assemblers.SearchBookingResponseAssembler;
 import com.optiflow.platform.searchbooking.interfaces.rest.resources.AppointmentResponse;

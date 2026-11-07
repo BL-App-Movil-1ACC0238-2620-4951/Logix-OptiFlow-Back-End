@@ -1,10 +1,10 @@
 package com.optiflow.platform.searchbooking.interfaces.rest;
 
-import com.optiflow.platform.searchbooking.application.commands.AssignStaffRoleCommand;
-import com.optiflow.platform.searchbooking.application.queries.GetStaffMembersQuery;
+import com.optiflow.platform.searchbooking.domain.model.commands.AssignStaffRoleCommand;
+import com.optiflow.platform.searchbooking.domain.model.queries.GetStaffMembersQuery;
 import com.optiflow.platform.searchbooking.application.services.StaffMemberApplicationService;
-import com.optiflow.platform.searchbooking.domain.valueobjects.OpticalStoreId;
-import com.optiflow.platform.searchbooking.domain.valueobjects.StaffMemberId;
+import com.optiflow.platform.searchbooking.domain.model.valueobjects.OpticalStoreId;
+import com.optiflow.platform.searchbooking.domain.model.valueobjects.StaffMemberId;
 import com.optiflow.platform.searchbooking.interfaces.rest.assemblers.FromRegisterStaffMemberRequestAssembler;
 import com.optiflow.platform.searchbooking.interfaces.rest.assemblers.SearchBookingResponseAssembler;
 import com.optiflow.platform.searchbooking.interfaces.rest.resources.RegisterStaffMemberRequest;

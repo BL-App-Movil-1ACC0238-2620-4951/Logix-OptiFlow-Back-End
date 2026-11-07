@@ -1,9 +1,9 @@
 package com.optiflow.platform.searchbooking.interfaces.rest;
 
-import com.optiflow.platform.searchbooking.application.queries.GetNearbyOpticalStoresQuery;
-import com.optiflow.platform.searchbooking.application.queries.GetOpticalStoreQuery;
+import com.optiflow.platform.searchbooking.domain.model.queries.GetNearbyOpticalStoresQuery;
+import com.optiflow.platform.searchbooking.domain.model.queries.GetOpticalStoreQuery;
 import com.optiflow.platform.searchbooking.application.services.OpticalStoreApplicationService;
-import com.optiflow.platform.searchbooking.domain.valueobjects.OpticalStoreId;
+import com.optiflow.platform.searchbooking.domain.model.valueobjects.OpticalStoreId;
 import com.optiflow.platform.searchbooking.interfaces.rest.assemblers.FromOpticalStoreQueryParamsAssembler;
 import com.optiflow.platform.searchbooking.interfaces.rest.assemblers.SearchBookingResponseAssembler;
 import com.optiflow.platform.searchbooking.interfaces.rest.resources.OpticalStoreQueryParams;

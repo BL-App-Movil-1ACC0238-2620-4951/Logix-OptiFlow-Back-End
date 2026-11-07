@@ -4,7 +4,7 @@ import com.optiflow.platform.clinical.application.commands.ExaminePatientCommand
 import com.optiflow.platform.clinical.application.services.ExaminePatientHandler;
 import com.optiflow.platform.clinical.domain.valueobjects.AppointmentId;
 import com.optiflow.platform.clinical.domain.valueobjects.PatientId;
-import com.optiflow.platform.searchbooking.domain.events.AppointmentBooked;
+import com.optiflow.platform.searchbooking.domain.model.events.AppointmentBooked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;

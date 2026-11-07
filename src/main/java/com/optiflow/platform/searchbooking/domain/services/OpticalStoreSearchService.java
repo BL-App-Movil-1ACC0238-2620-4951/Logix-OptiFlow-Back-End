@@ -1,7 +1,7 @@
 package com.optiflow.platform.searchbooking.domain.services;
 
-import com.optiflow.platform.searchbooking.domain.entities.OpticalStore;
-import com.optiflow.platform.searchbooking.domain.valueobjects.StoreStatus;
+import com.optiflow.platform.searchbooking.domain.model.entities.OpticalStore;
+import com.optiflow.platform.searchbooking.domain.model.valueobjects.StoreStatus;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Locale;

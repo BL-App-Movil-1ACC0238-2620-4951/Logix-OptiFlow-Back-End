@@ -1,13 +1,13 @@
 package com.optiflow.platform.searchbooking.interfaces.rest;
 
-import com.optiflow.platform.searchbooking.application.commands.CancelAppointmentCommand;
-import com.optiflow.platform.searchbooking.application.commands.CompleteAppointmentCommand;
-import com.optiflow.platform.searchbooking.application.queries.GetAppointmentQuery;
-import com.optiflow.platform.searchbooking.application.queries.GetAppointmentsByOpticalStoreQuery;
+import com.optiflow.platform.searchbooking.domain.model.commands.CancelAppointmentCommand;
+import com.optiflow.platform.searchbooking.domain.model.commands.CompleteAppointmentCommand;
+import com.optiflow.platform.searchbooking.domain.model.queries.GetAppointmentQuery;
+import com.optiflow.platform.searchbooking.domain.model.queries.GetAppointmentsByOpticalStoreQuery;
 import com.optiflow.platform.searchbooking.application.services.AppointmentApplicationService;
-import com.optiflow.platform.searchbooking.domain.valueobjects.AppointmentId;
-import com.optiflow.platform.searchbooking.domain.valueobjects.AppointmentStatus;
-import com.optiflow.platform.searchbooking.domain.valueobjects.OpticalStoreId;
+import com.optiflow.platform.searchbooking.domain.model.valueobjects.AppointmentId;
+import com.optiflow.platform.searchbooking.domain.model.valueobjects.AppointmentStatus;
+import com.optiflow.platform.searchbooking.domain.model.valueobjects.OpticalStoreId;
 import com.optiflow.platform.searchbooking.interfaces.rest.assemblers.FromBookAppointmentRequestAssembler;
 import com.optiflow.platform.searchbooking.interfaces.rest.assemblers.SearchBookingResponseAssembler;
 import com.optiflow.platform.searchbooking.interfaces.rest.resources.AppointmentResponse;
