@@ -1,11 +1,13 @@
 package com.optiflow.platform.searchbooking.interfaces.rest;
 
+import static org.hamcrest.Matchers.greaterThan;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.optiflow.platform.shared.interfaces.rest.ApiV1;
 import java.time.LocalDate;
@@ -39,12 +41,14 @@ class SearchAndBookingApiTest {
     String storeId = objectMapper.readTree(stores.getResponse().getContentAsString())
         .get(0).get("id").asText();
 
-    MvcResult availability = mockMvc.perform(get(ApiV1.path("/optical-stores/" + storeId + "/time-slots")))
+    String timeSlotsPath = ApiV1.path("/optical-stores/" + storeId + "/time-slots");
+    MvcResult availability = mockMvc.perform(get(timeSlotsPath))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.length()").value(3))
+        .andExpect(jsonPath("$.length()").value(greaterThan(0)))
         .andReturn();
-    String timeSlotId = objectMapper.readTree(availability.getResponse().getContentAsString())
-        .get(0).get("id").asText();
+    JsonNode availableSlots =
+        objectMapper.readTree(availability.getResponse().getContentAsString());
+    String timeSlotId = availableSlots.get(0).get("id").asText();
 
     MvcResult patient = mockMvc.perform(post(ApiV1.path("/patients"))
             .contentType(MediaType.APPLICATION_JSON)
@@ -63,6 +67,10 @@ class SearchAndBookingApiTest {
     mockMvc.perform(post(ApiV1.path("/appointments")).contentType(MediaType.APPLICATION_JSON).content(booking))
         .andExpect(status().isCreated())
         .andExpect(jsonPath("$.status").value("CONFIRMED"));
+
+    mockMvc.perform(get(timeSlotsPath))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.length()").value(availableSlots.size() - 1));
 
     mockMvc.perform(post(ApiV1.path("/appointments")).contentType(MediaType.APPLICATION_JSON).content(booking))
         .andExpect(status().isConflict())
