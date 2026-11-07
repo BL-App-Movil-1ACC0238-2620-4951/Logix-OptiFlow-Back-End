@@ -16,6 +16,8 @@ import com.optiflow.platform.clinical.interfaces.rest.resources.OpticalPrescript
 import com.optiflow.platform.clinical.interfaces.rest.resources.RecordMedicalHistoryRequest;
 import com.optiflow.platform.clinical.interfaces.rest.resources.RegisterClinicalRecordRequest;
 import com.optiflow.platform.shared.infrastructure.documentation.openapi.configuration.OpenApiTags;
+import com.optiflow.platform.shared.infrastructure.security.AuthenticatedUser;
+import com.optiflow.platform.shared.infrastructure.security.PatientDataAccessGuard;
 import com.optiflow.platform.shared.interfaces.rest.ApiV1;
 import com.optiflow.platform.shared.interfaces.rest.CreatedResourceResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -23,6 +25,7 @@ import jakarta.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -41,18 +44,21 @@ public class ClinicalRecordController {
   private final FromRecordMedicalHistoryRequestAssembler medicalHistoryAssembler;
   private final FromGenerateOpticalPrescriptionRequestAssembler prescriptionAssembler;
   private final ClinicalCommercialResponseAssembler responseAssembler;
+  private final PatientDataAccessGuard patientDataAccessGuard;
 
   public ClinicalRecordController(
       ClinicalRecordApplicationService clinicalRecordApplicationService,
       FromRegisterClinicalRecordRequestAssembler registerAssembler,
       FromRecordMedicalHistoryRequestAssembler medicalHistoryAssembler,
       FromGenerateOpticalPrescriptionRequestAssembler prescriptionAssembler,
-      ClinicalCommercialResponseAssembler responseAssembler) {
+      ClinicalCommercialResponseAssembler responseAssembler,
+      PatientDataAccessGuard patientDataAccessGuard) {
     this.clinicalRecordApplicationService = clinicalRecordApplicationService;
     this.registerAssembler = registerAssembler;
     this.medicalHistoryAssembler = medicalHistoryAssembler;
     this.prescriptionAssembler = prescriptionAssembler;
     this.responseAssembler = responseAssembler;
+    this.patientDataAccessGuard = patientDataAccessGuard;
   }
 
   @PostMapping("/clinical-records")
@@ -70,7 +76,9 @@ public class ClinicalRecordController {
   }
 
   @GetMapping("/patients/{patientId}/clinical-records")
-  public List<ClinicalRecordResponse> findByPatient(@PathVariable UUID patientId) {
+  public List<ClinicalRecordResponse> findByPatient(
+      @PathVariable UUID patientId, @AuthenticationPrincipal AuthenticatedUser user) {
+    patientDataAccessGuard.ensureSelfPatientAccess(user, patientId);
     return clinicalRecordApplicationService
         .findByPatient(new GetClinicalRecordsByPatientIdQuery(PatientId.of(patientId)))
         .stream()

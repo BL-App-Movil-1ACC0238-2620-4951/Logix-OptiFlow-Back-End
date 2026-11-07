@@ -18,6 +18,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Profile("!test")
 public class SecurityConfiguration {
 
+  private static final String PATIENT = "PATIENT";
+  private static final String OPTOMETRIST = "OPTOMETRIST";
+  private static final String SALES_ADVISOR = "SALES_ADVISOR";
+  private static final String TECHNICIAN = "TECHNICIAN";
+  private static final String ADMIN = "ADMIN";
+
   private final JwtAuthenticationFilter jwtAuthenticationFilter;
   private final RestAuthenticationEntryPoint authenticationEntryPoint;
   private final RestAccessDeniedHandler accessDeniedHandler;
@@ -49,6 +55,30 @@ public class SecurityConfiguration {
             .requestMatchers("/api/v1/staff-members/**").hasRole("ADMIN")
             .requestMatchers(HttpMethod.POST, "/api/v1/optical-stores/*/time-slots")
             .hasRole("ADMIN")
+            // Search & Booking
+            .requestMatchers(HttpMethod.POST, "/api/v1/appointments").hasAnyRole(PATIENT, ADMIN)
+            .requestMatchers(HttpMethod.GET, "/api/v1/appointments").hasAnyRole(OPTOMETRIST, ADMIN)
+            .requestMatchers("/api/v1/appointments/**").hasAnyRole(PATIENT, OPTOMETRIST, ADMIN)
+            .requestMatchers("/api/v1/patients/*/appointments", "/api/v1/patients/*/favorites")
+            .hasAnyRole(PATIENT, ADMIN)
+            .requestMatchers(HttpMethod.POST, "/api/v1/optical-stores/*/ratings")
+            .hasAnyRole(PATIENT, ADMIN)
+            // Clinical & Commercial
+            .requestMatchers(HttpMethod.GET, "/api/v1/clinical-records/**",
+                "/api/v1/patients/*/clinical-records")
+            .hasAnyRole(PATIENT, OPTOMETRIST, SALES_ADVISOR, ADMIN)
+            .requestMatchers("/api/v1/clinical-records/**").hasAnyRole(OPTOMETRIST, ADMIN)
+            .requestMatchers(HttpMethod.GET, "/api/v1/quotations/*", "/api/v1/sales/*")
+            .hasAnyRole(PATIENT, SALES_ADVISOR, ADMIN)
+            .requestMatchers("/api/v1/quotations/**", "/api/v1/sales/**")
+            .hasAnyRole(SALES_ADVISOR, ADMIN)
+            // Production & Tracking
+            .requestMatchers(HttpMethod.GET, "/api/v1/patients/*/work-orders")
+            .hasAnyRole(PATIENT, TECHNICIAN, ADMIN)
+            .requestMatchers(HttpMethod.POST, "/api/v1/work-orders")
+            .hasAnyRole(TECHNICIAN, SALES_ADVISOR, ADMIN)
+            .requestMatchers("/api/v1/work-orders/**", "/api/v1/technicians", "/api/v1/laboratories")
+            .hasAnyRole(TECHNICIAN, ADMIN)
             .anyRequest()
             .authenticated())
         .exceptionHandling(handler -> handler
