@@ -113,7 +113,9 @@ class ClinicalCommercialApiTest {
         {"quotationId":"%s"}
         """.formatted(quotationId);
     perform(post(ApiV1.path("/sales")), sale).andExpect(status().isConflict());
-    mockMvc.perform(patch(ApiV1.path("/quotations/" + quotationId + "/approve")))
+    mockMvc.perform(patch(ApiV1.path("/quotations/" + quotationId + "/status"))
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{\"status\":\"APPROVED\"}"))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.status").value("APPROVED"));
 
@@ -139,7 +141,9 @@ class ClinicalCommercialApiTest {
         .andExpect(jsonPath("$.status").value("PAID"))
         .andExpect(jsonPath("$.payment.transactionReference").value("YAPE-778899"));
 
-    mockMvc.perform(patch(ApiV1.path("/sales/" + saleId + "/close")))
+    mockMvc.perform(patch(ApiV1.path("/sales/" + saleId + "/status"))
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{\"status\":\"CLOSED\"}"))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.status").value("CLOSED"))
         .andExpect(jsonPath("$.receipt.receiptNumber").value("B001-00000001"))
@@ -148,7 +152,10 @@ class ClinicalCommercialApiTest {
     mockMvc.perform(get(ApiV1.path("/sales/" + saleId)))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.receipt.receiptNumber").value("B001-00000001"));
-    mockMvc.perform(patch(ApiV1.path("/sales/" + saleId + "/close"))).andExpect(status().isConflict());
+    mockMvc.perform(patch(ApiV1.path("/sales/" + saleId + "/status"))
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{\"status\":\"CLOSED\"}"))
+        .andExpect(status().isConflict());
 
     assertEquals(1, applicationEvents.stream(SaleWasClosed.class).count());
   }

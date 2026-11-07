@@ -5,14 +5,18 @@ import com.optiflow.platform.clinical.application.commands.RejectQuotationComman
 import com.optiflow.platform.clinical.application.queries.GetQuotationByIdQuery;
 import com.optiflow.platform.clinical.application.services.QuotationApplicationService;
 import com.optiflow.platform.clinical.domain.valueobjects.QuotationId;
+import com.optiflow.platform.clinical.domain.valueobjects.QuotationStatus;
 import com.optiflow.platform.clinical.interfaces.rest.assemblers.ClinicalCommercialResponseAssembler;
 import com.optiflow.platform.clinical.interfaces.rest.assemblers.FromApplyPromotionOrDiscountRequestAssembler;
 import com.optiflow.platform.clinical.interfaces.rest.assemblers.FromGenerateQuotationRequestAssembler;
 import com.optiflow.platform.clinical.interfaces.rest.resources.ApplyPromotionOrDiscountRequest;
 import com.optiflow.platform.clinical.interfaces.rest.resources.GenerateQuotationRequest;
 import com.optiflow.platform.clinical.interfaces.rest.resources.QuotationResponse;
-import com.optiflow.platform.clinical.interfaces.rest.resources.RejectQuotationRequest;
+import com.optiflow.platform.clinical.interfaces.rest.resources.UpdateQuotationStatusRequest;
 import com.optiflow.platform.shared.documentation.openapi.configuration.OpenApiTags;
+import com.optiflow.platform.shared.exceptions.DomainException;
+import com.optiflow.platform.shared.interfaces.rest.ApiV1;
+import com.optiflow.platform.shared.interfaces.rest.CreatedResourceResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.UUID;
@@ -24,8 +28,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.optiflow.platform.shared.interfaces.rest.ApiV1;
-import com.optiflow.platform.shared.interfaces.rest.CreatedResourceResponses;
 
 @Tag(name = OpenApiTags.QUOTATIONS)
 @RestController
@@ -69,16 +71,29 @@ public class QuotationController {
             discountAssembler.toCommand(id, request)));
   }
 
-  @PatchMapping("/quotations/{id}/approve")
-  public QuotationResponse approve(@PathVariable UUID id) {
-    return responseAssembler.toQuotationResponse(
-        quotationApplicationService.approve(new ApproveQuotationCommand(QuotationId.of(id))));
+  @PatchMapping("/quotations/{id}/status")
+  public QuotationResponse updateStatus(
+      @PathVariable UUID id, @Valid @RequestBody UpdateQuotationStatusRequest request) {
+    QuotationId quotationId = QuotationId.of(id);
+    QuotationStatus status = parseQuotationStatus(request.status());
+    return responseAssembler.toQuotationResponse(switch (status) {
+      case APPROVED -> quotationApplicationService.approve(new ApproveQuotationCommand(quotationId));
+      case REJECTED -> {
+        String reason = request.reason();
+        if (reason == null || reason.isBlank()) {
+          throw new DomainException("A rejection reason is required.", 400);
+        }
+        yield quotationApplicationService.reject(new RejectQuotationCommand(quotationId, reason));
+      }
+      case DRAFT -> throw new DomainException("Quotation status cannot be changed to DRAFT.", 400);
+    });
   }
 
-  @PatchMapping("/quotations/{id}/reject")
-  public QuotationResponse reject(
-      @PathVariable UUID id, @Valid @RequestBody RejectQuotationRequest request) {
-    return responseAssembler.toQuotationResponse(quotationApplicationService.reject(
-        new RejectQuotationCommand(QuotationId.of(id), request.reason())));
+  private static QuotationStatus parseQuotationStatus(String status) {
+    try {
+      return QuotationStatus.valueOf(status.trim().toUpperCase());
+    } catch (IllegalArgumentException exception) {
+      throw new DomainException("Quotation status must be APPROVED or REJECTED.", 400);
+    }
   }
 }

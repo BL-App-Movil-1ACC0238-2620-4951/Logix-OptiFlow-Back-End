@@ -213,7 +213,7 @@ class ProductionTrackingApiTest {
           {"itemType":"FRAME","description":"Montura Ray-Ban","unitPrice":320.00,"quantity":1},
           {"itemType":"LENS","description":"Lunas antirreflejo","unitPrice":169.00,"quantity":1}]}
         """.formatted(clinicalRecordId)).andExpect(status().isCreated())).get("id").asText();
-    mockMvc.perform(patch(ApiV1.path("/quotations/" + quotationId + "/approve")))
+    perform(patch(ApiV1.path("/quotations/" + quotationId + "/status")), "{\"status\":\"APPROVED\"}")
         .andExpect(status().isOk());
     return quotationId;
   }
@@ -224,7 +224,8 @@ class ProductionTrackingApiTest {
         .andExpect(status().isCreated())).get("id").asText();
     perform(post(ApiV1.path("/sales/" + saleId + "/payments")), "{\"method\":\"CASH\",\"amount\":489.00}")
         .andExpect(status().isCreated());
-    mockMvc.perform(patch(ApiV1.path("/sales/" + saleId + "/close"))).andExpect(status().isOk());
+    perform(patch(ApiV1.path("/sales/" + saleId + "/status")), "{\"status\":\"CLOSED\"}")
+        .andExpect(status().isOk());
     return saleId;
   }
 
