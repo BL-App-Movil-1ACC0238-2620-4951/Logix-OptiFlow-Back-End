@@ -12,6 +12,7 @@ import com.optiflow.platform.shared.domain.events.DomainEventPublisher;
 import java.time.Clock;
 import java.time.Instant;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
@@ -30,7 +31,7 @@ public class SendDeliveryDelayNotificationHandler {
     this.clock = clock;
   }
 
-  @Transactional
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
   public Notification handle(SendDeliveryDelayNotificationCommand command) {
     PatientId patientId = PatientId.of(command.patientId());
     WorkOrderId workOrderId = WorkOrderId.of(command.workOrderId());
