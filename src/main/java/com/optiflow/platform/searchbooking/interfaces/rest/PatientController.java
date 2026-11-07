@@ -10,6 +10,8 @@ import com.optiflow.platform.searchbooking.interfaces.rest.resources.Appointment
 import com.optiflow.platform.searchbooking.interfaces.rest.resources.PatientResponse;
 import com.optiflow.platform.searchbooking.interfaces.rest.resources.RegisterPatientRequest;
 import com.optiflow.platform.shared.documentation.openapi.configuration.OpenApiTags;
+import com.optiflow.platform.shared.security.AuthenticatedUser;
+import com.optiflow.platform.shared.security.PatientDataAccessGuard;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.RestController;
 import com.optiflow.platform.shared.interfaces.rest.ApiV1;
 import com.optiflow.platform.shared.interfaces.rest.CreatedResourceResponses;
@@ -33,16 +36,19 @@ public class PatientController {
   private final AppointmentApplicationService appointmentApplicationService;
   private final FromRegisterPatientRequestAssembler registerAssembler;
   private final SearchBookingResponseAssembler responseAssembler;
+  private final PatientDataAccessGuard patientDataAccessGuard;
 
   public PatientController(
       PatientApplicationService patientApplicationService,
       AppointmentApplicationService appointmentApplicationService,
       FromRegisterPatientRequestAssembler registerAssembler,
-      SearchBookingResponseAssembler responseAssembler) {
+      SearchBookingResponseAssembler responseAssembler,
+      PatientDataAccessGuard patientDataAccessGuard) {
     this.patientApplicationService = patientApplicationService;
     this.appointmentApplicationService = appointmentApplicationService;
     this.registerAssembler = registerAssembler;
     this.responseAssembler = responseAssembler;
+    this.patientDataAccessGuard = patientDataAccessGuard;
   }
 
   @PostMapping("/patients")
@@ -53,7 +59,9 @@ public class PatientController {
   }
 
   @GetMapping("/patients/{id}/appointments")
-  public List<AppointmentResponse> appointments(@PathVariable UUID id) {
+  public List<AppointmentResponse> appointments(
+      @PathVariable UUID id, @AuthenticationPrincipal AuthenticatedUser user) {
+    patientDataAccessGuard.ensureSelfPatientAccess(user, id);
     return appointmentApplicationService
         .findByPatient(new GetPatientAppointmentsQuery(PatientId.of(id)))
         .stream()

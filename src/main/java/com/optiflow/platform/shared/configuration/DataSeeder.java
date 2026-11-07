@@ -2,9 +2,15 @@ package com.optiflow.platform.shared.configuration;
 
 import com.optiflow.platform.searchbooking.application.commands.PublishAvailableTimeSlotsCommand.SlotDraft;
 import com.optiflow.platform.searchbooking.application.commands.PublishAvailableTimeSlotsCommand;
+import com.optiflow.platform.searchbooking.application.commands.RegisterStaffMemberCommand;
 import com.optiflow.platform.searchbooking.application.services.OpticalStoreApplicationService;
+import com.optiflow.platform.searchbooking.application.services.StaffMemberApplicationService;
 import com.optiflow.platform.searchbooking.domain.entities.OpticalStore;
 import com.optiflow.platform.searchbooking.domain.repositories.OpticalStoreRepository;
+import com.optiflow.platform.searchbooking.domain.repositories.StaffMemberRepository;
+import com.optiflow.platform.searchbooking.domain.valueobjects.EmailAddress;
+import com.optiflow.platform.searchbooking.domain.valueobjects.Name;
+import com.optiflow.platform.searchbooking.domain.valueobjects.UserRole;
 import com.optiflow.platform.searchbooking.domain.valueobjects.OpticalStoreId;
 import com.optiflow.platform.searchbooking.domain.valueobjects.PhoneNumber;
 import com.optiflow.platform.searchbooking.domain.valueobjects.StoreAddress;
@@ -30,12 +36,18 @@ public class DataSeeder implements ApplicationRunner {
 
   private final OpticalStoreRepository opticalStoreRepository;
   private final OpticalStoreApplicationService opticalStoreApplicationService;
+  private final StaffMemberRepository staffMemberRepository;
+  private final StaffMemberApplicationService staffMemberApplicationService;
 
   public DataSeeder(
       OpticalStoreRepository opticalStoreRepository,
-      OpticalStoreApplicationService opticalStoreApplicationService) {
+      OpticalStoreApplicationService opticalStoreApplicationService,
+      StaffMemberRepository staffMemberRepository,
+      StaffMemberApplicationService staffMemberApplicationService) {
     this.opticalStoreRepository = opticalStoreRepository;
     this.opticalStoreApplicationService = opticalStoreApplicationService;
+    this.staffMemberRepository = staffMemberRepository;
+    this.staffMemberApplicationService = staffMemberApplicationService;
   }
 
   @Override
@@ -58,6 +70,19 @@ public class DataSeeder implements ApplicationRunner {
     LocalDate tomorrow = LocalDate.now(LIMA).plusDays(1);
     publishSlots(MIRAFLORES_ID, tomorrow);
     publishSlots(SAN_ISIDRO_ID, tomorrow);
+    seedAdminStaffMember();
+  }
+
+  private void seedAdminStaffMember() {
+    if (!staffMemberRepository.findAll().isEmpty()) {
+      return;
+    }
+    staffMemberApplicationService.register(new RegisterStaffMemberCommand(
+        new Name("OptiFlow Admin"),
+        new EmailAddress("admin@optiflow.test"),
+        "secret12",
+        OpticalStoreId.of(MIRAFLORES_ID),
+        UserRole.ADMIN));
   }
 
   private void saveStore(UUID id, String name, String address, String phone, String rating) {
