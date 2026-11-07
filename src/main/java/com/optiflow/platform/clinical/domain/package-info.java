@@ -4,7 +4,7 @@
  * <p>Expected content: ClinicalRecord, Quotation and Sale aggregates; events such as
  * PatientExamined, OpticalPrescriptionGenerated and SaleWasClosed.
  *
- * <p>Subpackages: entities, events, exceptions, repositories, services, valueobjects.
+ * <p>Subpackages: model/{aggregates,entities,valueobjects,commands,queries,events}, exceptions, repositories, services.
  * Must not depend on Spring, JPA or any other framework.
  */
 package com.optiflow.platform.clinical.domain;
