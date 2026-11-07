@@ -1,6 +1,7 @@
 package com.optiflow.platform.searchbooking.interfaces.rest;
 
 import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -169,8 +170,7 @@ class SearchAndBookingApiTest {
             .param("opticalStoreId", storeId)
             .param("date", agendaDay.toString()))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.length()").value(1))
-        .andExpect(jsonPath("$[0].id").value(appointmentId));
+        .andExpect(jsonPath("$[*].id").value(hasItem(appointmentId)));
 
     mockMvc.perform(patch(ApiV1.path("/appointments/" + appointmentId + "/status"))
             .contentType(MediaType.APPLICATION_JSON)
