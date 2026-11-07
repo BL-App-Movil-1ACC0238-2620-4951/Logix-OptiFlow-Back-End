@@ -5,6 +5,7 @@ import com.optiflow.platform.searchbooking.application.commands.RateOpticalStore
 import com.optiflow.platform.searchbooking.application.commands.SaveFavoriteOpticalStoreCommand;
 import com.optiflow.platform.searchbooking.application.queries.FilterOpticalStoresQuery;
 import com.optiflow.platform.searchbooking.application.queries.GetAvailableTimeSlotsQuery;
+import com.optiflow.platform.searchbooking.application.queries.GetNearbyOpticalStoresQuery;
 import com.optiflow.platform.searchbooking.application.queries.GetOpticalStoreQuery;
 import com.optiflow.platform.searchbooking.domain.entities.FavoriteStore;
 import com.optiflow.platform.searchbooking.domain.entities.OpticalStore;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 public class OpticalStoreApplicationService {
 
   private final FilterOpticalStoresQueryService filterOpticalStoresQueryService;
+  private final GetNearbyOpticalStoresQueryService getNearbyOpticalStoresQueryService;
   private final GetOpticalStoreQueryService getOpticalStoreQueryService;
   private final GetAvailableTimeSlotsQueryService getAvailableTimeSlotsQueryService;
   private final SaveFavoriteOpticalStoreCommandHandler saveFavoriteOpticalStoreCommandHandler;
@@ -24,12 +26,14 @@ public class OpticalStoreApplicationService {
 
   public OpticalStoreApplicationService(
       FilterOpticalStoresQueryService filterOpticalStoresQueryService,
+      GetNearbyOpticalStoresQueryService getNearbyOpticalStoresQueryService,
       GetOpticalStoreQueryService getOpticalStoreQueryService,
       GetAvailableTimeSlotsQueryService getAvailableTimeSlotsQueryService,
       SaveFavoriteOpticalStoreCommandHandler saveFavoriteOpticalStoreCommandHandler,
       RateOpticalStoreCommandHandler rateOpticalStoreCommandHandler,
       PublishAvailableTimeSlotsCommandHandler publishAvailableTimeSlotsCommandHandler) {
     this.filterOpticalStoresQueryService = filterOpticalStoresQueryService;
+    this.getNearbyOpticalStoresQueryService = getNearbyOpticalStoresQueryService;
     this.getOpticalStoreQueryService = getOpticalStoreQueryService;
     this.getAvailableTimeSlotsQueryService = getAvailableTimeSlotsQueryService;
     this.saveFavoriteOpticalStoreCommandHandler = saveFavoriteOpticalStoreCommandHandler;
@@ -39,6 +43,10 @@ public class OpticalStoreApplicationService {
 
   public List<OpticalStore> findStores(FilterOpticalStoresQuery query) {
     return filterOpticalStoresQueryService.handle(query);
+  }
+
+  public List<OpticalStore> findNearby(GetNearbyOpticalStoresQuery query) {
+    return getNearbyOpticalStoresQueryService.handle(query);
   }
 
   public OpticalStore get(GetOpticalStoreQuery query) {

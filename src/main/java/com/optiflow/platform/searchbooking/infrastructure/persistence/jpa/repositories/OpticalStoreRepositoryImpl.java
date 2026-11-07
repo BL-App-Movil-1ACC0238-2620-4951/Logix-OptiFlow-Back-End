@@ -51,7 +51,8 @@ public class OpticalStoreRepositoryImpl implements OpticalStoreRepository {
     return opticalStoreJpaRepository.count() == 0;
   }
 
-  private List<OpticalStore> findAll() {
+  @Override
+  public List<OpticalStore> findAll() {
     return opticalStoreJpaRepository.findAll().stream().map(opticalStoreMapper::toDomain).toList();
   }
 }

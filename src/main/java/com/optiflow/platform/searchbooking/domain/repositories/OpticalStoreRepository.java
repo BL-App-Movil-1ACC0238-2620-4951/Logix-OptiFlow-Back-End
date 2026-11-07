@@ -16,5 +16,7 @@ public interface OpticalStoreRepository {
 
   void save(OpticalStore opticalStore);
 
+  List<OpticalStore> findAll();
+
   boolean isEmpty();
 }

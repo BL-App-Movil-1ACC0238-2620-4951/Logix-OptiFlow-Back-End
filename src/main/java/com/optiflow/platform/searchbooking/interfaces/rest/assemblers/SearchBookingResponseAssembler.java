@@ -54,7 +54,9 @@ public class SearchBookingResponseAssembler {
         store.address().value(),
         store.phone().value(),
         store.rating().value(),
-        store.status().name());
+        store.status().name(),
+        store.location().map(location -> location.latitudeScaled()).orElse(null),
+        store.location().map(location -> location.longitudeScaled()).orElse(null));
   }
 
   public List<OpticalStoreResponse> toStoreResponses(List<OpticalStore> stores) {
