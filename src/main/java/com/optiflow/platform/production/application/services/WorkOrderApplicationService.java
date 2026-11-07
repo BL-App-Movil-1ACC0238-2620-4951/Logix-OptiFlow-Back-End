@@ -19,6 +19,8 @@ import com.optiflow.platform.production.domain.model.commands.SendWorkOrderToLab
 import com.optiflow.platform.production.domain.model.commands.UpdateWorkOrderStatusCommand;
 import com.optiflow.platform.production.domain.model.entities.Laboratory;
 import com.optiflow.platform.production.domain.model.entities.Technician;
+import com.optiflow.platform.production.domain.model.queries.GetLaboratoriesQuery;
+import com.optiflow.platform.production.domain.model.queries.GetTechniciansQuery;
 import com.optiflow.platform.production.domain.model.queries.GetWorkOrderByIdQuery;
 import com.optiflow.platform.production.domain.model.queries.GetWorkOrdersByPatientIdQuery;
 import com.optiflow.platform.production.domain.model.queries.GetWorkOrdersQuery;
@@ -100,11 +102,11 @@ public class WorkOrderApplicationService {
     return workOrderQueryService.handle(query);
   }
 
-  public List<Technician> technicians() {
-    return productionCatalogQueryService.technicians();
+  public List<Technician> technicians(GetTechniciansQuery query) {
+    return productionCatalogQueryService.handle(query);
   }
 
-  public List<Laboratory> laboratories() {
-    return productionCatalogQueryService.laboratories();
+  public List<Laboratory> laboratories(GetLaboratoriesQuery query) {
+    return productionCatalogQueryService.handle(query);
   }
 }

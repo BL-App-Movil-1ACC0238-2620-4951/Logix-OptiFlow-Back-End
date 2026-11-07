@@ -1,6 +1,8 @@
 package com.optiflow.platform.production.interfaces.rest;
 
 import com.optiflow.platform.production.application.services.WorkOrderApplicationService;
+import com.optiflow.platform.production.domain.model.queries.GetLaboratoriesQuery;
+import com.optiflow.platform.production.domain.model.queries.GetTechniciansQuery;
 import com.optiflow.platform.production.interfaces.rest.assemblers.ProductionTrackingResponseAssembler;
 import com.optiflow.platform.production.interfaces.rest.resources.LaboratoryResponse;
 import com.optiflow.platform.production.interfaces.rest.resources.TechnicianResponse;
@@ -29,14 +31,14 @@ public class ProductionCatalogController {
 
   @GetMapping("/technicians")
   public List<TechnicianResponse> technicians() {
-    return workOrderApplicationService.technicians().stream()
+    return workOrderApplicationService.technicians(new GetTechniciansQuery()).stream()
         .map(responseAssembler::toTechnicianResponse)
         .toList();
   }
 
   @GetMapping("/laboratories")
   public List<LaboratoryResponse> laboratories() {
-    return workOrderApplicationService.laboratories().stream()
+    return workOrderApplicationService.laboratories(new GetLaboratoriesQuery()).stream()
         .map(responseAssembler::toLaboratoryResponse)
         .toList();
   }
