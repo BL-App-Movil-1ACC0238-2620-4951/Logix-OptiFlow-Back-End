@@ -52,6 +52,8 @@ public class SecurityConfiguration {
                 "/v3/api-docs/**")
             .permitAll()
             .requestMatchers(HttpMethod.GET, "/api/v1/optical-stores/**").permitAll()
+            .requestMatchers(HttpMethod.GET, "/api/v1/staff-members/*")
+            .hasAnyRole(OPTOMETRIST, SALES_ADVISOR, TECHNICIAN, ADMIN)
             .requestMatchers("/api/v1/staff-members/**").hasRole("ADMIN")
             .requestMatchers(HttpMethod.POST, "/api/v1/optical-stores/*/time-slots")
             .hasRole("ADMIN")

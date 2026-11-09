@@ -282,6 +282,33 @@ class AuthenticationAuthorizationApiTest {
         .andExpect(status().isBadRequest());
   }
 
+  @Test
+  void letsStaffMemberReadOnlyTheirOwnProfile() throws Exception {
+    String adminToken = issueTokenFor("admin@optiflow.test");
+    String optometristToken = registerStaffAndIssueToken(
+        adminToken, "Own Profile", "own.profile@optiflow.test", "OPTOMETRIST");
+    String optometristId = objectMapper.readTree(
+            mockMvc.perform(post(ApiV1.path("/auth/tokens"))
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content("""
+                        {"email":"own.profile@optiflow.test","password":"secret12"}
+                        """))
+                .andReturn().getResponse().getContentAsString())
+        .get("userId").asText();
+
+    mockMvc.perform(get(ApiV1.path("/staff-members/" + optometristId))
+            .header(HttpHeaders.AUTHORIZATION, bearer(optometristToken)))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.role").value("OPTOMETRIST"))
+        .andExpect(jsonPath("$.opticalStoreId").isNotEmpty());
+    mockMvc.perform(get(ApiV1.path("/staff-members/00000000-0000-0000-0000-000000000009"))
+            .header(HttpHeaders.AUTHORIZATION, bearer(optometristToken)))
+        .andExpect(status().isForbidden());
+    mockMvc.perform(get(ApiV1.path("/staff-members/" + optometristId))
+            .header(HttpHeaders.AUTHORIZATION, bearer(adminToken)))
+        .andExpect(status().isOk());
+  }
+
   private String registerStaffAndIssueToken(
       String adminToken, String name, String email, String role) throws Exception {
     String storeId = objectMapper.readTree(
