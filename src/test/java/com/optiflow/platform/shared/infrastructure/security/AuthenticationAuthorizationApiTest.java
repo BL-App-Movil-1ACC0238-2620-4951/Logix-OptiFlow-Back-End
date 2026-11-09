@@ -239,6 +239,44 @@ class AuthenticationAuthorizationApiTest {
   }
 
   @Test
+  void appliesTheInventoryRolesOfTheReport() throws Exception {
+    String adminToken = issueTokenFor("admin@optiflow.test");
+    String advisorToken = registerStaffAndIssueToken(
+        adminToken, "Inventory Advisor", "inventory.advisor@optiflow.test", "SALES_ADVISOR");
+    String patientToken = registerPatientAndIssueToken(
+        "Catalog Patient", "catalog.patient@optiflow.test", "999888111");
+    String storeId = "11111111-1111-1111-1111-111111111111";
+
+    mockMvc.perform(get(ApiV1.path("/inventory/frames"))
+            .header(HttpHeaders.AUTHORIZATION, bearer(patientToken)))
+        .andExpect(status().isOk());
+    mockMvc.perform(get(ApiV1.path("/inventory/stock")).param("opticalStoreId", storeId)
+            .header(HttpHeaders.AUTHORIZATION, bearer(patientToken)))
+        .andExpect(status().isForbidden());
+    mockMvc.perform(get(ApiV1.path("/inventory/stock")).param("opticalStoreId", storeId)
+            .header(HttpHeaders.AUTHORIZATION, bearer(advisorToken)))
+        .andExpect(status().isOk());
+    mockMvc.perform(post(ApiV1.path("/suppliers"))
+            .header(HttpHeaders.AUTHORIZATION, bearer(advisorToken))
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{\"name\":\"Proveedor\"}"))
+        .andExpect(status().isForbidden());
+    mockMvc.perform(post(ApiV1.path("/suppliers"))
+            .header(HttpHeaders.AUTHORIZATION, bearer(adminToken))
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{\"name\":\"Proveedor\"}"))
+        .andExpect(status().isCreated());
+    mockMvc.perform(get(ApiV1.path("/reports/inventory"))
+            .param("opticalStoreId", storeId).param("from", "2030-01-01").param("to", "2030-01-31")
+            .header(HttpHeaders.AUTHORIZATION, bearer(advisorToken)))
+        .andExpect(status().isForbidden());
+    mockMvc.perform(get(ApiV1.path("/reports/inventory"))
+            .param("opticalStoreId", storeId).param("from", "2030-01-01").param("to", "2030-01-31")
+            .header(HttpHeaders.AUTHORIZATION, bearer(adminToken)))
+        .andExpect(status().isOk());
+  }
+
+  @Test
   void forbidsPatientFromOtherPatientsRecordsOrdersAndFavorites() throws Exception {
     String patientToken = registerPatientAndIssueToken(
         "Nosy Patient", "nosy.patient@optiflow.test", "999555666");
