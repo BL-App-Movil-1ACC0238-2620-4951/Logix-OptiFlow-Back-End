@@ -49,8 +49,8 @@ public class GrantBirthdayDiscountHandler {
         NotificationId.generate(),
         patientId,
         new NotificationMessage(
-            "Happy birthday!",
-            "We added " + bonus.value() + " loyalty points to your account."),
+            "¡Feliz cumpleaños!",
+            "Sumamos " + bonus.value() + " puntos de fidelización a tu cuenta."),
         now);
     notificationRepository.save(notification);
     eventPublisher.publish(new BirthdayDiscountWasSent(

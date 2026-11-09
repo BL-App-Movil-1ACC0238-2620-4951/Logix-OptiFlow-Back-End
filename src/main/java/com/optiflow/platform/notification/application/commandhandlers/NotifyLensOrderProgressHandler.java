@@ -41,7 +41,7 @@ public class NotifyLensOrderProgressHandler {
         NotificationId.generate(),
         patientId,
         workOrderId,
-        new NotificationMessage("Lens order update", command.progressSummary()),
+        new NotificationMessage("Avance de tu pedido", command.progressSummary()),
         now);
     notificationRepository.save(notification);
     eventPublisher.publish(new LensOrderProgressNotified(

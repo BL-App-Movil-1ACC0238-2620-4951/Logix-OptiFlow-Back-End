@@ -56,7 +56,10 @@ public class OpenApiConfiguration {
                 "Stock of each optical store, replenishments, movements and low stock alerts."),
             tag(OpenApiTags.SUPPLIERS, "Suppliers that deliver the replenishments."),
             tag(OpenApiTags.INVENTORY_REPORTS,
-                "Inventory metrics of a store for the admin, in JSON or CSV.")));
+                "Inventory metrics of a store for the admin, in JSON or CSV."),
+            tag(OpenApiTags.NOTIFICATIONS,
+                "Notifications of a patient: reminders, order updates and surveys."),
+            tag(OpenApiTags.LOYALTY_ACCOUNTS, "Loyalty points of a patient.")));
   }
 
   /**

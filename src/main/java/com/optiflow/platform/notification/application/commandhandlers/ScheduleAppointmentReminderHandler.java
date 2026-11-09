@@ -47,8 +47,8 @@ public class ScheduleAppointmentReminderHandler {
         patientId,
         appointmentId,
         new NotificationMessage(
-            "Appointment confirmed",
-            "Your optometry appointment was booked successfully. We will remind you before the visit."),
+            "Cita reservada",
+            "Tu cita de evaluación visual quedó reservada. Te avisaremos antes de la visita."),
         now);
     notificationRepository.save(notification);
     eventPublisher.publish(new InAppNotificationSent(

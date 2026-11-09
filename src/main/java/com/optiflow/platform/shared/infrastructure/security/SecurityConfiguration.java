@@ -99,6 +99,10 @@ public class SecurityConfiguration {
             .requestMatchers(HttpMethod.GET, "/api/v1/inventory/stock")
             .hasAnyRole(SALES_ADVISOR, ADMIN)
             .requestMatchers("/api/v1/inventory/**", "/api/v1/suppliers").hasRole(ADMIN)
+            // Notification & Loyalty
+            .requestMatchers("/api/v1/patients/*/notifications",
+                "/api/v1/patients/*/loyalty-account", "/api/v1/notifications/**")
+            .hasRole(PATIENT)
             // Reports
             .requestMatchers("/api/v1/reports/**").hasRole(ADMIN)
             .anyRequest()

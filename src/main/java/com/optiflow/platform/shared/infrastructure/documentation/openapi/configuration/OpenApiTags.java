@@ -24,6 +24,8 @@ public final class OpenApiTags {
   public static final String INVENTORY = "Store Management & Inventory - Inventory";
   public static final String SUPPLIERS = "Store Management & Inventory - Suppliers";
   public static final String INVENTORY_REPORTS = "Store Management & Inventory - Reports";
+  public static final String NOTIFICATIONS = "Notification & Loyalty - Notifications";
+  public static final String LOYALTY_ACCOUNTS = "Notification & Loyalty - Loyalty Accounts";
 
   private OpenApiTags() {
   }
