@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import java.time.Instant;
 import java.util.List;
 
-public record PublishTimeSlotsRequest(@NotEmpty @Valid List<SlotRequest> slots) {
+public record PublishTimeSlotsRequest(@NotEmpty @Valid List<SlotRequest> timeSlots) {
 
   public record SlotRequest(
       @NotNull Instant startDateTime, @NotNull Instant endDateTime) {}

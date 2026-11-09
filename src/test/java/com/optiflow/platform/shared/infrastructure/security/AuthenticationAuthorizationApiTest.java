@@ -151,7 +151,7 @@ class AuthenticationAuthorizationApiTest {
             .header(HttpHeaders.AUTHORIZATION, bearer(adminToken))
             .contentType(MediaType.APPLICATION_JSON)
             .content("""
-                {"slots":[{"startDateTime":"2030-01-15T14:00:00Z",
+                {"timeSlots":[{"startDateTime":"2030-01-15T14:00:00Z",
                            "endDateTime":"2030-01-15T14:30:00Z"}]}
                 """))
         .andExpect(status().isCreated())
