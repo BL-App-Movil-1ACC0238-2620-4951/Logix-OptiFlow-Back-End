@@ -50,7 +50,8 @@ public class NotificationController {
 
   @Operation(
       summary = "List the notifications of a patient",
-      description = "Returns the notifications of the patient, newest first.")
+      description = "Returns the notifications of the patient, newest first. A reminder is"
+          + " listed once its scheduled date arrives.")
   @ApiResponses(@ApiResponse(responseCode = "200", description = "Notifications of the patient."))
   @GetMapping("/patients/{patientId}/notifications")
   public List<NotificationResponse> findByPatient(

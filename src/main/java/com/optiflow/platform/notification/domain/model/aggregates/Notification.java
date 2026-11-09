@@ -51,24 +51,43 @@ public class Notification {
     this.readAt = readAt;
   }
 
+  /** Reminder of a booked appointment, sent at {@code scheduledAt} (24 hours before it). */
   public static Notification scheduleAppointmentReminder(
       NotificationId id,
       PatientId patientId,
       AppointmentId appointmentId,
       NotificationMessage message,
+      Instant scheduledAt,
       Instant now) {
-    return new Notification(
-        id,
-        patientId,
-        NotificationType.APPOINTMENT_REMINDER,
-        message,
-        appointmentId,
-        null,
-        NotificationStatus.UNREAD,
-        PushStatus.PENDING,
-        null,
-        now,
-        null);
+    return scheduled(NotificationType.APPOINTMENT_REMINDER, id, patientId, appointmentId, message,
+        scheduledAt, now);
+  }
+
+  /** Reminder of the next visual check-up, sent at {@code scheduledAt} (12 months later). */
+  public static Notification scheduleAnnualCheckupReminder(
+      NotificationId id,
+      PatientId patientId,
+      AppointmentId appointmentId,
+      NotificationMessage message,
+      Instant scheduledAt,
+      Instant now) {
+    return scheduled(NotificationType.ANNUAL_CHECKUP_REMINDER, id, patientId, appointmentId,
+        message, scheduledAt, now);
+  }
+
+  private static Notification scheduled(
+      NotificationType type,
+      NotificationId id,
+      PatientId patientId,
+      AppointmentId appointmentId,
+      NotificationMessage message,
+      Instant scheduledAt,
+      Instant now) {
+    if (scheduledAt == null) {
+      throw new DomainException("The reminder date is required.", 400);
+    }
+    return new Notification(id, patientId, type, message, appointmentId, null,
+        NotificationStatus.UNREAD, PushStatus.PENDING, scheduledAt, now, null);
   }
 
   public static Notification notifyLensOrderProgress(
@@ -166,6 +185,16 @@ public class Notification {
   /** The notification stays visible in the app even when the push could not be delivered. */
   public void markPushFailed() {
     pushStatus = PushStatus.FAILED;
+  }
+
+  public boolean isReminder() {
+    return type == NotificationType.APPOINTMENT_REMINDER
+        || type == NotificationType.ANNUAL_CHECKUP_REMINDER;
+  }
+
+  /** Date the patient sees: the scheduled date of a reminder or the creation date. */
+  public Instant date() {
+    return scheduledAt == null ? createdAt : scheduledAt;
   }
 
   public NotificationId id() {

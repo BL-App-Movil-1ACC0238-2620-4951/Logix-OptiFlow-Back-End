@@ -25,6 +25,7 @@ public class NotificationResourceAssembler {
         notification.message().body(),
         notification.status().name(),
         notification.createdAt(),
+        notification.scheduledAt().orElse(null),
         notification.readAt().orElse(null),
         notification.appointmentId().map(AppointmentId::value).orElse(null),
         notification.workOrderId().map(WorkOrderId::value).orElse(null));

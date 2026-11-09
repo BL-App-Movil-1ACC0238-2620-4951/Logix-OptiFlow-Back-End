@@ -1,6 +1,7 @@
 package com.optiflow.platform.notification.domain.model.aggregates;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -32,13 +33,16 @@ class NotificationAndLoyaltyRulesTest {
         NotificationId.generate(),
         PATIENT_ID,
         APPOINTMENT_ID,
-        new NotificationMessage("Appointment confirmed", "Your visit is scheduled."),
+        new NotificationMessage("Recordatorio de cita", "Tu evaluación visual es mañana."),
+        NOW.plusSeconds(3600),
         NOW);
 
     assertEquals(NotificationType.APPOINTMENT_REMINDER, notification.type());
     assertEquals(NotificationStatus.UNREAD, notification.status());
     assertTrue(notification.appointmentId().isPresent());
     assertEquals(APPOINTMENT_ID, notification.appointmentId().orElseThrow());
+    assertFalse(notification.isDue(NOW));
+    assertTrue(notification.isDue(NOW.plusSeconds(3600)));
   }
 
   @Test

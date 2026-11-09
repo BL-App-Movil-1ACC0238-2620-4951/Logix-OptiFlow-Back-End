@@ -1,15 +1,19 @@
 package com.optiflow.platform.notification.infrastructure.persistence;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.optiflow.platform.notification.application.services.NotificationApplicationService;
-import com.optiflow.platform.notification.domain.model.queries.GetNotificationsByPatientQuery;
+import com.optiflow.platform.notification.domain.model.aggregates.Notification;
 import com.optiflow.platform.notification.domain.model.valueobjects.NotificationType;
+import com.optiflow.platform.notification.domain.model.valueobjects.PatientId;
+import com.optiflow.platform.notification.domain.repositories.NotificationRepository;
 import com.optiflow.platform.shared.interfaces.rest.ApiV1;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -31,7 +35,7 @@ class NotificationPersistenceIntegrationTest {
   private ObjectMapper objectMapper;
 
   @Autowired
-  private NotificationApplicationService notificationApplicationService;
+  private NotificationRepository notificationRepository;
 
   @Test
   void persistsAppointmentReminderWhenAnAppointmentIsBooked() throws Exception {
@@ -64,10 +68,12 @@ class NotificationPersistenceIntegrationTest {
                 """.formatted(patientId, storeId, timeSlotId)))
         .andExpect(status().isCreated());
 
-    var notifications = notificationApplicationService.findByPatient(
-        new GetNotificationsByPatientQuery(java.util.UUID.fromString(patientId)));
+    var notifications = notificationRepository.findByPatientId(
+        PatientId.of(java.util.UUID.fromString(patientId)));
 
-    assertEquals(1, notifications.size());
-    assertEquals(NotificationType.APPOINTMENT_REMINDER, notifications.get(0).type());
+    assertEquals(
+        Set.of(NotificationType.APPOINTMENT_REMINDER, NotificationType.ANNUAL_CHECKUP_REMINDER),
+        notifications.stream().map(Notification::type).collect(Collectors.toSet()));
+    assertTrue(notifications.stream().allMatch(n -> n.scheduledAt().isPresent()));
   }
 }
