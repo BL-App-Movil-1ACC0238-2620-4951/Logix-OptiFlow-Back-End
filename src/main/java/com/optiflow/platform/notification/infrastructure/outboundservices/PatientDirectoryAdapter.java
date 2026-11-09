@@ -7,14 +7,17 @@ import com.optiflow.platform.notification.domain.model.valueobjects.PatientId;
 import com.optiflow.platform.searchbooking.application.results.AppointmentDetails;
 import com.optiflow.platform.searchbooking.application.services.SearchBookingApplicationService;
 import com.optiflow.platform.searchbooking.domain.model.queries.GetAppointmentQuery;
+import com.optiflow.platform.searchbooking.domain.model.queries.GetPatientsByBirthdayQuery;
 import com.optiflow.platform.searchbooking.domain.model.valueobjects.AppointmentStatus;
 import com.optiflow.platform.shared.domain.exceptions.DomainException;
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Component;
 
 /**
- * Reads appointments from Search &amp; Booking without exposing its {@code Appointment} model to
- * the Notification &amp; Loyalty context.
+ * Reads appointments and birthdays from Search &amp; Booking without exposing its
+ * {@code Patient} and {@code Appointment} models to the Notification &amp; Loyalty context.
  */
 @Component
 public class PatientDirectoryAdapter implements ExternalPatientDirectoryService {
@@ -43,5 +46,13 @@ public class PatientDirectoryAdapter implements ExternalPatientDirectoryService 
       }
       throw exception;
     }
+  }
+
+  @Override
+  public List<PatientId> findPatientsWithBirthday(LocalDate date) {
+    return searchBookingApplicationService
+        .getPatientsByBirthday(new GetPatientsByBirthdayQuery(date)).stream()
+        .map(patientId -> PatientId.of(patientId.value()))
+        .toList();
   }
 }

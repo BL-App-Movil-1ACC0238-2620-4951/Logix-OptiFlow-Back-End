@@ -5,6 +5,8 @@ import com.optiflow.platform.notification.application.outboundservices.Scheduled
 import com.optiflow.platform.notification.domain.model.valueobjects.AppointmentId;
 import com.optiflow.platform.notification.domain.model.valueobjects.PatientId;
 import java.time.Instant;
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -13,6 +15,11 @@ import java.util.concurrent.ConcurrentHashMap;
 public class FakePatientDirectory implements ExternalPatientDirectoryService {
 
   private final Map<AppointmentId, ScheduledAppointment> appointments = new ConcurrentHashMap<>();
+  private final Map<PatientId, LocalDate> birthDates = new ConcurrentHashMap<>();
+
+  public void bornOn(UUID patientId, LocalDate birthDate) {
+    birthDates.put(PatientId.of(patientId), birthDate);
+  }
 
   public void book(UUID appointmentId, UUID patientId, Instant startsAt) {
     AppointmentId id = AppointmentId.of(appointmentId);
@@ -29,5 +36,14 @@ public class FakePatientDirectory implements ExternalPatientDirectoryService {
   @Override
   public Optional<ScheduledAppointment> findAppointment(AppointmentId appointmentId) {
     return Optional.ofNullable(appointments.get(appointmentId));
+  }
+
+  @Override
+  public List<PatientId> findPatientsWithBirthday(LocalDate date) {
+    return birthDates.entrySet().stream()
+        .filter(entry -> entry.getValue().getMonth() == date.getMonth()
+            && entry.getValue().getDayOfMonth() == date.getDayOfMonth())
+        .map(Map.Entry::getKey)
+        .toList();
   }
 }
