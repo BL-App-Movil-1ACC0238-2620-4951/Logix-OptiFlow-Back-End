@@ -1,6 +1,7 @@
 package com.optiflow.platform.production.infrastructure.persistence.jpa.repositories;
 
 import com.optiflow.platform.production.infrastructure.persistence.jpa.entities.WorkOrderEntity;
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,4 +13,7 @@ public interface WorkOrderJpaRepository
   boolean existsBySaleId(UUID saleId);
 
   List<WorkOrderEntity> findByPatientIdOrderByCreatedAtDesc(UUID patientId);
+
+  List<WorkOrderEntity> findByCreatedAtLessThanAndUpdatedAtGreaterThanEqualOrderByCreatedAt(
+      Instant to, Instant from);
 }

@@ -1,6 +1,7 @@
 package com.optiflow.platform.clinical.infrastructure.persistence.jpa.repositories;
 
 import com.optiflow.platform.clinical.infrastructure.persistence.jpa.entities.ClinicalRecordEntity;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -15,4 +16,7 @@ public interface ClinicalRecordJpaRepository extends JpaRepository<ClinicalRecor
 
   @Query("select count(distinct record.patientId) from ClinicalRecordEntity record")
   long countDistinctPatients();
+
+  List<ClinicalRecordEntity> findByExaminationDateGreaterThanEqualAndExaminationDateLessThan(
+      Instant from, Instant to);
 }

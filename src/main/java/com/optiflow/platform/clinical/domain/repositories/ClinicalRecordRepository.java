@@ -4,6 +4,7 @@ import com.optiflow.platform.clinical.domain.model.aggregates.ClinicalRecord;
 import com.optiflow.platform.clinical.domain.model.valueobjects.AppointmentId;
 import com.optiflow.platform.clinical.domain.model.valueobjects.ClinicalRecordId;
 import com.optiflow.platform.clinical.domain.model.valueobjects.PatientId;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,4 +19,7 @@ public interface ClinicalRecordRepository {
   List<ClinicalRecord> findByPatientId(PatientId patientId);
 
   long countPatientsWithRecords();
+
+  /** Records examined from {@code from} (inclusive) to {@code to} (exclusive). */
+  List<ClinicalRecord> findExaminedBetween(Instant from, Instant to);
 }

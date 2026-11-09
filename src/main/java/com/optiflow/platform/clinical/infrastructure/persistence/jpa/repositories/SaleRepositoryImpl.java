@@ -5,7 +5,9 @@ import com.optiflow.platform.clinical.domain.model.valueobjects.PatientId;
 import com.optiflow.platform.clinical.domain.model.valueobjects.QuotationId;
 import com.optiflow.platform.clinical.domain.model.valueobjects.SaleId;
 import com.optiflow.platform.clinical.domain.repositories.SaleRepository;
+import com.optiflow.platform.clinical.infrastructure.persistence.jpa.entities.SaleEntity;
 import com.optiflow.platform.clinical.infrastructure.persistence.jpa.mappers.SaleMapper;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Repository;
@@ -43,9 +45,21 @@ public class SaleRepositoryImpl implements SaleRepository {
   @Override
   public List<Sale> findByPatientId(PatientId patientId) {
     return saleJpaRepository.findByPatientId(patientId.value()).stream()
-        .map(entity -> saleMapper.toDomain(
-            entity, electronicReceiptJpaRepository.findBySaleId(entity.getId()).orElse(null)))
+        .map(this::toDomain)
         .toList();
+  }
+
+  @Override
+  public List<Sale> findClosedBetween(Instant from, Instant to) {
+    return saleJpaRepository
+        .findByClosedAtGreaterThanEqualAndClosedAtLessThanOrderByClosedAt(from, to).stream()
+        .map(this::toDomain)
+        .toList();
+  }
+
+  private Sale toDomain(SaleEntity entity) {
+    return saleMapper.toDomain(
+        entity, electronicReceiptJpaRepository.findBySaleId(entity.getId()).orElse(null));
   }
 
   @Override

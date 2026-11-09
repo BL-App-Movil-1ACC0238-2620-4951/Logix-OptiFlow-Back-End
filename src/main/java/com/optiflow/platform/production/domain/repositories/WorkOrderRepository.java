@@ -7,6 +7,7 @@ import com.optiflow.platform.production.domain.model.valueobjects.SaleId;
 import com.optiflow.platform.production.domain.model.valueobjects.TechnicianId;
 import com.optiflow.platform.production.domain.model.valueobjects.WorkOrderId;
 import com.optiflow.platform.production.domain.model.valueobjects.WorkOrderStatus;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,4 +24,11 @@ public interface WorkOrderRepository {
   /** Kanban search; every filter is optional (null means "any"). */
   List<WorkOrder> search(
       WorkOrderStatus status, TechnicianId technicianId, OpticalStoreId opticalStoreId);
+
+  /**
+   * Orders created before {@code to} and changed since {@code from}: every order that was
+   * created, changed, delayed or delivered from {@code from} (inclusive) to {@code to}
+   * (exclusive).
+   */
+  List<WorkOrder> findWithActivityBetween(Instant from, Instant to);
 }

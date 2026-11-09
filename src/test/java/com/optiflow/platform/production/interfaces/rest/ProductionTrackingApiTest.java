@@ -1,9 +1,14 @@
 package com.optiflow.platform.production.interfaces.rest;
 
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.endsWith;
+import static org.hamcrest.Matchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -19,6 +24,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.event.ApplicationEvents;
@@ -154,6 +160,43 @@ class ProductionTrackingApiTest {
 
     assertEquals(4, applicationEvents.stream(WorkOrderStatusUpdated.class).count());
     assertEquals(1, applicationEvents.stream(OrderWasMarkedAsDelivered.class).count());
+
+    mockMvc.perform(get(ApiV1.path("/reports/production"))
+            .param("from", today.toString()).param("to", today.toString()))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.ordersByStatus.PENDING").value(0))
+        .andExpect(jsonPath("$.ordersByStatus.DELIVERED").value(1))
+        .andExpect(jsonPath("$.deliveredOrders").value(1))
+        .andExpect(jsonPath("$.averageFabricationHours").value(0.0))
+        .andExpect(jsonPath("$.delayedOrders").value(1));
+    mockMvc.perform(get(ApiV1.path("/reports/production")).accept("text/csv")
+            .param("from", today.toString()).param("to", today.toString()))
+        .andExpect(status().isOk())
+        .andExpect(header().string(HttpHeaders.CONTENT_TYPE, startsWith("text/csv")))
+        .andExpect(content().string(allOf(
+            startsWith("work_order_id,status,created_at,ready_at,delivered_at,fabrication_hours,"
+                + "delayed\n" + workOrderId + ",DELIVERED,"),
+            endsWith(",0.0,true\n"))));
+  }
+
+  @Test
+  void reportsZeroProductionForAPeriodWithoutData() throws Exception {
+    mockMvc.perform(get(ApiV1.path("/reports/production"))
+            .param("from", "2030-01-01").param("to", "2030-01-31"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.ordersByStatus.length()").value(5))
+        .andExpect(jsonPath("$.ordersByStatus.DELIVERED").value(0))
+        .andExpect(jsonPath("$.deliveredOrders").value(0))
+        .andExpect(jsonPath("$.averageFabricationHours").value(0.0))
+        .andExpect(jsonPath("$.delayedOrders").value(0));
+    mockMvc.perform(get(ApiV1.path("/reports/production")).accept("text/csv")
+            .param("from", "2030-01-01").param("to", "2030-01-31"))
+        .andExpect(status().isOk())
+        .andExpect(content().string(
+            "work_order_id,status,created_at,ready_at,delivered_at,fabrication_hours,delayed\n"));
+    mockMvc.perform(get(ApiV1.path("/reports/production"))
+            .param("from", "2030-01-31").param("to", "2030-01-01"))
+        .andExpect(status().isBadRequest());
   }
 
   @Test

@@ -17,9 +17,11 @@ public final class OpenApiTags {
   public static final String CLINICAL_RECORDS = "Clinical & Commercial - Clinical Records";
   public static final String QUOTATIONS = "Clinical & Commercial - Quotations";
   public static final String SALES = "Clinical & Commercial - Sales";
+  public static final String SALES_REPORTS = "Clinical & Commercial - Reports";
   public static final String WORK_ORDERS = "Production & Tracking - Work Orders";
   public static final String TECHNICIANS_AND_LABORATORIES =
       "Production & Tracking - Technicians & Laboratories";
+  public static final String PRODUCTION_REPORTS = "Production & Tracking - Reports";
   public static final String FRAME_MODELS = "Store Management & Inventory - Frame Models";
   public static final String INVENTORY = "Store Management & Inventory - Inventory";
   public static final String SUPPLIERS = "Store Management & Inventory - Suppliers";
