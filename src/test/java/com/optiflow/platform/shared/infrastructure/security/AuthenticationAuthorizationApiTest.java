@@ -376,7 +376,7 @@ class AuthenticationAuthorizationApiTest {
   }
 
   @Test
-  void letsOnlyThePatientOfASaleAskToPayIt() throws Exception {
+  void letsOnlyThePatientOfASaleReadAndPayIt() throws Exception {
     String adminToken = issueTokenFor("admin@optiflow.test");
     String advisorToken = registerStaffAndIssueToken(
         adminToken, "Checkout Advisor", "checkout.advisor@optiflow.test", "SALES_ADVISOR");
@@ -389,9 +389,24 @@ class AuthenticationAuthorizationApiTest {
                 .content("{\"email\":\"sale.owner@optiflow.test\",\"password\":\"secret12\"}"))
             .andReturn().getResponse().getContentAsString())
         .get("userId").asText());
-    String preference = ApiV1.path("/sales/"
-        + SaleTestData.pendingSale(quotationRepository, saleRepository, ownerId)
-        + "/payment-preference");
+    String sale = ApiV1.path("/sales/"
+        + SaleTestData.pendingSale(quotationRepository, saleRepository, ownerId));
+    String preference = sale + "/payment-preference";
+
+    mockMvc.perform(get(sale).header(HttpHeaders.AUTHORIZATION, bearer(otherToken)))
+        .andExpect(status().isForbidden())
+        .andExpect(jsonPath("$.message").value("You cannot access another patient's data."));
+    mockMvc.perform(get(sale).header(HttpHeaders.AUTHORIZATION, bearer(ownerToken)))
+        .andExpect(status().isOk());
+    mockMvc.perform(get(sale).header(HttpHeaders.AUTHORIZATION, bearer(advisorToken)))
+        .andExpect(status().isOk());
+    mockMvc.perform(get(ApiV1.path("/patients/" + ownerId + "/sales"))
+            .header(HttpHeaders.AUTHORIZATION, bearer(otherToken)))
+        .andExpect(status().isForbidden());
+    mockMvc.perform(get(ApiV1.path("/patients/" + ownerId + "/sales"))
+            .header(HttpHeaders.AUTHORIZATION, bearer(ownerToken)))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$[0].status").value("PENDING_PAYMENT"));
 
     mockMvc.perform(post(preference).header(HttpHeaders.AUTHORIZATION, bearer(advisorToken)))
         .andExpect(status().isForbidden());

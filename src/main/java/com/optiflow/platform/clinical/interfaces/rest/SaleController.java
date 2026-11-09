@@ -1,6 +1,7 @@
 package com.optiflow.platform.clinical.interfaces.rest;
 
 import com.optiflow.platform.clinical.application.services.SaleApplicationService;
+import com.optiflow.platform.clinical.domain.model.aggregates.Sale;
 import com.optiflow.platform.clinical.domain.model.commands.CloseSaleCommand;
 import com.optiflow.platform.clinical.domain.model.commands.CreatePaymentPreferenceCommand;
 import com.optiflow.platform.clinical.domain.model.queries.GetSaleByIdQuery;
@@ -83,12 +84,14 @@ public class SaleController {
       description = "Returns the sale with its payment (approved or rejected) and its receipt.")
   @ApiResponses({
       @ApiResponse(responseCode = "200", description = "Sale found."),
+      @ApiResponse(responseCode = "403", description = "The sale belongs to another patient."),
       @ApiResponse(responseCode = "404", description = "The sale was not found.")
   })
   @GetMapping("/sales/{id}")
-  public SaleResponse get(@PathVariable UUID id) {
-    return responseAssembler.toSaleResponse(
-        saleApplicationService.getById(new GetSaleByIdQuery(SaleId.of(id))));
+  public SaleResponse get(@PathVariable UUID id, @AuthenticationPrincipal AuthenticatedUser user) {
+    Sale sale = saleApplicationService.getById(new GetSaleByIdQuery(SaleId.of(id)));
+    patientDataAccessGuard.ensureSelfPatientAccess(user, sale.patientId().value());
+    return responseAssembler.toSaleResponse(sale);
   }
 
   @Operation(summary = "Create the payment preference of a sale",
