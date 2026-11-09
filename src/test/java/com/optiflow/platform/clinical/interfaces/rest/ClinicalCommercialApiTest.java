@@ -1,5 +1,7 @@
 package com.optiflow.platform.clinical.interfaces.rest;
 
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.Matchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -7,6 +9,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -15,11 +19,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.optiflow.platform.clinical.domain.model.events.SaleWasClosed;
 import com.optiflow.platform.clinical.domain.model.valueobjects.SoldProduct;
 import com.optiflow.platform.shared.interfaces.rest.ApiV1;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.event.ApplicationEvents;
@@ -169,6 +176,43 @@ class ClinicalCommercialApiTest {
     SaleWasClosed closed = applicationEvents.stream(SaleWasClosed.class).findFirst().orElseThrow();
     assertEquals(List.of(new SoldProduct("RB-2140-BLK", 1)), closed.soldProducts());
     assertNotNull(closed.opticalStoreId());
+
+    String today = LocalDate.now(ZoneId.of("America/Lima")).toString();
+    mockMvc.perform(get(ApiV1.path("/reports/sales")).param("from", today).param("to", today))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.attentions").value(1))
+        .andExpect(jsonPath("$.approvedQuotations").value(1))
+        .andExpect(jsonPath("$.rejectedQuotations").value(0))
+        .andExpect(jsonPath("$.closedSales").value(1))
+        .andExpect(jsonPath("$.totalAmount").value(440.10))
+        .andExpect(jsonPath("$.averageTicket").value(440.10));
+    mockMvc.perform(get(ApiV1.path("/reports/sales")).accept("text/csv")
+            .param("from", today).param("to", today))
+        .andExpect(status().isOk())
+        .andExpect(header().string(HttpHeaders.CONTENT_TYPE, startsWith("text/csv")))
+        .andExpect(content().string(allOf(
+            startsWith("sale_id,closed_at,receipt_number,payment_method,total_amount\n" + saleId),
+            endsWith(",B001-00000001,CASH,440.10\n"))));
+  }
+
+  @Test
+  void reportsZeroSalesForAPeriodWithoutData() throws Exception {
+    mockMvc.perform(get(ApiV1.path("/reports/sales"))
+            .param("from", "2030-01-01").param("to", "2030-01-31"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.attentions").value(0))
+        .andExpect(jsonPath("$.closedSales").value(0))
+        .andExpect(jsonPath("$.totalAmount").value(0.00))
+        .andExpect(jsonPath("$.averageTicket").value(0.00));
+    mockMvc.perform(get(ApiV1.path("/reports/sales")).accept("text/csv")
+            .param("from", "2030-01-01").param("to", "2030-01-31"))
+        .andExpect(status().isOk())
+        .andExpect(content().string(
+            "sale_id,closed_at,receipt_number,payment_method,total_amount\n"));
+    mockMvc.perform(get(ApiV1.path("/reports/sales"))
+            .param("from", "2030-01-31").param("to", "2030-01-01"))
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.message").value("The start date must not be after the end date."));
   }
 
   @Test

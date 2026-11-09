@@ -46,6 +46,8 @@ public class OpenApiConfiguration {
                 "Patient examination, medical history and optical prescription."),
             tag(OpenApiTags.QUOTATIONS, "Quotations derived from the prescription."),
             tag(OpenApiTags.SALES, "Sales, payments and electronic receipts."),
+            tag(OpenApiTags.SALES_REPORTS,
+                "Sales metrics of the business for the admin, in JSON or CSV."),
             tag(OpenApiTags.WORK_ORDERS,
                 "Work orders generated from closed sales: Kanban board, lenses and delivery."),
             tag(OpenApiTags.TECHNICIANS_AND_LABORATORIES,

@@ -7,6 +7,7 @@ import com.optiflow.platform.clinical.domain.model.valueobjects.PatientId;
 import com.optiflow.platform.clinical.domain.repositories.ClinicalRecordRepository;
 import com.optiflow.platform.clinical.infrastructure.persistence.jpa.entities.ClinicalRecordEntity;
 import com.optiflow.platform.clinical.infrastructure.persistence.jpa.mappers.ClinicalRecordMapper;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Repository;
@@ -53,6 +54,14 @@ public class ClinicalRecordRepositoryImpl implements ClinicalRecordRepository {
   @Override
   public List<ClinicalRecord> findByPatientId(PatientId patientId) {
     return clinicalRecordJpaRepository.findByPatientId(patientId.value()).stream()
+        .map(this::toDomain)
+        .toList();
+  }
+
+  @Override
+  public List<ClinicalRecord> findExaminedBetween(Instant from, Instant to) {
+    return clinicalRecordJpaRepository
+        .findByExaminationDateGreaterThanEqualAndExaminationDateLessThan(from, to).stream()
         .map(this::toDomain)
         .toList();
   }
