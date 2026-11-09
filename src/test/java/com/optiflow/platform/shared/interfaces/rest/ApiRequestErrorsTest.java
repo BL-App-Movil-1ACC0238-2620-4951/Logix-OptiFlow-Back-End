@@ -37,7 +37,7 @@ class ApiRequestErrorsTest {
         .andExpect(jsonPath("$.status").value(400))
         .andExpect(jsonPath("$.error").value("Bad Request"))
         .andExpect(jsonPath("$.message")
-            .value("El parámetro " + parameter + " debe ser un UUID válido."));
+            .value("The parameter " + parameter + " must be a valid UUID."));
   }
 
   @ParameterizedTest
@@ -49,7 +49,17 @@ class ApiRequestErrorsTest {
         .andExpect(jsonPath("$.status").value(400))
         .andExpect(jsonPath("$.error").value("Bad Request"))
         .andExpect(jsonPath("$.message").value(
-            "El cuerpo de la solicitud debe contener un JSON válido con los datos en el formato esperado."));
+            "The request body must be valid JSON with the data in the expected format."));
+  }
+
+  @Test
+  void answersFieldValidationInEnglishWhateverTheClientLanguage() throws Exception {
+    mockMvc.perform(post(ApiV1.path("/appointments"))
+            .header("Accept-Language", "es-PE")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{}"))
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.message").value(org.hamcrest.Matchers.containsString("must not be null")));
   }
 
   @Test

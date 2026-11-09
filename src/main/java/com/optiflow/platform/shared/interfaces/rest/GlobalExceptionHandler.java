@@ -35,8 +35,8 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(MethodArgumentTypeMismatchException.class)
   public ResponseEntity<ApiError> handleInvalidParameter(MethodArgumentTypeMismatchException exception) {
     String message = UUID.class.equals(exception.getRequiredType())
-        ? "El parámetro " + exception.getName() + " debe ser un UUID válido."
-        : "El parámetro " + exception.getName() + " tiene un formato inválido.";
+        ? "The parameter " + exception.getName() + " must be a valid UUID."
+        : "The parameter " + exception.getName() + " has an invalid format.";
     return ResponseEntity.badRequest()
         .body(new ApiError(400, "Bad Request", message));
   }
@@ -45,6 +45,6 @@ public class GlobalExceptionHandler {
   public ResponseEntity<ApiError> handleUnreadableRequest(HttpMessageNotReadableException exception) {
     return ResponseEntity.badRequest()
         .body(new ApiError(400, "Bad Request",
-            "El cuerpo de la solicitud debe contener un JSON válido con los datos en el formato esperado."));
+            "The request body must be valid JSON with the data in the expected format."));
   }
 }
