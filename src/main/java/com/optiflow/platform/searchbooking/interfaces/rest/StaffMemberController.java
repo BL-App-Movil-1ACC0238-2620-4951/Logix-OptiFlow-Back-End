@@ -1,8 +1,10 @@
 package com.optiflow.platform.searchbooking.interfaces.rest;
 
 import com.optiflow.platform.searchbooking.application.services.StaffMemberApplicationService;
+import com.optiflow.platform.searchbooking.domain.model.queries.GetStaffMemberByIdQuery;
 import com.optiflow.platform.searchbooking.domain.model.queries.GetStaffMembersQuery;
 import com.optiflow.platform.searchbooking.domain.model.valueobjects.OpticalStoreId;
+import com.optiflow.platform.searchbooking.domain.model.valueobjects.StaffMemberId;
 import com.optiflow.platform.searchbooking.interfaces.rest.assemblers.FromAssignStaffRoleRequestAssembler;
 import com.optiflow.platform.searchbooking.interfaces.rest.assemblers.FromRegisterStaffMemberRequestAssembler;
 import com.optiflow.platform.searchbooking.interfaces.rest.assemblers.SearchBookingResponseAssembler;
@@ -10,6 +12,8 @@ import com.optiflow.platform.searchbooking.interfaces.rest.resources.AssignStaff
 import com.optiflow.platform.searchbooking.interfaces.rest.resources.RegisterStaffMemberRequest;
 import com.optiflow.platform.searchbooking.interfaces.rest.resources.StaffMemberResponse;
 import com.optiflow.platform.shared.infrastructure.documentation.openapi.configuration.OpenApiTags;
+import com.optiflow.platform.shared.infrastructure.security.AuthenticatedUser;
+import com.optiflow.platform.shared.infrastructure.security.StaffDataAccessGuard;
 import com.optiflow.platform.shared.interfaces.rest.ApiV1;
 import com.optiflow.platform.shared.interfaces.rest.CreatedResourceResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -18,6 +22,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,16 +41,19 @@ public class StaffMemberController {
   private final FromRegisterStaffMemberRequestAssembler registerAssembler;
   private final FromAssignStaffRoleRequestAssembler assignRoleAssembler;
   private final SearchBookingResponseAssembler responseAssembler;
+  private final StaffDataAccessGuard staffDataAccessGuard;
 
   public StaffMemberController(
       StaffMemberApplicationService staffMemberApplicationService,
       FromRegisterStaffMemberRequestAssembler registerAssembler,
       FromAssignStaffRoleRequestAssembler assignRoleAssembler,
-      SearchBookingResponseAssembler responseAssembler) {
+      SearchBookingResponseAssembler responseAssembler,
+      StaffDataAccessGuard staffDataAccessGuard) {
     this.staffMemberApplicationService = staffMemberApplicationService;
     this.registerAssembler = registerAssembler;
     this.assignRoleAssembler = assignRoleAssembler;
     this.responseAssembler = responseAssembler;
+    this.staffDataAccessGuard = staffDataAccessGuard;
   }
 
   @PostMapping("/staff-members")
@@ -63,6 +71,14 @@ public class StaffMemberController {
     return staffMemberApplicationService.find(new GetStaffMembersQuery(storeId)).stream()
         .map(responseAssembler::toStaffMemberResponse)
         .toList();
+  }
+
+  @GetMapping("/staff-members/{id}")
+  public StaffMemberResponse get(
+      @PathVariable UUID id, @AuthenticationPrincipal AuthenticatedUser user) {
+    staffDataAccessGuard.ensureSelfStaffAccess(user, id);
+    return responseAssembler.toStaffMemberResponse(
+        staffMemberApplicationService.get(new GetStaffMemberByIdQuery(StaffMemberId.of(id))));
   }
 
   @PatchMapping("/staff-members/{id}/role")
