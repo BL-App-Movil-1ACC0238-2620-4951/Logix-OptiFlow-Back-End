@@ -16,6 +16,9 @@ import com.optiflow.platform.shared.infrastructure.security.AuthenticatedUser;
 import com.optiflow.platform.shared.infrastructure.security.StaffDataAccessGuard;
 import com.optiflow.platform.shared.interfaces.rest.ApiV1;
 import com.optiflow.platform.shared.interfaces.rest.CreatedResourceResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -56,6 +59,16 @@ public class StaffMemberController {
     this.staffDataAccessGuard = staffDataAccessGuard;
   }
 
+  @Operation(summary = "Register a staff member",
+      description = "The admin registers an optometrist, sales advisor, technician or admin of a "
+          + "store.")
+  @ApiResponses({
+      @ApiResponse(responseCode = "201", description = "Staff member registered."),
+      @ApiResponse(responseCode = "400", description = "The role is PATIENT."),
+      @ApiResponse(responseCode = "404", description = "The optical store was not found."),
+      @ApiResponse(responseCode = "409",
+          description = "The email is already registered as staff or as a patient.")
+  })
   @PostMapping("/staff-members")
   public ResponseEntity<StaffMemberResponse> register(
       @Valid @RequestBody RegisterStaffMemberRequest request) {
@@ -64,6 +77,10 @@ public class StaffMemberController {
     return CreatedResourceResponses.at("/staff-members/{id}", response, response.id());
   }
 
+  @Operation(summary = "List staff members",
+      description = "Returns the staff, optionally only the members of one optical store. Only "
+          + "admins.")
+  @ApiResponses(@ApiResponse(responseCode = "200", description = "Staff members."))
   @GetMapping("/staff-members")
   public List<StaffMemberResponse> list(@RequestParam(required = false) UUID opticalStoreId) {
     Optional<OpticalStoreId> storeId =
@@ -73,6 +90,15 @@ public class StaffMemberController {
         .toList();
   }
 
+  @Operation(summary = "Get a staff member",
+      description = "Returns the profile of a staff member. Admins read any profile; the other "
+          + "staff members only their own.")
+  @ApiResponses({
+      @ApiResponse(responseCode = "200", description = "Staff member found."),
+      @ApiResponse(responseCode = "403",
+          description = "A staff member asked for another member's profile."),
+      @ApiResponse(responseCode = "404", description = "The staff member was not found.")
+  })
   @GetMapping("/staff-members/{id}")
   public StaffMemberResponse get(
       @PathVariable UUID id, @AuthenticationPrincipal AuthenticatedUser user) {
@@ -81,6 +107,13 @@ public class StaffMemberController {
         staffMemberApplicationService.get(new GetStaffMemberByIdQuery(StaffMemberId.of(id))));
   }
 
+  @Operation(summary = "Assign a role",
+      description = "The admin changes the role of a staff member.")
+  @ApiResponses({
+      @ApiResponse(responseCode = "200", description = "Role assigned."),
+      @ApiResponse(responseCode = "400", description = "The role is PATIENT."),
+      @ApiResponse(responseCode = "404", description = "The staff member was not found.")
+  })
   @PatchMapping("/staff-members/{id}/role")
   public StaffMemberResponse updateRole(
       @PathVariable UUID id, @Valid @RequestBody AssignStaffRoleRequest request) {

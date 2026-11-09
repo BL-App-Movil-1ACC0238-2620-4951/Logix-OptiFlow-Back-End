@@ -10,6 +10,10 @@ import com.optiflow.platform.searchbooking.interfaces.rest.resources.TimeSlotRes
 import com.optiflow.platform.shared.infrastructure.documentation.openapi.configuration.OpenApiTags;
 import com.optiflow.platform.shared.interfaces.rest.ApiV1;
 import com.optiflow.platform.shared.interfaces.rest.CreatedResourceResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -40,6 +44,13 @@ public class TimeSlotController {
     this.publishAssembler = publishAssembler;
   }
 
+  @Operation(summary = "List the available time slots",
+      description = "Returns the time slots of the store that can still be booked. Public route.")
+  @ApiResponses({
+      @ApiResponse(responseCode = "200", description = "Available time slots."),
+      @ApiResponse(responseCode = "404", description = "The optical store was not found.")
+  })
+  @SecurityRequirements
   @GetMapping("/optical-stores/{id}/time-slots")
   public List<TimeSlotResponse> list(@PathVariable UUID id) {
     return responseAssembler.toTimeSlotResponses(
@@ -47,6 +58,13 @@ public class TimeSlotController {
             new GetAvailableTimeSlotsQuery(OpticalStoreId.of(id))));
   }
 
+  @Operation(summary = "Publish time slots",
+      description = "The admin publishes new time slots of the store; they are created available. "
+          + "The Location header points to the list of time slots.")
+  @ApiResponses({
+      @ApiResponse(responseCode = "201", description = "Time slots published."),
+      @ApiResponse(responseCode = "404", description = "The optical store was not found.")
+  })
   @PostMapping("/optical-stores/{id}/time-slots")
   public ResponseEntity<List<TimeSlotResponse>> publish(
       @PathVariable UUID id, @Valid @RequestBody PublishTimeSlotsRequest request) {

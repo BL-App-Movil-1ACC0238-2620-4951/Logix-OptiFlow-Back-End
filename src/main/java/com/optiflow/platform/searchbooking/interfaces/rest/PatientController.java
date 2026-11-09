@@ -16,6 +16,10 @@ import com.optiflow.platform.shared.infrastructure.security.AuthenticatedUser;
 import com.optiflow.platform.shared.infrastructure.security.PatientDataAccessGuard;
 import com.optiflow.platform.shared.interfaces.rest.ApiV1;
 import com.optiflow.platform.shared.interfaces.rest.CreatedResourceResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -54,6 +58,15 @@ public class PatientController {
     this.patientDataAccessGuard = patientDataAccessGuard;
   }
 
+  @Operation(summary = "Register a patient",
+      description = "Creates the account of a patient, who can then log in with the same email and "
+          + "password.")
+  @ApiResponses({
+      @ApiResponse(responseCode = "201", description = "Patient registered."),
+      @ApiResponse(responseCode = "409",
+          description = "The email is already registered as a patient or as staff.")
+  })
+  @SecurityRequirements
   @PostMapping("/patients")
   public ResponseEntity<PatientResponse> register(@Valid @RequestBody RegisterPatientRequest request) {
     PatientResponse response = responseAssembler.toPatientResponse(
@@ -61,6 +74,11 @@ public class PatientController {
     return CreatedResourceResponses.at("/patients/{id}", response, response.id());
   }
 
+  @Operation(summary = "Search patients",
+      description = "Patient directory of the staff: filters by name or email, both optional. Only "
+          + "optometrists, sales advisors and admins.")
+  @ApiResponses(@ApiResponse(responseCode = "200",
+      description = "Patients that match the filters."))
   @GetMapping("/patients")
   public List<PatientResponse> search(
       @RequestParam(required = false) String name, @RequestParam(required = false) String email) {
@@ -69,6 +87,14 @@ public class PatientController {
         .toList();
   }
 
+  @Operation(summary = "Get a patient",
+      description = "Returns the profile of a patient. A patient can only read their own profile.")
+  @ApiResponses({
+      @ApiResponse(responseCode = "200", description = "Patient found."),
+      @ApiResponse(responseCode = "403",
+          description = "A patient asked for another patient's profile."),
+      @ApiResponse(responseCode = "404", description = "The patient was not found.")
+  })
   @GetMapping("/patients/{patientId}")
   public PatientResponse get(
       @PathVariable UUID patientId, @AuthenticationPrincipal AuthenticatedUser user) {
@@ -77,6 +103,14 @@ public class PatientController {
         patientApplicationService.get(new GetPatientByIdQuery(PatientId.of(patientId))));
   }
 
+  @Operation(summary = "List the appointments of a patient",
+      description = "Returns the appointment history of the patient. A patient can only read their "
+          + "own appointments.")
+  @ApiResponses({
+      @ApiResponse(responseCode = "200", description = "Appointments of the patient."),
+      @ApiResponse(responseCode = "403",
+          description = "A patient asked for another patient's appointments.")
+  })
   @GetMapping("/patients/{patientId}/appointments")
   public List<AppointmentResponse> appointments(
       @PathVariable UUID patientId, @AuthenticationPrincipal AuthenticatedUser user) {

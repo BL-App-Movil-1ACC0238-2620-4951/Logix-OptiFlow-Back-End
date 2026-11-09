@@ -22,6 +22,9 @@ import com.optiflow.platform.shared.infrastructure.security.AuthenticatedUser;
 import com.optiflow.platform.shared.infrastructure.security.PatientDataAccessGuard;
 import com.optiflow.platform.shared.interfaces.rest.ApiV1;
 import com.optiflow.platform.shared.interfaces.rest.CreatedResourceResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.UUID;
@@ -65,6 +68,15 @@ public class QuotationController {
     this.patientDataAccessGuard = patientDataAccessGuard;
   }
 
+  @Operation(summary = "Generate a quotation",
+      description = "Creates a DRAFT quotation with the frames, lenses, treatments and services of "
+          + "a clinical record that already has its prescription.")
+  @ApiResponses({
+      @ApiResponse(responseCode = "201", description = "Quotation generated with its total."),
+      @ApiResponse(responseCode = "404", description = "The clinical record was not found."),
+      @ApiResponse(responseCode = "409",
+          description = "The clinical record has no prescription yet.")
+  })
   @PostMapping("/quotations")
   public ResponseEntity<QuotationResponse> generate(@Valid @RequestBody GenerateQuotationRequest request) {
     QuotationResponse response = responseAssembler.toQuotationResponse(
@@ -72,6 +84,14 @@ public class QuotationController {
     return CreatedResourceResponses.at("/quotations/{id}", response, response.id());
   }
 
+  @Operation(summary = "Get a quotation",
+      description = "Returns the quotation with its items, discount and total. A patient can only "
+          + "read the quotations of their own records.")
+  @ApiResponses({
+      @ApiResponse(responseCode = "200", description = "Quotation found."),
+      @ApiResponse(responseCode = "403", description = "The quotation belongs to another patient."),
+      @ApiResponse(responseCode = "404", description = "The quotation was not found.")
+  })
   @GetMapping("/quotations/{id}")
   public QuotationResponse get(
       @PathVariable UUID id, @AuthenticationPrincipal AuthenticatedUser user) {
@@ -86,6 +106,16 @@ public class QuotationController {
     return responseAssembler.toQuotationResponse(quotation);
   }
 
+  @Operation(summary = "Apply a promotion or discount",
+      description = "Applies a percentage or fixed amount discount to a draft quotation and "
+          + "recalculates its total.")
+  @ApiResponses({
+      @ApiResponse(responseCode = "200", description = "Discount applied."),
+      @ApiResponse(responseCode = "400",
+          description = "The discount exceeds 100% or the subtotal."),
+      @ApiResponse(responseCode = "404", description = "The quotation was not found."),
+      @ApiResponse(responseCode = "409", description = "Only a draft quotation can be modified.")
+  })
   @PatchMapping("/quotations/{id}/discount")
   public QuotationResponse applyPromotionOrDiscount(
       @PathVariable UUID id, @Valid @RequestBody ApplyPromotionOrDiscountRequest request) {
@@ -94,6 +124,17 @@ public class QuotationController {
             discountAssembler.toCommand(id, request)));
   }
 
+  @Operation(summary = "Approve or reject a quotation",
+      description = "With status APPROVED, the patient accepts the quotation and a sale can be "
+          + "registered; with REJECTED, a reason is required.")
+  @ApiResponses({
+      @ApiResponse(responseCode = "200", description = "Quotation updated."),
+      @ApiResponse(responseCode = "400",
+          description = "The status is invalid or the rejection reason is missing."),
+      @ApiResponse(responseCode = "404", description = "The quotation was not found."),
+      @ApiResponse(responseCode = "409",
+          description = "Only a draft quotation can be approved or rejected.")
+  })
   @PatchMapping("/quotations/{id}/status")
   public QuotationResponse updateStatus(
       @PathVariable UUID id, @Valid @RequestBody UpdateQuotationStatusRequest request) {

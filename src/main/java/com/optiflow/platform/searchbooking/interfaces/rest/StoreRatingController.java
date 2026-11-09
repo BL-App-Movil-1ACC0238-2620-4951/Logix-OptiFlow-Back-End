@@ -8,6 +8,9 @@ import com.optiflow.platform.searchbooking.interfaces.rest.resources.StoreRating
 import com.optiflow.platform.shared.infrastructure.documentation.openapi.configuration.OpenApiTags;
 import com.optiflow.platform.shared.interfaces.rest.ApiV1;
 import com.optiflow.platform.shared.interfaces.rest.CreatedResourceResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.UUID;
@@ -36,6 +39,17 @@ public class StoreRatingController {
     this.responseAssembler = responseAssembler;
   }
 
+  @Operation(summary = "Rate an optical store",
+      description = "Saves the rating of a patient (1 to 5) and updates the average rating of the "
+          + "store.")
+  @ApiResponses({
+      @ApiResponse(responseCode = "201",
+          description = "Rating saved with the new average of the store."),
+      @ApiResponse(responseCode = "404",
+          description = "The patient or the optical store was not found."),
+      @ApiResponse(responseCode = "409",
+          description = "The patient already rated this store or the store is not available.")
+  })
   @PostMapping("/optical-stores/{id}/ratings")
   public ResponseEntity<StoreRatingResponse> rate(
       @PathVariable UUID id, @Valid @RequestBody RateOpticalStoreRequest request) {

@@ -8,6 +8,9 @@ import com.optiflow.platform.production.interfaces.rest.resources.LaboratoryResp
 import com.optiflow.platform.production.interfaces.rest.resources.TechnicianResponse;
 import com.optiflow.platform.shared.infrastructure.documentation.openapi.configuration.OpenApiTags;
 import com.optiflow.platform.shared.interfaces.rest.ApiV1;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,6 +32,9 @@ public class ProductionCatalogController {
     this.responseAssembler = responseAssembler;
   }
 
+  @Operation(summary = "List technicians",
+      description = "Returns the technicians that can be assigned to an order.")
+  @ApiResponses(@ApiResponse(responseCode = "200", description = "Technicians."))
   @GetMapping("/technicians")
   public List<TechnicianResponse> technicians() {
     return workOrderApplicationService.technicians(new GetTechniciansQuery()).stream()
@@ -36,6 +42,9 @@ public class ProductionCatalogController {
         .toList();
   }
 
+  @Operation(summary = "List laboratories",
+      description = "Returns the laboratories that can receive an order.")
+  @ApiResponses(@ApiResponse(responseCode = "200", description = "Laboratories."))
   @GetMapping("/laboratories")
   public List<LaboratoryResponse> laboratories() {
     return workOrderApplicationService.laboratories(new GetLaboratoriesQuery()).stream()
