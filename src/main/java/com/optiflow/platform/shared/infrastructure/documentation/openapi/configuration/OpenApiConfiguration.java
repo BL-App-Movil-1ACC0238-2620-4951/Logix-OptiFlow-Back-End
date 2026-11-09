@@ -1,12 +1,20 @@
 package com.optiflow.platform.shared.infrastructure.documentation.openapi.configuration;
 
+import com.optiflow.platform.shared.interfaces.rest.ApiError;
+import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.media.Content;
+import io.swagger.v3.oas.models.media.MediaType;
+import io.swagger.v3.oas.models.media.Schema;
+import io.swagger.v3.oas.models.responses.ApiResponse;
+import io.swagger.v3.oas.models.responses.ApiResponses;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.tags.Tag;
 import java.util.List;
+import org.springdoc.core.customizers.OpenApiCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -14,6 +22,7 @@ import org.springframework.context.annotation.Configuration;
 public class OpenApiConfiguration {
 
   public static final String BEARER_SCHEME = "bearerAuth";
+  private static final String API_ERROR = "ApiError";
 
   @Bean
   OpenAPI optiFlowOpenApi() {
@@ -48,6 +57,41 @@ public class OpenApiConfiguration {
             tag(OpenApiTags.SUPPLIERS, "Suppliers that deliver the replenishments."),
             tag(OpenApiTags.INVENTORY_REPORTS,
                 "Inventory metrics of a store for the admin, in JSON or CSV.")));
+  }
+
+  /**
+   * Documents the error responses shared by every route once: 400 on routes with input, 401 and
+   * 403 on secured routes, and the {@link ApiError} body of every 4xx response, which springdoc
+   * would otherwise fill with the return type of the method.
+   */
+  @Bean
+  OpenApiCustomizer apiErrorResponses() {
+    return openApi -> {
+      openApi.getComponents().addSchemas(API_ERROR,
+          ModelConverters.getInstance().readAllAsResolvedSchema(ApiError.class).schema);
+      openApi.getPaths().values().forEach(path -> path.readOperations().forEach(operation -> {
+        ApiResponses responses = operation.getResponses();
+        boolean hasInput = operation.getRequestBody() != null
+            || (operation.getParameters() != null && !operation.getParameters().isEmpty());
+        if (hasInput) {
+          responses.putIfAbsent("400",
+              new ApiResponse().description("The request data is invalid."));
+        }
+        if (operation.getSecurity() == null) {
+          responses.putIfAbsent("401", new ApiResponse()
+              .description("The access token is missing, invalid or expired."));
+          responses.putIfAbsent("403", new ApiResponse()
+              .description("The role of the user cannot use this route."));
+        }
+        responses.forEach((code, response) -> {
+          if (code.startsWith("4")) {
+            response.setContent(new Content().addMediaType(
+                org.springframework.http.MediaType.APPLICATION_JSON_VALUE,
+                new MediaType().schema(new Schema<>().$ref("#/components/schemas/" + API_ERROR))));
+          }
+        });
+      }));
+    };
   }
 
   private static Tag tag(String name, String description) {

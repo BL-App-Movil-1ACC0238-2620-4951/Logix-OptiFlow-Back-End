@@ -8,8 +8,11 @@ import com.optiflow.platform.inventory.interfaces.rest.resources.RegisterSupplie
 import com.optiflow.platform.inventory.interfaces.rest.resources.SupplierResponse;
 import com.optiflow.platform.shared.infrastructure.documentation.openapi.configuration.OpenApiTags;
 import com.optiflow.platform.shared.interfaces.rest.ApiV1;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import com.optiflow.platform.shared.interfaces.rest.CreatedResourceResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.http.ResponseEntity;
@@ -37,6 +40,8 @@ public class SupplierController {
     this.responseAssembler = responseAssembler;
   }
 
+  @Operation(summary = "Register a supplier")
+  @ApiResponses(@ApiResponse(responseCode = "201", description = "Supplier registered."))
   @PostMapping("/suppliers")
   public ResponseEntity<SupplierResponse> register(@Valid @RequestBody RegisterSupplierRequest request) {
     SupplierResponse response = responseAssembler.toSupplierResponse(
@@ -44,6 +49,8 @@ public class SupplierController {
     return CreatedResourceResponses.at("/suppliers", response);
   }
 
+  @Operation(summary = "List the suppliers", description = "Returns the suppliers ordered by name.")
+  @ApiResponses(@ApiResponse(responseCode = "200", description = "Suppliers."))
   @GetMapping("/suppliers")
   public List<SupplierResponse> suppliers() {
     return supplierApplicationService.suppliers(new GetSuppliersQuery()).stream()

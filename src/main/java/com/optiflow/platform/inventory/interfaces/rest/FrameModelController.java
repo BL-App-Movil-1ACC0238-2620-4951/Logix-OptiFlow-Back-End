@@ -14,8 +14,12 @@ import com.optiflow.platform.inventory.interfaces.rest.resources.FrameModelRespo
 import com.optiflow.platform.inventory.interfaces.rest.resources.UpdateFrameModelPriceRequest;
 import com.optiflow.platform.shared.infrastructure.documentation.openapi.configuration.OpenApiTags;
 import com.optiflow.platform.shared.interfaces.rest.ApiV1;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import com.optiflow.platform.shared.interfaces.rest.CreatedResourceResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
 import java.util.UUID;
@@ -53,6 +57,10 @@ public class FrameModelController {
     this.responseAssembler = responseAssembler;
   }
 
+  @Operation(summary = "List the frame catalog",
+      description = "Returns every frame model ordered by name, with its SKU, price and the 3D "
+          + "model of the virtual try-on.")
+  @ApiResponses(@ApiResponse(responseCode = "200", description = "Frame catalog."))
   @GetMapping("/inventory/frames")
   public List<FrameModelResponse> catalog() {
     return frameModelApplicationService.catalog(new GetFrameCatalogQuery()).stream()
@@ -61,14 +69,33 @@ public class FrameModelController {
   }
 
   /** Scanned frame: its data and price, plus its stock when an optical store is given. */
+  @Operation(summary = "Get a scanned frame",
+      description = "Returns the data and price of the frame with this SKU. When opticalStoreId "
+          + "is given, it also returns its quantity and minimum stock in that store.")
+  @ApiResponses({
+      @ApiResponse(responseCode = "200", description = "Frame found."),
+      @ApiResponse(responseCode = "404", description = "No frame model has this SKU.")
+  })
   @GetMapping("/inventory/frames/{sku}")
   public FrameModelResponse get(
-      @PathVariable String sku, @RequestParam(required = false) UUID opticalStoreId) {
+      @Parameter(description = "SKU read from the frame label.", example = "RB-2140-BLK")
+      @PathVariable String sku,
+      @Parameter(description = "Optical store whose stock of the frame is included.",
+          example = "11111111-1111-1111-1111-111111111111")
+      @RequestParam(required = false) UUID opticalStoreId) {
     return responseAssembler.toFrameModelResponse(inventoryApplicationService.getFrameModel(
         new GetFrameModelBySkuQuery(
             Sku.of(sku), opticalStoreId == null ? null : OpticalStoreId.of(opticalStoreId))));
   }
 
+  @Operation(summary = "Add a frame model",
+      description = "Registers a new frame in the catalog. Its price is in PEN.")
+  @ApiResponses({
+      @ApiResponse(responseCode = "201",
+          description = "Frame model created. The Location header points to it."),
+      @ApiResponse(responseCode = "409",
+          description = "A frame model with this SKU already exists.")
+  })
   @PostMapping("/inventory/frames")
   public ResponseEntity<FrameModelResponse> add(@Valid @RequestBody AddNewFrameModelRequest request) {
     FrameModelResponse response = responseAssembler.toFrameModelResponse(
@@ -76,9 +103,15 @@ public class FrameModelController {
     return CreatedResourceResponses.at("/inventory/frames/{sku}", response, response.sku());
   }
 
+  @Operation(summary = "Update the price of a frame")
+  @ApiResponses({
+      @ApiResponse(responseCode = "200", description = "Frame model with its new price."),
+      @ApiResponse(responseCode = "404", description = "No frame model has this SKU.")
+  })
   @PatchMapping("/inventory/frames/{sku}/price")
   public FrameModelResponse updatePrice(
-      @PathVariable String sku, @Valid @RequestBody UpdateFrameModelPriceRequest request) {
+      @Parameter(description = "SKU of the frame.", example = "RB-2140-BLK") @PathVariable String sku,
+      @Valid @RequestBody UpdateFrameModelPriceRequest request) {
     return responseAssembler.toFrameModelResponse(
         frameModelApplicationService.updatePrice(priceAssembler.toCommand(sku, request)));
   }

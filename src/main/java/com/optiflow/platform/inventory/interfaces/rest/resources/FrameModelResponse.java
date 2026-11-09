@@ -1,5 +1,6 @@
 package com.optiflow.platform.inventory.interfaces.rest.resources;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.math.BigDecimal;
 import java.util.UUID;
 
@@ -12,8 +13,8 @@ public record FrameModelResponse(
     String shape,
     String color,
     BigDecimal price,
-    String currency,
+    @Schema(example = "PEN") String currency,
     String tryOnModelUrl,
-    Integer quantity,
-    Integer minimumStock) {
+    @Schema(description = "Only filled when opticalStoreId is given.") Integer quantity,
+    @Schema(description = "Only filled when opticalStoreId is given.") Integer minimumStock) {
 }

@@ -14,10 +14,14 @@ import com.optiflow.platform.inventory.interfaces.rest.resources.LowStockAlertRe
 import com.optiflow.platform.inventory.interfaces.rest.resources.ReplenishStockRequest;
 import com.optiflow.platform.inventory.interfaces.rest.resources.StockMovementResponse;
 import com.optiflow.platform.shared.infrastructure.documentation.openapi.configuration.OpenApiTags;
-import com.optiflow.platform.shared.interfaces.rest.ApiV1;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import com.optiflow.platform.shared.infrastructure.security.AuthenticatedUser;
+import com.optiflow.platform.shared.interfaces.rest.ApiV1;
 import com.optiflow.platform.shared.interfaces.rest.CreatedResourceResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.time.LocalDate;
 import java.util.List;
@@ -55,12 +59,27 @@ public class InventoryController {
     this.responseAssembler = responseAssembler;
   }
 
+  @Operation(summary = "Consult the stock of an optical store",
+      description = "Returns the quantity and minimum stock of each frame in the inventory of the "
+          + "store. low is true when the quantity is at or below the minimum stock.")
+  @ApiResponses({
+      @ApiResponse(responseCode = "200", description = "Stock of the store."),
+      @ApiResponse(responseCode = "404", description = "The optical store has no inventory.")
+  })
   @GetMapping("/inventory/stock")
   public InventoryResponse stock(@ParameterObject @Valid @ModelAttribute ConsultStockRequest request) {
     return responseAssembler.toInventoryResponse(
         inventoryApplicationService.consultStock(consultStockAssembler.toQuery(request)));
   }
 
+  @Operation(summary = "Replenish stock",
+      description = "Registers the frames delivered by a supplier as an IN movement made by the "
+          + "authenticated user. The first replenishment of a frame in a store creates its stock.")
+  @ApiResponses({
+      @ApiResponse(responseCode = "201", description = "Replenishment movement registered."),
+      @ApiResponse(responseCode = "404", description = "The frame model, the supplier or the "
+          + "inventory of the store was not found.")
+  })
   @PostMapping("/inventory/replenishments")
   public ResponseEntity<StockMovementResponse> replenish(
       @Valid @RequestBody ReplenishStockRequest request,
@@ -71,11 +90,26 @@ public class InventoryController {
     return CreatedResourceResponses.at("/inventory/frames/{sku}", response, response.sku());
   }
 
+  @Operation(summary = "List the inventory movements",
+      description = "Returns the IN and OUT movements of the store from the start date to the end "
+          + "date, both included, newest first. Exits of a sale carry its saleId and no "
+          + "performedBy.")
+  @ApiResponses({
+      @ApiResponse(responseCode = "200", description = "Movements of the period."),
+      @ApiResponse(responseCode = "400",
+          description = "The parameters are invalid or the start date is after the end date."),
+      @ApiResponse(responseCode = "404", description = "The optical store has no inventory.")
+  })
   @GetMapping("/inventory/movements")
   public List<StockMovementResponse> movements(
+      @Parameter(description = "Optical store whose inventory is used.",
+          example = "11111111-1111-1111-1111-111111111111")
       @RequestParam UUID opticalStoreId,
+      @Parameter(description = "Start date (ISO).", example = "2026-11-01")
       @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
+      @Parameter(description = "End date (ISO).", example = "2026-11-30")
       @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to,
+      @Parameter(description = "Only the movements of this frame.", example = "RB-2140-BLK")
       @RequestParam(required = false) String sku) {
     GetInventoryMovementsQuery query = new GetInventoryMovementsQuery(
         OpticalStoreId.of(opticalStoreId), from, to,
@@ -85,8 +119,17 @@ public class InventoryController {
         .toList();
   }
 
+  @Operation(summary = "List the low stock alerts",
+      description = "Returns the frames whose quantity is at or below their minimum stock.")
+  @ApiResponses({
+      @ApiResponse(responseCode = "200", description = "Current low stock alerts."),
+      @ApiResponse(responseCode = "404", description = "The optical store has no inventory.")
+  })
   @GetMapping("/inventory/alerts")
-  public List<LowStockAlertResponse> alerts(@RequestParam UUID opticalStoreId) {
+  public List<LowStockAlertResponse> alerts(
+      @Parameter(description = "Optical store whose inventory is used.",
+          example = "11111111-1111-1111-1111-111111111111")
+      @RequestParam UUID opticalStoreId) {
     return inventoryApplicationService
         .lowStockAlerts(new GetLowStockAlertsQuery(OpticalStoreId.of(opticalStoreId)))
         .stream()
