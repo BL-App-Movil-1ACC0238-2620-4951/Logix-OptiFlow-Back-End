@@ -16,4 +16,6 @@ public interface ClinicalRecordRepository {
   Optional<ClinicalRecord> findByAppointmentId(AppointmentId appointmentId);
 
   List<ClinicalRecord> findByPatientId(PatientId patientId);
+
+  long countPatientsWithRecords();
 }

@@ -4,12 +4,14 @@ import com.optiflow.platform.clinical.application.commandhandlers.GenerateOptica
 import com.optiflow.platform.clinical.application.commandhandlers.RecordMedicalHistoryHandler;
 import com.optiflow.platform.clinical.application.commandhandlers.RegisterClinicalRecordHandler;
 import com.optiflow.platform.clinical.application.queryservices.ClinicalRecordQueryService;
+import com.optiflow.platform.clinical.application.results.ClinicalRecordsSummary;
 import com.optiflow.platform.clinical.domain.model.aggregates.ClinicalRecord;
 import com.optiflow.platform.clinical.domain.model.commands.GenerateOpticalPrescriptionCommand;
 import com.optiflow.platform.clinical.domain.model.commands.RecordMedicalHistoryCommand;
 import com.optiflow.platform.clinical.domain.model.commands.RegisterClinicalRecordCommand;
 import com.optiflow.platform.clinical.domain.model.queries.GetClinicalRecordByIdQuery;
 import com.optiflow.platform.clinical.domain.model.queries.GetClinicalRecordsByPatientIdQuery;
+import com.optiflow.platform.clinical.domain.model.queries.GetClinicalRecordsSummaryQuery;
 import com.optiflow.platform.clinical.domain.model.queries.GetOpticalPrescriptionQuery;
 import java.util.List;
 import org.springframework.stereotype.Service;
@@ -50,6 +52,10 @@ public class ClinicalRecordApplicationService {
   }
 
   public List<ClinicalRecord> findByPatient(GetClinicalRecordsByPatientIdQuery query) {
+    return clinicalRecordQueryService.handle(query);
+  }
+
+  public ClinicalRecordsSummary getSummary(GetClinicalRecordsSummaryQuery query) {
     return clinicalRecordQueryService.handle(query);
   }
 
