@@ -1,7 +1,9 @@
 package com.optiflow.platform.notification.interfaces.rest;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -11,6 +13,7 @@ import com.optiflow.platform.notification.domain.model.valueobjects.Notification
 import com.optiflow.platform.notification.domain.model.valueobjects.NotificationMessage;
 import com.optiflow.platform.notification.domain.model.valueobjects.PatientId;
 import com.optiflow.platform.notification.domain.model.valueobjects.WorkOrderId;
+import com.optiflow.platform.notification.domain.repositories.DeviceTokenRepository;
 import com.optiflow.platform.notification.domain.repositories.LoyaltyAccountRepository;
 import com.optiflow.platform.notification.domain.repositories.NotificationRepository;
 import com.optiflow.platform.shared.interfaces.rest.ApiV1;
@@ -38,6 +41,9 @@ class NotificationApiTest {
 
   @Autowired
   private LoyaltyAccountRepository loyaltyAccountRepository;
+
+  @Autowired
+  private DeviceTokenRepository deviceTokenRepository;
 
   @Test
   void listsAndMarksTheNotificationsOfAPatientAsRead() throws Exception {
@@ -71,6 +77,29 @@ class NotificationApiTest {
 
   private static MockHttpServletRequestBuilder markAsRead(String route, boolean read) {
     return patch(route).contentType(MediaType.APPLICATION_JSON).content("{\"read\":" + read + "}");
+  }
+
+  @Test
+  void registersADeviceTokenAndMovesItToTheLastPatient() throws Exception {
+    UUID firstPatient = UUID.randomUUID();
+    UUID secondPatient = UUID.randomUUID();
+    String token = "fcm-" + UUID.randomUUID();
+    String body = "{\"token\":\"" + token + "\",\"platform\":\"ANDROID\"}";
+
+    mockMvc.perform(post(ApiV1.path("/patients/" + firstPatient + "/device-tokens"))
+            .contentType(MediaType.APPLICATION_JSON).content(body))
+        .andExpect(status().isCreated())
+        .andExpect(jsonPath("$.platform").value("ANDROID"));
+    mockMvc.perform(post(ApiV1.path("/patients/" + secondPatient + "/device-tokens"))
+            .contentType(MediaType.APPLICATION_JSON).content(body))
+        .andExpect(status().isCreated());
+    mockMvc.perform(post(ApiV1.path("/patients/" + secondPatient + "/device-tokens"))
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{\"token\":\"" + token + "\",\"platform\":\"IOS\"}"))
+        .andExpect(status().isBadRequest());
+
+    assertEquals(0, deviceTokenRepository.findByPatientId(PatientId.of(firstPatient)).size());
+    assertEquals(1, deviceTokenRepository.findByPatientId(PatientId.of(secondPatient)).size());
   }
 
   @Test

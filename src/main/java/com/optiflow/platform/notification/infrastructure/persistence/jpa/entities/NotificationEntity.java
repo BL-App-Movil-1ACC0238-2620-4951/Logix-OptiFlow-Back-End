@@ -35,6 +35,12 @@ public class NotificationEntity {
   @Column(nullable = false, length = 10)
   private String status;
 
+  @Column(name = "push_status", nullable = false, length = 10)
+  private String pushStatus;
+
+  @Column(name = "scheduled_at")
+  private Instant scheduledAt;
+
   @Column(name = "created_at", nullable = false)
   private Instant createdAt;
 
@@ -103,6 +109,22 @@ public class NotificationEntity {
 
   public void setStatus(String status) {
     this.status = status;
+  }
+
+  public String getPushStatus() {
+    return pushStatus;
+  }
+
+  public void setPushStatus(String pushStatus) {
+    this.pushStatus = pushStatus;
+  }
+
+  public Instant getScheduledAt() {
+    return scheduledAt;
+  }
+
+  public void setScheduledAt(Instant scheduledAt) {
+    this.scheduledAt = scheduledAt;
   }
 
   public Instant getCreatedAt() {

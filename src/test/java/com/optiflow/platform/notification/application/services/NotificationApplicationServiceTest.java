@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import com.optiflow.platform.notification.application.commandhandlers.GrantBirthdayDiscountHandler;
 import com.optiflow.platform.notification.application.commandhandlers.MarkNotificationAsReadHandler;
 import com.optiflow.platform.notification.application.commandhandlers.NotifyLensOrderProgressHandler;
+import com.optiflow.platform.notification.application.commandhandlers.RegisterDeviceTokenHandler;
 import com.optiflow.platform.notification.application.commandhandlers.ScheduleAppointmentReminderHandler;
 import com.optiflow.platform.notification.application.commandhandlers.SendDeliveryDelayNotificationHandler;
 import com.optiflow.platform.notification.application.queryservices.GetLoyaltyAccountByPatientQueryService;
@@ -19,6 +20,7 @@ import com.optiflow.platform.notification.domain.model.queries.GetLoyaltyAccount
 import com.optiflow.platform.notification.domain.model.queries.GetNotificationsByPatientQuery;
 import com.optiflow.platform.notification.domain.model.valueobjects.NotificationStatus;
 import com.optiflow.platform.notification.domain.model.valueobjects.NotificationType;
+import com.optiflow.platform.notification.support.FakeDeviceTokenRepository;
 import com.optiflow.platform.notification.support.FakeLoyaltyAccountRepository;
 import com.optiflow.platform.notification.support.FakeNotificationRepository;
 import com.optiflow.platform.shared.domain.events.DomainEventPublisher;
@@ -69,6 +71,7 @@ class NotificationApplicationServiceTest {
         new SendDeliveryDelayNotificationHandler(notificationRepository, eventPublisher, clock),
         grantBirthdayDiscountHandler,
         markNotificationAsReadHandler,
+        new RegisterDeviceTokenHandler(new FakeDeviceTokenRepository(), eventPublisher, clock),
         getNotificationsByPatientQueryService,
         getNotificationByIdQueryService);
     loyaltyApplicationService = new LoyaltyApplicationService(getLoyaltyAccountByPatientQueryService);

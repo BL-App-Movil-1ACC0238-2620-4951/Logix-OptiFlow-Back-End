@@ -6,6 +6,7 @@ import com.optiflow.platform.notification.domain.model.valueobjects.Notification
 import com.optiflow.platform.notification.domain.model.valueobjects.NotificationStatus;
 import com.optiflow.platform.notification.domain.model.valueobjects.NotificationType;
 import com.optiflow.platform.notification.domain.model.valueobjects.PatientId;
+import com.optiflow.platform.notification.domain.model.valueobjects.PushStatus;
 import com.optiflow.platform.notification.domain.model.valueobjects.WorkOrderId;
 import com.optiflow.platform.shared.domain.exceptions.DomainException;
 import java.time.Instant;
@@ -20,6 +21,8 @@ public class Notification {
   private final AppointmentId appointmentId;
   private final WorkOrderId workOrderId;
   private NotificationStatus status;
+  private PushStatus pushStatus;
+  private final Instant scheduledAt;
   private final Instant createdAt;
   private Instant readAt;
 
@@ -31,6 +34,8 @@ public class Notification {
       AppointmentId appointmentId,
       WorkOrderId workOrderId,
       NotificationStatus status,
+      PushStatus pushStatus,
+      Instant scheduledAt,
       Instant createdAt,
       Instant readAt) {
     this.id = id;
@@ -40,6 +45,8 @@ public class Notification {
     this.appointmentId = appointmentId;
     this.workOrderId = workOrderId;
     this.status = status;
+    this.pushStatus = pushStatus;
+    this.scheduledAt = scheduledAt;
     this.createdAt = createdAt;
     this.readAt = readAt;
   }
@@ -58,6 +65,8 @@ public class Notification {
         appointmentId,
         null,
         NotificationStatus.UNREAD,
+        PushStatus.PENDING,
+        null,
         now,
         null);
   }
@@ -76,6 +85,8 @@ public class Notification {
         null,
         workOrderId,
         NotificationStatus.UNREAD,
+        PushStatus.PENDING,
+        null,
         now,
         null);
   }
@@ -94,6 +105,8 @@ public class Notification {
         null,
         workOrderId,
         NotificationStatus.UNREAD,
+        PushStatus.PENDING,
+        null,
         now,
         null);
   }
@@ -111,6 +124,8 @@ public class Notification {
         null,
         null,
         NotificationStatus.UNREAD,
+        PushStatus.PENDING,
+        null,
         now,
         null);
   }
@@ -123,10 +138,12 @@ public class Notification {
       AppointmentId appointmentId,
       WorkOrderId workOrderId,
       NotificationStatus status,
+      PushStatus pushStatus,
+      Instant scheduledAt,
       Instant createdAt,
       Instant readAt) {
-    return new Notification(
-        id, patientId, type, message, appointmentId, workOrderId, status, createdAt, readAt);
+    return new Notification(id, patientId, type, message, appointmentId, workOrderId, status,
+        pushStatus, scheduledAt, createdAt, readAt);
   }
 
   public void markAsRead(Instant now) {
@@ -135,6 +152,15 @@ public class Notification {
     }
     status = NotificationStatus.READ;
     readAt = now;
+  }
+
+  public void markPushSent() {
+    pushStatus = PushStatus.SENT;
+  }
+
+  /** The notification stays visible in the app even when the push could not be delivered. */
+  public void markPushFailed() {
+    pushStatus = PushStatus.FAILED;
   }
 
   public NotificationId id() {
@@ -163,6 +189,15 @@ public class Notification {
 
   public NotificationStatus status() {
     return status;
+  }
+
+  public PushStatus pushStatus() {
+    return pushStatus;
+  }
+
+  /** Date when a reminder is sent; empty for notifications sent right away. */
+  public Optional<Instant> scheduledAt() {
+    return Optional.ofNullable(scheduledAt);
   }
 
   public Instant createdAt() {

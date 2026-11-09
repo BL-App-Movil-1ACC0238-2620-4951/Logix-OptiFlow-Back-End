@@ -101,7 +101,8 @@ public class SecurityConfiguration {
             .requestMatchers("/api/v1/inventory/**", "/api/v1/suppliers").hasRole(ADMIN)
             // Notification & Loyalty
             .requestMatchers("/api/v1/patients/*/notifications",
-                "/api/v1/patients/*/loyalty-account", "/api/v1/notifications/**")
+                "/api/v1/patients/*/loyalty-account", "/api/v1/patients/*/device-tokens",
+                "/api/v1/notifications/**")
             .hasRole(PATIENT)
             // Reports
             .requestMatchers("/api/v1/reports/**").hasRole(ADMIN)

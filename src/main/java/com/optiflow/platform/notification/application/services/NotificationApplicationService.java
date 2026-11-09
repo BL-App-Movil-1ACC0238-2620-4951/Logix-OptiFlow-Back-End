@@ -3,6 +3,7 @@ package com.optiflow.platform.notification.application.services;
 import com.optiflow.platform.notification.application.commandhandlers.GrantBirthdayDiscountHandler;
 import com.optiflow.platform.notification.application.commandhandlers.MarkNotificationAsReadHandler;
 import com.optiflow.platform.notification.application.commandhandlers.NotifyLensOrderProgressHandler;
+import com.optiflow.platform.notification.application.commandhandlers.RegisterDeviceTokenHandler;
 import com.optiflow.platform.notification.application.commandhandlers.ScheduleAppointmentReminderHandler;
 import com.optiflow.platform.notification.application.commandhandlers.SendDeliveryDelayNotificationHandler;
 import com.optiflow.platform.notification.application.queryservices.GetNotificationByIdQueryService;
@@ -11,8 +12,10 @@ import com.optiflow.platform.notification.domain.model.aggregates.Notification;
 import com.optiflow.platform.notification.domain.model.commands.GrantBirthdayDiscountCommand;
 import com.optiflow.platform.notification.domain.model.commands.MarkNotificationAsReadCommand;
 import com.optiflow.platform.notification.domain.model.commands.NotifyLensOrderProgressCommand;
+import com.optiflow.platform.notification.domain.model.commands.RegisterDeviceTokenCommand;
 import com.optiflow.platform.notification.domain.model.commands.ScheduleAppointmentReminderCommand;
 import com.optiflow.platform.notification.domain.model.commands.SendDeliveryDelayNotificationCommand;
+import com.optiflow.platform.notification.domain.model.entities.DeviceToken;
 import com.optiflow.platform.notification.domain.model.queries.GetNotificationByIdQuery;
 import com.optiflow.platform.notification.domain.model.queries.GetNotificationsByPatientQuery;
 import java.util.List;
@@ -26,6 +29,7 @@ public class NotificationApplicationService {
   private final SendDeliveryDelayNotificationHandler sendDeliveryDelayNotificationHandler;
   private final GrantBirthdayDiscountHandler grantBirthdayDiscountHandler;
   private final MarkNotificationAsReadHandler markNotificationAsReadHandler;
+  private final RegisterDeviceTokenHandler registerDeviceTokenHandler;
   private final GetNotificationsByPatientQueryService getNotificationsByPatientQueryService;
   private final GetNotificationByIdQueryService getNotificationByIdQueryService;
 
@@ -35,6 +39,7 @@ public class NotificationApplicationService {
       SendDeliveryDelayNotificationHandler sendDeliveryDelayNotificationHandler,
       GrantBirthdayDiscountHandler grantBirthdayDiscountHandler,
       MarkNotificationAsReadHandler markNotificationAsReadHandler,
+      RegisterDeviceTokenHandler registerDeviceTokenHandler,
       GetNotificationsByPatientQueryService getNotificationsByPatientQueryService,
       GetNotificationByIdQueryService getNotificationByIdQueryService) {
     this.scheduleAppointmentReminderHandler = scheduleAppointmentReminderHandler;
@@ -42,6 +47,7 @@ public class NotificationApplicationService {
     this.sendDeliveryDelayNotificationHandler = sendDeliveryDelayNotificationHandler;
     this.grantBirthdayDiscountHandler = grantBirthdayDiscountHandler;
     this.markNotificationAsReadHandler = markNotificationAsReadHandler;
+    this.registerDeviceTokenHandler = registerDeviceTokenHandler;
     this.getNotificationsByPatientQueryService = getNotificationsByPatientQueryService;
     this.getNotificationByIdQueryService = getNotificationByIdQueryService;
   }
@@ -64,6 +70,10 @@ public class NotificationApplicationService {
 
   public Notification markAsRead(MarkNotificationAsReadCommand command) {
     return markNotificationAsReadHandler.handle(command);
+  }
+
+  public DeviceToken registerDeviceToken(RegisterDeviceTokenCommand command) {
+    return registerDeviceTokenHandler.handle(command);
   }
 
   public List<Notification> findByPatient(GetNotificationsByPatientQuery query) {

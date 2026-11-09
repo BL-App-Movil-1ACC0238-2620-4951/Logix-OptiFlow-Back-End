@@ -7,6 +7,7 @@ import com.optiflow.platform.notification.domain.model.valueobjects.Notification
 import com.optiflow.platform.notification.domain.model.valueobjects.NotificationStatus;
 import com.optiflow.platform.notification.domain.model.valueobjects.NotificationType;
 import com.optiflow.platform.notification.domain.model.valueobjects.PatientId;
+import com.optiflow.platform.notification.domain.model.valueobjects.PushStatus;
 import com.optiflow.platform.notification.domain.model.valueobjects.WorkOrderId;
 import com.optiflow.platform.notification.infrastructure.persistence.jpa.entities.NotificationEntity;
 import org.springframework.stereotype.Component;
@@ -23,6 +24,8 @@ public class NotificationMapper {
         entity.getAppointmentId() == null ? null : AppointmentId.of(entity.getAppointmentId()),
         entity.getWorkOrderId() == null ? null : WorkOrderId.of(entity.getWorkOrderId()),
         NotificationStatus.valueOf(entity.getStatus()),
+        PushStatus.valueOf(entity.getPushStatus()),
+        entity.getScheduledAt(),
         entity.getCreatedAt(),
         entity.getReadAt());
   }
@@ -37,6 +40,8 @@ public class NotificationMapper {
     entity.setAppointmentId(notification.appointmentId().map(AppointmentId::value).orElse(null));
     entity.setWorkOrderId(notification.workOrderId().map(WorkOrderId::value).orElse(null));
     entity.setStatus(notification.status().name());
+    entity.setPushStatus(notification.pushStatus().name());
+    entity.setScheduledAt(notification.scheduledAt().orElse(null));
     entity.setCreatedAt(notification.createdAt());
     entity.setReadAt(notification.readAt().orElse(null));
     return entity;
