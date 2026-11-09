@@ -3,6 +3,8 @@ package com.optiflow.platform.searchbooking.interfaces.rest;
 import com.optiflow.platform.searchbooking.application.services.AppointmentApplicationService;
 import com.optiflow.platform.searchbooking.application.services.PatientApplicationService;
 import com.optiflow.platform.searchbooking.domain.model.queries.GetPatientAppointmentsQuery;
+import com.optiflow.platform.searchbooking.domain.model.queries.GetPatientByIdQuery;
+import com.optiflow.platform.searchbooking.domain.model.queries.SearchPatientsQuery;
 import com.optiflow.platform.searchbooking.domain.model.valueobjects.PatientId;
 import com.optiflow.platform.searchbooking.interfaces.rest.assemblers.FromRegisterPatientRequestAssembler;
 import com.optiflow.platform.searchbooking.interfaces.rest.assemblers.SearchBookingResponseAssembler;
@@ -25,6 +27,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = OpenApiTags.PATIENTS)
@@ -56,6 +59,22 @@ public class PatientController {
     PatientResponse response = responseAssembler.toPatientResponse(
         patientApplicationService.register(registerAssembler.toCommand(request)));
     return CreatedResourceResponses.at("/patients/{id}", response, response.id());
+  }
+
+  @GetMapping("/patients")
+  public List<PatientResponse> search(
+      @RequestParam(required = false) String name, @RequestParam(required = false) String email) {
+    return patientApplicationService.search(new SearchPatientsQuery(name, email)).stream()
+        .map(responseAssembler::toPatientResponse)
+        .toList();
+  }
+
+  @GetMapping("/patients/{patientId}")
+  public PatientResponse get(
+      @PathVariable UUID patientId, @AuthenticationPrincipal AuthenticatedUser user) {
+    patientDataAccessGuard.ensureSelfPatientAccess(user, patientId);
+    return responseAssembler.toPatientResponse(
+        patientApplicationService.get(new GetPatientByIdQuery(PatientId.of(patientId))));
   }
 
   @GetMapping("/patients/{patientId}/appointments")

@@ -15,6 +15,9 @@ public interface PatientRepository {
 
   Optional<Patient> findByEmail(EmailAddress email);
 
+  /** Patients whose name and email contain the given texts, ignoring case; null matches all. */
+  List<Patient> search(String name, String email);
+
   Optional<String> findPasswordHashByEmail(EmailAddress email);
 
   List<PatientId> findIdsByBirthday(LocalDate date);
