@@ -40,7 +40,12 @@ public class OpenApiConfiguration {
             tag(OpenApiTags.WORK_ORDERS,
                 "Work orders generated from closed sales: Kanban board, lenses and delivery."),
             tag(OpenApiTags.TECHNICIANS_AND_LABORATORIES,
-                "Technicians and laboratories that can work on an order.")));
+                "Technicians and laboratories that can work on an order."),
+            tag(OpenApiTags.FRAME_MODELS,
+                "Frame catalog, scanned frames and prices."),
+            tag(OpenApiTags.INVENTORY,
+                "Stock of each optical store, replenishments, movements and low stock alerts."),
+            tag(OpenApiTags.SUPPLIERS, "Suppliers that deliver the replenishments.")));
   }
 
   private static Tag tag(String name, String description) {

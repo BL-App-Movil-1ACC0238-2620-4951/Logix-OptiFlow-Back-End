@@ -90,6 +90,12 @@ public class SecurityConfiguration {
             .hasAnyRole(TECHNICIAN, OPTOMETRIST, SALES_ADVISOR, ADMIN)
             .requestMatchers("/api/v1/work-orders/**", "/api/v1/technicians", "/api/v1/laboratories")
             .hasAnyRole(TECHNICIAN, ADMIN)
+            // Store Management & Inventory
+            .requestMatchers(HttpMethod.GET, "/api/v1/inventory/frames", "/api/v1/inventory/frames/*")
+            .hasAnyRole(PATIENT, SALES_ADVISOR, ADMIN)
+            .requestMatchers(HttpMethod.GET, "/api/v1/inventory/stock")
+            .hasAnyRole(SALES_ADVISOR, ADMIN)
+            .requestMatchers("/api/v1/inventory/**", "/api/v1/suppliers").hasRole(ADMIN)
             .anyRequest()
             .authenticated())
         .exceptionHandling(handler -> handler

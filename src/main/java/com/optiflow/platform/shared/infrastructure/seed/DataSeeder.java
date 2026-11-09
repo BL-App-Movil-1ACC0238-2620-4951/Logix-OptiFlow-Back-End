@@ -1,5 +1,7 @@
 package com.optiflow.platform.shared.infrastructure.seed;
 
+import com.optiflow.platform.inventory.domain.model.aggregates.Inventory;
+import com.optiflow.platform.inventory.domain.repositories.InventoryRepository;
 import com.optiflow.platform.searchbooking.application.services.OpticalStoreApplicationService;
 import com.optiflow.platform.searchbooking.application.services.StaffMemberApplicationService;
 import com.optiflow.platform.searchbooking.domain.model.commands.PublishAvailableTimeSlotsCommand.SlotDraft;
@@ -39,23 +41,41 @@ public class DataSeeder implements ApplicationRunner {
   private final OpticalStoreApplicationService opticalStoreApplicationService;
   private final StaffMemberRepository staffMemberRepository;
   private final StaffMemberApplicationService staffMemberApplicationService;
+  private final InventoryRepository inventoryRepository;
 
   public DataSeeder(
       OpticalStoreRepository opticalStoreRepository,
       OpticalStoreApplicationService opticalStoreApplicationService,
       StaffMemberRepository staffMemberRepository,
-      StaffMemberApplicationService staffMemberApplicationService) {
+      StaffMemberApplicationService staffMemberApplicationService,
+      InventoryRepository inventoryRepository) {
     this.opticalStoreRepository = opticalStoreRepository;
     this.opticalStoreApplicationService = opticalStoreApplicationService;
     this.staffMemberRepository = staffMemberRepository;
     this.staffMemberApplicationService = staffMemberApplicationService;
+    this.inventoryRepository = inventoryRepository;
   }
 
   @Override
   public void run(ApplicationArguments args) {
-    if (!opticalStoreRepository.isEmpty()) {
-      return;
+    if (opticalStoreRepository.isEmpty()) {
+      seedOpticalStores();
     }
+    seedInventories();
+  }
+
+  /** Each seeded optical store gets its inventory, also on databases seeded before it existed. */
+  private void seedInventories() {
+    for (UUID storeId : List.of(MIRAFLORES_ID, SAN_ISIDRO_ID)) {
+      var opticalStoreId =
+          com.optiflow.platform.inventory.domain.model.valueobjects.OpticalStoreId.of(storeId);
+      if (inventoryRepository.findByOpticalStoreId(opticalStoreId).isEmpty()) {
+        inventoryRepository.save(Inventory.open(opticalStoreId));
+      }
+    }
+  }
+
+  private void seedOpticalStores() {
     saveStore(
         MIRAFLORES_ID,
         "OptiFlow Miraflores",
