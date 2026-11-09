@@ -57,6 +57,11 @@ public class ClinicalRecordRepositoryImpl implements ClinicalRecordRepository {
         .toList();
   }
 
+  @Override
+  public long countPatientsWithRecords() {
+    return clinicalRecordJpaRepository.countDistinctPatients();
+  }
+
   private ClinicalRecord toDomain(ClinicalRecordEntity entity) {
     return clinicalRecordMapper.toDomain(
         entity,

@@ -217,6 +217,28 @@ class AuthenticationAuthorizationApiTest {
   }
 
   @Test
+  void letsOnlyClinicalStaffReadTheClinicalRecordsSummary() throws Exception {
+    String adminToken = issueTokenFor("admin@optiflow.test");
+    String optometristToken = registerStaffAndIssueToken(
+        adminToken, "Summary Optometrist", "summary.optometrist@optiflow.test", "OPTOMETRIST");
+    String technicianToken = registerStaffAndIssueToken(
+        adminToken, "Summary Technician", "summary.technician@optiflow.test", "TECHNICIAN");
+    String patientToken = registerPatientAndIssueToken(
+        "Summary Patient", "summary.patient@optiflow.test", "999777888");
+
+    mockMvc.perform(get(ApiV1.path("/clinical-records/summary"))
+            .header(HttpHeaders.AUTHORIZATION, bearer(optometristToken)))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.patientsWithRecords").isNumber());
+    mockMvc.perform(get(ApiV1.path("/clinical-records/summary"))
+            .header(HttpHeaders.AUTHORIZATION, bearer(technicianToken)))
+        .andExpect(status().isForbidden());
+    mockMvc.perform(get(ApiV1.path("/clinical-records/summary"))
+            .header(HttpHeaders.AUTHORIZATION, bearer(patientToken)))
+        .andExpect(status().isForbidden());
+  }
+
+  @Test
   void forbidsPatientFromOtherPatientsRecordsOrdersAndFavorites() throws Exception {
     String patientToken = registerPatientAndIssueToken(
         "Nosy Patient", "nosy.patient@optiflow.test", "999555666");

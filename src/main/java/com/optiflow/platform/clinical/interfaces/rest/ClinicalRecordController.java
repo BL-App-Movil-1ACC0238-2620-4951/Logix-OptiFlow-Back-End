@@ -3,6 +3,7 @@ package com.optiflow.platform.clinical.interfaces.rest;
 import com.optiflow.platform.clinical.application.services.ClinicalRecordApplicationService;
 import com.optiflow.platform.clinical.domain.model.queries.GetClinicalRecordByIdQuery;
 import com.optiflow.platform.clinical.domain.model.queries.GetClinicalRecordsByPatientIdQuery;
+import com.optiflow.platform.clinical.domain.model.queries.GetClinicalRecordsSummaryQuery;
 import com.optiflow.platform.clinical.domain.model.queries.GetOpticalPrescriptionQuery;
 import com.optiflow.platform.clinical.domain.model.valueobjects.ClinicalRecordId;
 import com.optiflow.platform.clinical.domain.model.valueobjects.PatientId;
@@ -11,6 +12,7 @@ import com.optiflow.platform.clinical.interfaces.rest.assemblers.FromGenerateOpt
 import com.optiflow.platform.clinical.interfaces.rest.assemblers.FromRecordMedicalHistoryRequestAssembler;
 import com.optiflow.platform.clinical.interfaces.rest.assemblers.FromRegisterClinicalRecordRequestAssembler;
 import com.optiflow.platform.clinical.interfaces.rest.resources.ClinicalRecordResponse;
+import com.optiflow.platform.clinical.interfaces.rest.resources.ClinicalRecordsSummaryResponse;
 import com.optiflow.platform.clinical.interfaces.rest.resources.GenerateOpticalPrescriptionRequest;
 import com.optiflow.platform.clinical.interfaces.rest.resources.OpticalPrescriptionResponse;
 import com.optiflow.platform.clinical.interfaces.rest.resources.RecordMedicalHistoryRequest;
@@ -67,6 +69,12 @@ public class ClinicalRecordController {
     ClinicalRecordResponse response = responseAssembler.toClinicalRecordResponse(
         clinicalRecordApplicationService.register(registerAssembler.toCommand(request)));
     return CreatedResourceResponses.at("/clinical-records/{id}", response, response.id());
+  }
+
+  @GetMapping("/clinical-records/summary")
+  public ClinicalRecordsSummaryResponse summary() {
+    return responseAssembler.toClinicalRecordsSummaryResponse(
+        clinicalRecordApplicationService.getSummary(new GetClinicalRecordsSummaryQuery()));
   }
 
   @GetMapping("/clinical-records/{id}")

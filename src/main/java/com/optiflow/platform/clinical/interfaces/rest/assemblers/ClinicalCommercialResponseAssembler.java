@@ -9,7 +9,9 @@ import com.optiflow.platform.clinical.domain.model.entities.QuotationItem;
 import com.optiflow.platform.clinical.domain.model.valueobjects.Money;
 import com.optiflow.platform.clinical.domain.model.valueobjects.OpticalPrescription;
 import com.optiflow.platform.clinical.domain.model.valueobjects.Payment;
+import com.optiflow.platform.clinical.application.results.ClinicalRecordsSummary;
 import com.optiflow.platform.clinical.interfaces.rest.resources.ClinicalRecordResponse;
+import com.optiflow.platform.clinical.interfaces.rest.resources.ClinicalRecordsSummaryResponse;
 import com.optiflow.platform.clinical.interfaces.rest.resources.DiscountResponse;
 import com.optiflow.platform.clinical.interfaces.rest.resources.ElectronicReceiptResponse;
 import com.optiflow.platform.clinical.interfaces.rest.resources.MedicalHistoryResponse;
@@ -22,6 +24,11 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class ClinicalCommercialResponseAssembler {
+
+  public ClinicalRecordsSummaryResponse toClinicalRecordsSummaryResponse(
+      ClinicalRecordsSummary summary) {
+    return new ClinicalRecordsSummaryResponse(summary.patientsWithRecords());
+  }
 
   public ClinicalRecordResponse toClinicalRecordResponse(ClinicalRecord clinicalRecord) {
     return new ClinicalRecordResponse(

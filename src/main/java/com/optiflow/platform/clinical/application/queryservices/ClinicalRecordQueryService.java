@@ -1,9 +1,11 @@
 package com.optiflow.platform.clinical.application.queryservices;
 
+import com.optiflow.platform.clinical.application.results.ClinicalRecordsSummary;
 import com.optiflow.platform.clinical.domain.exceptions.ClinicalRecordNotFoundException;
 import com.optiflow.platform.clinical.domain.model.aggregates.ClinicalRecord;
 import com.optiflow.platform.clinical.domain.model.queries.GetClinicalRecordByIdQuery;
 import com.optiflow.platform.clinical.domain.model.queries.GetClinicalRecordsByPatientIdQuery;
+import com.optiflow.platform.clinical.domain.model.queries.GetClinicalRecordsSummaryQuery;
 import com.optiflow.platform.clinical.domain.model.queries.GetOpticalPrescriptionQuery;
 import com.optiflow.platform.clinical.domain.repositories.ClinicalRecordRepository;
 import com.optiflow.platform.shared.domain.exceptions.DomainException;
@@ -37,6 +39,11 @@ public class ClinicalRecordQueryService {
     return clinicalRecordRepository.findByPatientId(query.patientId()).stream()
         .sorted(MOST_RECENT_FIRST)
         .toList();
+  }
+
+  @Transactional(readOnly = true)
+  public ClinicalRecordsSummary handle(GetClinicalRecordsSummaryQuery query) {
+    return new ClinicalRecordsSummary(clinicalRecordRepository.countPatientsWithRecords());
   }
 
   @Transactional(readOnly = true)
