@@ -56,7 +56,8 @@ public class SecurityConfiguration {
             .requestMatchers(HttpMethod.POST, "/api/v1/optical-stores/*/time-slots")
             .hasRole("ADMIN")
             // Search & Booking
-            .requestMatchers(HttpMethod.POST, "/api/v1/appointments").hasAnyRole(PATIENT, ADMIN)
+            .requestMatchers(HttpMethod.POST, "/api/v1/appointments")
+            .hasAnyRole(PATIENT, OPTOMETRIST, SALES_ADVISOR, ADMIN)
             .requestMatchers(HttpMethod.GET, "/api/v1/appointments").hasAnyRole(OPTOMETRIST, ADMIN)
             .requestMatchers("/api/v1/appointments/**").hasAnyRole(PATIENT, OPTOMETRIST, ADMIN)
             .requestMatchers(HttpMethod.GET, "/api/v1/patients")

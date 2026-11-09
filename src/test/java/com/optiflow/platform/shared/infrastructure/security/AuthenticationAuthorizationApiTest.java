@@ -262,7 +262,7 @@ class AuthenticationAuthorizationApiTest {
   }
 
   @Test
-  void letsStaffSearchPatients() throws Exception {
+  void letsStaffSearchPatientsAndBookForThem() throws Exception {
     registerPatientAndIssueToken(
         "Directory Patient", "directory.patient@optiflow.test", "999777888");
     String adminToken = issueTokenFor("admin@optiflow.test");
@@ -275,6 +275,11 @@ class AuthenticationAuthorizationApiTest {
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.length()").value(1))
         .andExpect(jsonPath("$[0].email").value("directory.patient@optiflow.test"));
+    mockMvc.perform(post(ApiV1.path("/appointments"))
+            .header(HttpHeaders.AUTHORIZATION, bearer(advisorToken))
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{}"))
+        .andExpect(status().isBadRequest());
   }
 
   private String registerStaffAndIssueToken(
