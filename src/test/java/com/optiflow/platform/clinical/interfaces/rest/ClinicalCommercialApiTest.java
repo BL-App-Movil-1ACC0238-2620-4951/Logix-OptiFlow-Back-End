@@ -1,6 +1,7 @@
 package com.optiflow.platform.clinical.interfaces.rest;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -11,7 +12,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.optiflow.platform.clinical.domain.model.events.SaleWasClosed;
+import com.optiflow.platform.clinical.domain.model.valueobjects.SoldProduct;
 import com.optiflow.platform.shared.interfaces.rest.ApiV1;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -158,6 +161,9 @@ class ClinicalCommercialApiTest {
         .andExpect(status().isConflict());
 
     assertEquals(1, applicationEvents.stream(SaleWasClosed.class).count());
+    SaleWasClosed closed = applicationEvents.stream(SaleWasClosed.class).findFirst().orElseThrow();
+    assertEquals(List.of(new SoldProduct("RB-2140-BLK", 1)), closed.soldProducts());
+    assertNotNull(closed.opticalStoreId());
   }
 
   @Test
