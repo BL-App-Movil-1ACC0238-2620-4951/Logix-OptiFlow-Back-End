@@ -1,8 +1,8 @@
 package com.optiflow.platform.searchbooking.infrastructure.outboundservices;
 
-import com.optiflow.platform.searchbooking.domain.events.AppointmentBooked;
-import com.optiflow.platform.searchbooking.domain.events.AppointmentCancelled;
-import com.optiflow.platform.searchbooking.domain.events.AppointmentCompleted;
+import com.optiflow.platform.searchbooking.domain.model.events.AppointmentBooked;
+import com.optiflow.platform.searchbooking.domain.model.events.AppointmentCancelled;
+import com.optiflow.platform.searchbooking.domain.model.events.AppointmentCompleted;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;

@@ -1,7 +1,7 @@
 package com.optiflow.platform.production.interfaces.rest.assemblers;
 
-import com.optiflow.platform.production.application.commands.GenerateWorkOrderCommand;
-import com.optiflow.platform.production.domain.valueobjects.SaleId;
+import com.optiflow.platform.production.domain.model.commands.GenerateWorkOrderCommand;
+import com.optiflow.platform.production.domain.model.valueobjects.SaleId;
 import com.optiflow.platform.production.interfaces.rest.resources.GenerateWorkOrderRequest;
 import org.springframework.stereotype.Component;
 

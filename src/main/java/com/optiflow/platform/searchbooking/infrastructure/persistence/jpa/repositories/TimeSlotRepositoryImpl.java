@@ -1,9 +1,9 @@
 package com.optiflow.platform.searchbooking.infrastructure.persistence.jpa.repositories;
 
-import com.optiflow.platform.searchbooking.domain.entities.TimeSlot;
+import com.optiflow.platform.searchbooking.domain.model.entities.TimeSlot;
+import com.optiflow.platform.searchbooking.domain.model.valueobjects.OpticalStoreId;
+import com.optiflow.platform.searchbooking.domain.model.valueobjects.TimeSlotId;
 import com.optiflow.platform.searchbooking.domain.repositories.TimeSlotRepository;
-import com.optiflow.platform.searchbooking.domain.valueobjects.OpticalStoreId;
-import com.optiflow.platform.searchbooking.domain.valueobjects.TimeSlotId;
 import com.optiflow.platform.searchbooking.infrastructure.persistence.jpa.mappers.TimeSlotMapper;
 import java.time.Instant;
 import java.util.List;

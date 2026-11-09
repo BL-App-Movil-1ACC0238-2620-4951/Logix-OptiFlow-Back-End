@@ -1,7 +1,7 @@
 package com.optiflow.platform.clinical.domain.repositories;
 
-import com.optiflow.platform.clinical.domain.entities.Quotation;
-import com.optiflow.platform.clinical.domain.valueobjects.QuotationId;
+import com.optiflow.platform.clinical.domain.model.aggregates.Quotation;
+import com.optiflow.platform.clinical.domain.model.valueobjects.QuotationId;
 import java.util.Optional;
 
 public interface QuotationRepository {

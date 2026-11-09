@@ -1,16 +1,16 @@
 package com.optiflow.platform.searchbooking.interfaces.rest.assemblers;
 
-import com.optiflow.platform.searchbooking.application.services.AppointmentDetails;
-import com.optiflow.platform.searchbooking.application.services.LoginResult;
-import com.optiflow.platform.searchbooking.application.services.RatingResult;
-import com.optiflow.platform.searchbooking.domain.entities.FavoriteStore;
-import com.optiflow.platform.searchbooking.domain.entities.OpticalStore;
-import com.optiflow.platform.searchbooking.domain.entities.Patient;
-import com.optiflow.platform.searchbooking.domain.entities.StaffMember;
-import com.optiflow.platform.searchbooking.domain.entities.TimeSlot;
+import com.optiflow.platform.searchbooking.application.results.AppointmentDetails;
+import com.optiflow.platform.searchbooking.application.results.LoginResult;
+import com.optiflow.platform.searchbooking.application.results.RatingResult;
+import com.optiflow.platform.searchbooking.domain.model.entities.FavoriteStore;
+import com.optiflow.platform.searchbooking.domain.model.entities.OpticalStore;
+import com.optiflow.platform.searchbooking.domain.model.entities.Patient;
+import com.optiflow.platform.searchbooking.domain.model.entities.StaffMember;
+import com.optiflow.platform.searchbooking.domain.model.entities.TimeSlot;
 import com.optiflow.platform.searchbooking.interfaces.rest.resources.AppointmentResponse;
-import com.optiflow.platform.searchbooking.interfaces.rest.resources.FavoriteStoreResponse;
 import com.optiflow.platform.searchbooking.interfaces.rest.resources.AuthTokenResponse;
+import com.optiflow.platform.searchbooking.interfaces.rest.resources.FavoriteStoreResponse;
 import com.optiflow.platform.searchbooking.interfaces.rest.resources.OpticalStoreResponse;
 import com.optiflow.platform.searchbooking.interfaces.rest.resources.PatientResponse;
 import com.optiflow.platform.searchbooking.interfaces.rest.resources.StaffMemberResponse;

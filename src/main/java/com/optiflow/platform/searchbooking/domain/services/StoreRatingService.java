@@ -1,8 +1,8 @@
 package com.optiflow.platform.searchbooking.domain.services;
 
-import com.optiflow.platform.searchbooking.domain.entities.PatientStoreRating;
-import com.optiflow.platform.searchbooking.domain.valueobjects.StoreRating;
-import com.optiflow.platform.shared.exceptions.DomainException;
+import com.optiflow.platform.searchbooking.domain.model.entities.PatientStoreRating;
+import com.optiflow.platform.searchbooking.domain.model.valueobjects.StoreRating;
+import com.optiflow.platform.shared.domain.exceptions.DomainException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;

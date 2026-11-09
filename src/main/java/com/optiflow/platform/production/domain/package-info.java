@@ -4,7 +4,7 @@
  * <p>Expected content: WorkOrder aggregate; events such as WorkOrderGenerated,
  * WorkOrderStatusUpdated and OrderWasMarkedAsDelivered.
  *
- * <p>Subpackages: entities, events, exceptions, repositories, services, valueobjects.
+ * <p>Subpackages: model/{aggregates,entities,valueobjects,commands,queries,events}, exceptions, repositories, services.
  * Must not depend on Spring, JPA or any other framework.
  */
 package com.optiflow.platform.production.domain;

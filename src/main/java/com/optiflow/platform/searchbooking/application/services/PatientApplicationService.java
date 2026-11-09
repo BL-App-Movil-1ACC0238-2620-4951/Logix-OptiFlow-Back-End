@@ -1,10 +1,14 @@
 package com.optiflow.platform.searchbooking.application.services;
 
-import com.optiflow.platform.searchbooking.application.commands.LoginCommand;
-import com.optiflow.platform.searchbooking.application.commands.RegisterPatientCommand;
-import com.optiflow.platform.searchbooking.application.queries.GetPatientsByBirthdayQuery;
-import com.optiflow.platform.searchbooking.domain.entities.Patient;
-import com.optiflow.platform.searchbooking.domain.valueobjects.PatientId;
+import com.optiflow.platform.searchbooking.application.commandhandlers.LoginCommandHandler;
+import com.optiflow.platform.searchbooking.application.commandhandlers.RegisterPatientCommandHandler;
+import com.optiflow.platform.searchbooking.application.queryservices.GetPatientsByBirthdayQueryService;
+import com.optiflow.platform.searchbooking.application.results.LoginResult;
+import com.optiflow.platform.searchbooking.domain.model.commands.LoginCommand;
+import com.optiflow.platform.searchbooking.domain.model.commands.RegisterPatientCommand;
+import com.optiflow.platform.searchbooking.domain.model.entities.Patient;
+import com.optiflow.platform.searchbooking.domain.model.queries.GetPatientsByBirthdayQuery;
+import com.optiflow.platform.searchbooking.domain.model.valueobjects.PatientId;
 import java.util.List;
 import org.springframework.stereotype.Service;
 

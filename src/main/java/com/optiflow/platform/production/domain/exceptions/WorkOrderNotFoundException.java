@@ -1,6 +1,6 @@
 package com.optiflow.platform.production.domain.exceptions;
 
-import com.optiflow.platform.shared.exceptions.DomainException;
+import com.optiflow.platform.shared.domain.exceptions.DomainException;
 
 public class WorkOrderNotFoundException extends DomainException {
 

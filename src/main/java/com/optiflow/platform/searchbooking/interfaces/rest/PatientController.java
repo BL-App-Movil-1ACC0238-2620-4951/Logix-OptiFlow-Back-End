@@ -1,31 +1,31 @@
 package com.optiflow.platform.searchbooking.interfaces.rest;
 
-import com.optiflow.platform.searchbooking.application.queries.GetPatientAppointmentsQuery;
 import com.optiflow.platform.searchbooking.application.services.AppointmentApplicationService;
 import com.optiflow.platform.searchbooking.application.services.PatientApplicationService;
-import com.optiflow.platform.searchbooking.domain.valueobjects.PatientId;
+import com.optiflow.platform.searchbooking.domain.model.queries.GetPatientAppointmentsQuery;
+import com.optiflow.platform.searchbooking.domain.model.valueobjects.PatientId;
 import com.optiflow.platform.searchbooking.interfaces.rest.assemblers.FromRegisterPatientRequestAssembler;
 import com.optiflow.platform.searchbooking.interfaces.rest.assemblers.SearchBookingResponseAssembler;
 import com.optiflow.platform.searchbooking.interfaces.rest.resources.AppointmentResponse;
 import com.optiflow.platform.searchbooking.interfaces.rest.resources.PatientResponse;
 import com.optiflow.platform.searchbooking.interfaces.rest.resources.RegisterPatientRequest;
-import com.optiflow.platform.shared.documentation.openapi.configuration.OpenApiTags;
-import com.optiflow.platform.shared.security.AuthenticatedUser;
-import com.optiflow.platform.shared.security.PatientDataAccessGuard;
+import com.optiflow.platform.shared.infrastructure.documentation.openapi.configuration.OpenApiTags;
+import com.optiflow.platform.shared.infrastructure.security.AuthenticatedUser;
+import com.optiflow.platform.shared.infrastructure.security.PatientDataAccessGuard;
+import com.optiflow.platform.shared.interfaces.rest.ApiV1;
+import com.optiflow.platform.shared.interfaces.rest.CreatedResourceResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.RestController;
-import com.optiflow.platform.shared.interfaces.rest.ApiV1;
-import com.optiflow.platform.shared.interfaces.rest.CreatedResourceResponses;
 
 @Tag(name = OpenApiTags.PATIENTS)
 @RestController

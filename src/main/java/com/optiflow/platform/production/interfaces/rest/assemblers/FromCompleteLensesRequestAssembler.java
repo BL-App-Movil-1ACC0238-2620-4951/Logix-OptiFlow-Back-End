@@ -1,8 +1,8 @@
 package com.optiflow.platform.production.interfaces.rest.assemblers;
 
-import com.optiflow.platform.production.application.commands.CompleteLensesCommand;
-import com.optiflow.platform.production.domain.valueobjects.LensId;
-import com.optiflow.platform.production.domain.valueobjects.WorkOrderId;
+import com.optiflow.platform.production.domain.model.commands.CompleteLensesCommand;
+import com.optiflow.platform.production.domain.model.valueobjects.LensId;
+import com.optiflow.platform.production.domain.model.valueobjects.WorkOrderId;
 import com.optiflow.platform.production.interfaces.rest.resources.CompleteLensesRequest;
 import java.util.List;
 import java.util.UUID;

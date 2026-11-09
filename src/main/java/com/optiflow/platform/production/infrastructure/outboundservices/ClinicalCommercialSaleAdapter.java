@@ -1,26 +1,26 @@
 package com.optiflow.platform.production.infrastructure.outboundservices;
 
-import com.optiflow.platform.clinical.application.queries.GetClinicalRecordByIdQuery;
-import com.optiflow.platform.clinical.application.queries.GetQuotationByIdQuery;
-import com.optiflow.platform.clinical.application.queries.GetSaleByIdQuery;
 import com.optiflow.platform.clinical.application.services.ClinicalRecordApplicationService;
 import com.optiflow.platform.clinical.application.services.QuotationApplicationService;
 import com.optiflow.platform.clinical.application.services.SaleApplicationService;
-import com.optiflow.platform.clinical.domain.entities.ClinicalRecord;
-import com.optiflow.platform.clinical.domain.entities.Quotation;
-import com.optiflow.platform.clinical.domain.entities.Sale;
-import com.optiflow.platform.clinical.domain.valueobjects.OpticalPrescription;
-import com.optiflow.platform.clinical.domain.valueobjects.QuotationItemType;
-import com.optiflow.platform.clinical.domain.valueobjects.SaleStatus;
-import com.optiflow.platform.production.application.services.ClosedSale;
-import com.optiflow.platform.production.application.services.ExternalSaleService;
-import com.optiflow.platform.production.domain.valueobjects.OpticalStoreId;
-import com.optiflow.platform.production.domain.valueobjects.PatientId;
-import com.optiflow.platform.production.domain.valueobjects.SaleId;
-import com.optiflow.platform.searchbooking.application.queries.GetAppointmentQuery;
+import com.optiflow.platform.clinical.domain.model.aggregates.ClinicalRecord;
+import com.optiflow.platform.clinical.domain.model.aggregates.Quotation;
+import com.optiflow.platform.clinical.domain.model.aggregates.Sale;
+import com.optiflow.platform.clinical.domain.model.queries.GetClinicalRecordByIdQuery;
+import com.optiflow.platform.clinical.domain.model.queries.GetQuotationByIdQuery;
+import com.optiflow.platform.clinical.domain.model.queries.GetSaleByIdQuery;
+import com.optiflow.platform.clinical.domain.model.valueobjects.OpticalPrescription;
+import com.optiflow.platform.clinical.domain.model.valueobjects.QuotationItemType;
+import com.optiflow.platform.clinical.domain.model.valueobjects.SaleStatus;
+import com.optiflow.platform.production.application.outboundservices.ClosedSale;
+import com.optiflow.platform.production.application.outboundservices.ExternalSaleService;
+import com.optiflow.platform.production.domain.model.valueobjects.OpticalStoreId;
+import com.optiflow.platform.production.domain.model.valueobjects.PatientId;
+import com.optiflow.platform.production.domain.model.valueobjects.SaleId;
 import com.optiflow.platform.searchbooking.application.services.AppointmentApplicationService;
-import com.optiflow.platform.searchbooking.domain.valueobjects.AppointmentId;
-import com.optiflow.platform.shared.exceptions.DomainException;
+import com.optiflow.platform.searchbooking.domain.model.queries.GetAppointmentQuery;
+import com.optiflow.platform.searchbooking.domain.model.valueobjects.AppointmentId;
+import com.optiflow.platform.shared.domain.exceptions.DomainException;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Locale;
@@ -58,7 +58,7 @@ public class ClinicalCommercialSaleAdapter implements ExternalSaleService {
     Sale sale;
     try {
       sale = saleApplicationService.getById(new GetSaleByIdQuery(
-          com.optiflow.platform.clinical.domain.valueobjects.SaleId.of(saleId.value())));
+          com.optiflow.platform.clinical.domain.model.valueobjects.SaleId.of(saleId.value())));
     } catch (DomainException exception) {
       if (exception.status() == 404) {
         return Optional.empty();

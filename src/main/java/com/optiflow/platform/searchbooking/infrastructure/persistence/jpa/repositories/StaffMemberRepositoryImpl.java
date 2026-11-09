@@ -1,13 +1,13 @@
 package com.optiflow.platform.searchbooking.infrastructure.persistence.jpa.repositories;
 
-import com.optiflow.platform.searchbooking.domain.entities.StaffMember;
+import com.optiflow.platform.searchbooking.domain.model.entities.StaffMember;
+import com.optiflow.platform.searchbooking.domain.model.valueobjects.EmailAddress;
+import com.optiflow.platform.searchbooking.domain.model.valueobjects.OpticalStoreId;
+import com.optiflow.platform.searchbooking.domain.model.valueobjects.StaffMemberId;
 import com.optiflow.platform.searchbooking.domain.repositories.StaffMemberRepository;
-import com.optiflow.platform.searchbooking.domain.valueobjects.EmailAddress;
-import com.optiflow.platform.searchbooking.domain.valueobjects.OpticalStoreId;
-import com.optiflow.platform.searchbooking.domain.valueobjects.StaffMemberId;
 import com.optiflow.platform.searchbooking.infrastructure.persistence.jpa.entities.StaffMemberEntity;
 import com.optiflow.platform.searchbooking.infrastructure.persistence.jpa.mappers.StaffMemberMapper;
-import com.optiflow.platform.shared.exceptions.DomainException;
+import com.optiflow.platform.shared.domain.exceptions.DomainException;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Repository;

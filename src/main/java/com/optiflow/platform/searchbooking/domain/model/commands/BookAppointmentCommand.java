@@ -1,0 +1,9 @@
+package com.optiflow.platform.searchbooking.domain.model.commands;
+
+import com.optiflow.platform.searchbooking.domain.model.valueobjects.OpticalStoreId;
+import com.optiflow.platform.searchbooking.domain.model.valueobjects.PatientId;
+import com.optiflow.platform.searchbooking.domain.model.valueobjects.TimeSlotId;
+
+public record BookAppointmentCommand(
+    PatientId patientId, OpticalStoreId opticalStoreId, TimeSlotId timeSlotId) {
+}

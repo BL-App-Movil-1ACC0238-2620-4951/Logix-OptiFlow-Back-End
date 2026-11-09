@@ -1,13 +1,20 @@
 package com.optiflow.platform.notification.application.services;
 
-import com.optiflow.platform.notification.application.commands.GrantBirthdayDiscountCommand;
-import com.optiflow.platform.notification.application.commands.MarkNotificationAsReadCommand;
-import com.optiflow.platform.notification.application.commands.NotifyLensOrderProgressCommand;
-import com.optiflow.platform.notification.application.commands.ScheduleAppointmentReminderCommand;
-import com.optiflow.platform.notification.application.commands.SendDeliveryDelayNotificationCommand;
-import com.optiflow.platform.notification.application.queries.GetNotificationByIdQuery;
-import com.optiflow.platform.notification.application.queries.GetNotificationsByPatientQuery;
-import com.optiflow.platform.notification.domain.entities.Notification;
+import com.optiflow.platform.notification.application.commandhandlers.GrantBirthdayDiscountHandler;
+import com.optiflow.platform.notification.application.commandhandlers.MarkNotificationAsReadHandler;
+import com.optiflow.platform.notification.application.commandhandlers.NotifyLensOrderProgressHandler;
+import com.optiflow.platform.notification.application.commandhandlers.ScheduleAppointmentReminderHandler;
+import com.optiflow.platform.notification.application.commandhandlers.SendDeliveryDelayNotificationHandler;
+import com.optiflow.platform.notification.application.queryservices.GetNotificationByIdQueryService;
+import com.optiflow.platform.notification.application.queryservices.GetNotificationsByPatientQueryService;
+import com.optiflow.platform.notification.domain.model.aggregates.Notification;
+import com.optiflow.platform.notification.domain.model.commands.GrantBirthdayDiscountCommand;
+import com.optiflow.platform.notification.domain.model.commands.MarkNotificationAsReadCommand;
+import com.optiflow.platform.notification.domain.model.commands.NotifyLensOrderProgressCommand;
+import com.optiflow.platform.notification.domain.model.commands.ScheduleAppointmentReminderCommand;
+import com.optiflow.platform.notification.domain.model.commands.SendDeliveryDelayNotificationCommand;
+import com.optiflow.platform.notification.domain.model.queries.GetNotificationByIdQuery;
+import com.optiflow.platform.notification.domain.model.queries.GetNotificationsByPatientQuery;
 import java.util.List;
 import org.springframework.stereotype.Service;
 

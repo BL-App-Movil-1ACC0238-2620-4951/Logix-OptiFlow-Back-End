@@ -1,11 +1,18 @@
 package com.optiflow.platform.searchbooking.application.services;
 
-import com.optiflow.platform.searchbooking.application.commands.BookAppointmentCommand;
-import com.optiflow.platform.searchbooking.application.commands.CancelAppointmentCommand;
-import com.optiflow.platform.searchbooking.application.commands.CompleteAppointmentCommand;
-import com.optiflow.platform.searchbooking.application.queries.GetAppointmentQuery;
-import com.optiflow.platform.searchbooking.application.queries.GetAppointmentsByOpticalStoreQuery;
-import com.optiflow.platform.searchbooking.application.queries.GetPatientAppointmentsQuery;
+import com.optiflow.platform.searchbooking.application.commandhandlers.BookAppointmentCommandHandler;
+import com.optiflow.platform.searchbooking.application.commandhandlers.CancelAppointmentCommandHandler;
+import com.optiflow.platform.searchbooking.application.commandhandlers.CompleteAppointmentCommandHandler;
+import com.optiflow.platform.searchbooking.application.queryservices.GetAppointmentQueryService;
+import com.optiflow.platform.searchbooking.application.queryservices.GetAppointmentsByOpticalStoreQueryService;
+import com.optiflow.platform.searchbooking.application.queryservices.GetPatientAppointmentsQueryService;
+import com.optiflow.platform.searchbooking.application.results.AppointmentDetails;
+import com.optiflow.platform.searchbooking.domain.model.commands.BookAppointmentCommand;
+import com.optiflow.platform.searchbooking.domain.model.commands.CancelAppointmentCommand;
+import com.optiflow.platform.searchbooking.domain.model.commands.CompleteAppointmentCommand;
+import com.optiflow.platform.searchbooking.domain.model.queries.GetAppointmentQuery;
+import com.optiflow.platform.searchbooking.domain.model.queries.GetAppointmentsByOpticalStoreQuery;
+import com.optiflow.platform.searchbooking.domain.model.queries.GetPatientAppointmentsQuery;
 import java.util.List;
 import org.springframework.stereotype.Service;
 

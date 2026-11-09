@@ -1,9 +1,9 @@
 package com.optiflow.platform.searchbooking.infrastructure.persistence.jpa.repositories;
 
-import com.optiflow.platform.searchbooking.domain.entities.OpticalStore;
+import com.optiflow.platform.searchbooking.domain.model.entities.OpticalStore;
+import com.optiflow.platform.searchbooking.domain.model.valueobjects.OpticalStoreId;
 import com.optiflow.platform.searchbooking.domain.repositories.OpticalStoreRepository;
 import com.optiflow.platform.searchbooking.domain.services.OpticalStoreSearchService;
-import com.optiflow.platform.searchbooking.domain.valueobjects.OpticalStoreId;
 import com.optiflow.platform.searchbooking.infrastructure.persistence.jpa.mappers.OpticalStoreMapper;
 import java.math.BigDecimal;
 import java.util.List;

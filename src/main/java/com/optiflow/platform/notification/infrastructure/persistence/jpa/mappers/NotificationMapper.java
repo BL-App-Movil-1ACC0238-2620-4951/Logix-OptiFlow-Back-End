@@ -1,13 +1,13 @@
 package com.optiflow.platform.notification.infrastructure.persistence.jpa.mappers;
 
-import com.optiflow.platform.notification.domain.entities.Notification;
-import com.optiflow.platform.notification.domain.valueobjects.AppointmentId;
-import com.optiflow.platform.notification.domain.valueobjects.NotificationId;
-import com.optiflow.platform.notification.domain.valueobjects.NotificationMessage;
-import com.optiflow.platform.notification.domain.valueobjects.NotificationStatus;
-import com.optiflow.platform.notification.domain.valueobjects.NotificationType;
-import com.optiflow.platform.notification.domain.valueobjects.PatientId;
-import com.optiflow.platform.notification.domain.valueobjects.WorkOrderId;
+import com.optiflow.platform.notification.domain.model.aggregates.Notification;
+import com.optiflow.platform.notification.domain.model.valueobjects.AppointmentId;
+import com.optiflow.platform.notification.domain.model.valueobjects.NotificationId;
+import com.optiflow.platform.notification.domain.model.valueobjects.NotificationMessage;
+import com.optiflow.platform.notification.domain.model.valueobjects.NotificationStatus;
+import com.optiflow.platform.notification.domain.model.valueobjects.NotificationType;
+import com.optiflow.platform.notification.domain.model.valueobjects.PatientId;
+import com.optiflow.platform.notification.domain.model.valueobjects.WorkOrderId;
 import com.optiflow.platform.notification.infrastructure.persistence.jpa.entities.NotificationEntity;
 import org.springframework.stereotype.Component;
 

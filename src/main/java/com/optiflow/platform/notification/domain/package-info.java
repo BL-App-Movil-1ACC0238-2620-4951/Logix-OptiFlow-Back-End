@@ -4,7 +4,7 @@
  * <p>Expected content: notification and loyalty models; events such as BirthdayDiscountWasSent,
  * InAppNotificationSent and LensOrderProgressNotified.
  *
- * <p>Subpackages: entities, events, exceptions, repositories, services, valueobjects.
+ * <p>Subpackages: model/{aggregates,entities,valueobjects,commands,queries,events}, exceptions, repositories, services.
  * Must not depend on Spring, JPA or any other framework.
  */
 package com.optiflow.platform.notification.domain;

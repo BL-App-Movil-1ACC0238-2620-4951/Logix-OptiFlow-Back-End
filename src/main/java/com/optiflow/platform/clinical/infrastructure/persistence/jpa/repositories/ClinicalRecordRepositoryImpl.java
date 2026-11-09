@@ -1,10 +1,10 @@
 package com.optiflow.platform.clinical.infrastructure.persistence.jpa.repositories;
 
-import com.optiflow.platform.clinical.domain.entities.ClinicalRecord;
+import com.optiflow.platform.clinical.domain.model.aggregates.ClinicalRecord;
+import com.optiflow.platform.clinical.domain.model.valueobjects.AppointmentId;
+import com.optiflow.platform.clinical.domain.model.valueobjects.ClinicalRecordId;
+import com.optiflow.platform.clinical.domain.model.valueobjects.PatientId;
 import com.optiflow.platform.clinical.domain.repositories.ClinicalRecordRepository;
-import com.optiflow.platform.clinical.domain.valueobjects.AppointmentId;
-import com.optiflow.platform.clinical.domain.valueobjects.ClinicalRecordId;
-import com.optiflow.platform.clinical.domain.valueobjects.PatientId;
 import com.optiflow.platform.clinical.infrastructure.persistence.jpa.entities.ClinicalRecordEntity;
 import com.optiflow.platform.clinical.infrastructure.persistence.jpa.mappers.ClinicalRecordMapper;
 import java.util.List;

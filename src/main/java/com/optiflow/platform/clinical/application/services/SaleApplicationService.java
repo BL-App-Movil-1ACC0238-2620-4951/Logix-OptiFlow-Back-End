@@ -1,10 +1,14 @@
 package com.optiflow.platform.clinical.application.services;
 
-import com.optiflow.platform.clinical.application.commands.CloseSaleCommand;
-import com.optiflow.platform.clinical.application.commands.RecordPaymentCommand;
-import com.optiflow.platform.clinical.application.commands.RegisterSaleCommand;
-import com.optiflow.platform.clinical.application.queries.GetSaleByIdQuery;
-import com.optiflow.platform.clinical.domain.entities.Sale;
+import com.optiflow.platform.clinical.application.commandhandlers.CloseSaleHandler;
+import com.optiflow.platform.clinical.application.commandhandlers.RecordPaymentHandler;
+import com.optiflow.platform.clinical.application.commandhandlers.RegisterSaleHandler;
+import com.optiflow.platform.clinical.application.queryservices.SaleQueryService;
+import com.optiflow.platform.clinical.domain.model.aggregates.Sale;
+import com.optiflow.platform.clinical.domain.model.commands.CloseSaleCommand;
+import com.optiflow.platform.clinical.domain.model.commands.RecordPaymentCommand;
+import com.optiflow.platform.clinical.domain.model.commands.RegisterSaleCommand;
+import com.optiflow.platform.clinical.domain.model.queries.GetSaleByIdQuery;
 import org.springframework.stereotype.Service;
 
 @Service

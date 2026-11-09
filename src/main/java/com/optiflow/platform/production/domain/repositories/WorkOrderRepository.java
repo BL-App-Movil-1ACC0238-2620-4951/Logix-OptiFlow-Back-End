@@ -1,12 +1,12 @@
 package com.optiflow.platform.production.domain.repositories;
 
-import com.optiflow.platform.production.domain.entities.WorkOrder;
-import com.optiflow.platform.production.domain.valueobjects.OpticalStoreId;
-import com.optiflow.platform.production.domain.valueobjects.PatientId;
-import com.optiflow.platform.production.domain.valueobjects.SaleId;
-import com.optiflow.platform.production.domain.valueobjects.TechnicianId;
-import com.optiflow.platform.production.domain.valueobjects.WorkOrderId;
-import com.optiflow.platform.production.domain.valueobjects.WorkOrderStatus;
+import com.optiflow.platform.production.domain.model.aggregates.WorkOrder;
+import com.optiflow.platform.production.domain.model.valueobjects.OpticalStoreId;
+import com.optiflow.platform.production.domain.model.valueobjects.PatientId;
+import com.optiflow.platform.production.domain.model.valueobjects.SaleId;
+import com.optiflow.platform.production.domain.model.valueobjects.TechnicianId;
+import com.optiflow.platform.production.domain.model.valueobjects.WorkOrderId;
+import com.optiflow.platform.production.domain.model.valueobjects.WorkOrderStatus;
 import java.util.List;
 import java.util.Optional;
 

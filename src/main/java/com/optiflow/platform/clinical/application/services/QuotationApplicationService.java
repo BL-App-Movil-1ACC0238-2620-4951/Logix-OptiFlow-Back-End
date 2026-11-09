@@ -1,11 +1,16 @@
 package com.optiflow.platform.clinical.application.services;
 
-import com.optiflow.platform.clinical.application.commands.ApplyPromotionOrDiscountCommand;
-import com.optiflow.platform.clinical.application.commands.ApproveQuotationCommand;
-import com.optiflow.platform.clinical.application.commands.GenerateQuotationCommand;
-import com.optiflow.platform.clinical.application.commands.RejectQuotationCommand;
-import com.optiflow.platform.clinical.application.queries.GetQuotationByIdQuery;
-import com.optiflow.platform.clinical.domain.entities.Quotation;
+import com.optiflow.platform.clinical.application.commandhandlers.ApplyPromotionOrDiscountHandler;
+import com.optiflow.platform.clinical.application.commandhandlers.ApproveQuotationHandler;
+import com.optiflow.platform.clinical.application.commandhandlers.GenerateQuotationHandler;
+import com.optiflow.platform.clinical.application.commandhandlers.RejectQuotationHandler;
+import com.optiflow.platform.clinical.application.queryservices.QuotationQueryService;
+import com.optiflow.platform.clinical.domain.model.aggregates.Quotation;
+import com.optiflow.platform.clinical.domain.model.commands.ApplyPromotionOrDiscountCommand;
+import com.optiflow.platform.clinical.domain.model.commands.ApproveQuotationCommand;
+import com.optiflow.platform.clinical.domain.model.commands.GenerateQuotationCommand;
+import com.optiflow.platform.clinical.domain.model.commands.RejectQuotationCommand;
+import com.optiflow.platform.clinical.domain.model.queries.GetQuotationByIdQuery;
 import org.springframework.stereotype.Service;
 
 @Service

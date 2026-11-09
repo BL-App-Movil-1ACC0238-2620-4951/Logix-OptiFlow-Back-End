@@ -4,13 +4,13 @@ import com.optiflow.platform.production.application.services.WorkOrderApplicatio
 import com.optiflow.platform.production.interfaces.rest.assemblers.ProductionTrackingResponseAssembler;
 import com.optiflow.platform.production.interfaces.rest.resources.LaboratoryResponse;
 import com.optiflow.platform.production.interfaces.rest.resources.TechnicianResponse;
-import com.optiflow.platform.shared.documentation.openapi.configuration.OpenApiTags;
+import com.optiflow.platform.shared.infrastructure.documentation.openapi.configuration.OpenApiTags;
+import com.optiflow.platform.shared.interfaces.rest.ApiV1;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.optiflow.platform.shared.interfaces.rest.ApiV1;
 
 @Tag(name = OpenApiTags.TECHNICIANS_AND_LABORATORIES)
 @RestController

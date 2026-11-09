@@ -1,11 +1,11 @@
 package com.optiflow.platform.clinical.interfaces.rest;
 
-import com.optiflow.platform.clinical.application.commands.ApproveQuotationCommand;
-import com.optiflow.platform.clinical.application.commands.RejectQuotationCommand;
-import com.optiflow.platform.clinical.application.queries.GetQuotationByIdQuery;
 import com.optiflow.platform.clinical.application.services.QuotationApplicationService;
-import com.optiflow.platform.clinical.domain.valueobjects.QuotationId;
-import com.optiflow.platform.clinical.domain.valueobjects.QuotationStatus;
+import com.optiflow.platform.clinical.domain.model.commands.ApproveQuotationCommand;
+import com.optiflow.platform.clinical.domain.model.commands.RejectQuotationCommand;
+import com.optiflow.platform.clinical.domain.model.queries.GetQuotationByIdQuery;
+import com.optiflow.platform.clinical.domain.model.valueobjects.QuotationId;
+import com.optiflow.platform.clinical.domain.model.valueobjects.QuotationStatus;
 import com.optiflow.platform.clinical.interfaces.rest.assemblers.ClinicalCommercialResponseAssembler;
 import com.optiflow.platform.clinical.interfaces.rest.assemblers.FromApplyPromotionOrDiscountRequestAssembler;
 import com.optiflow.platform.clinical.interfaces.rest.assemblers.FromGenerateQuotationRequestAssembler;
@@ -13,8 +13,8 @@ import com.optiflow.platform.clinical.interfaces.rest.resources.ApplyPromotionOr
 import com.optiflow.platform.clinical.interfaces.rest.resources.GenerateQuotationRequest;
 import com.optiflow.platform.clinical.interfaces.rest.resources.QuotationResponse;
 import com.optiflow.platform.clinical.interfaces.rest.resources.UpdateQuotationStatusRequest;
-import com.optiflow.platform.shared.documentation.openapi.configuration.OpenApiTags;
-import com.optiflow.platform.shared.exceptions.DomainException;
+import com.optiflow.platform.shared.domain.exceptions.DomainException;
+import com.optiflow.platform.shared.infrastructure.documentation.openapi.configuration.OpenApiTags;
 import com.optiflow.platform.shared.interfaces.rest.ApiV1;
 import com.optiflow.platform.shared.interfaces.rest.CreatedResourceResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;

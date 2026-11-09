@@ -1,8 +1,8 @@
 package com.optiflow.platform.clinical.interfaces.rest.assemblers;
 
-import com.optiflow.platform.clinical.application.commands.GenerateOpticalPrescriptionCommand;
-import com.optiflow.platform.clinical.domain.valueobjects.ClinicalRecordId;
-import com.optiflow.platform.clinical.domain.valueobjects.OpticalPrescription;
+import com.optiflow.platform.clinical.domain.model.commands.GenerateOpticalPrescriptionCommand;
+import com.optiflow.platform.clinical.domain.model.valueobjects.ClinicalRecordId;
+import com.optiflow.platform.clinical.domain.model.valueobjects.OpticalPrescription;
 import com.optiflow.platform.clinical.interfaces.rest.resources.GenerateOpticalPrescriptionRequest;
 import java.util.UUID;
 import org.springframework.stereotype.Component;

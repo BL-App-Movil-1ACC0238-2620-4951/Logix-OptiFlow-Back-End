@@ -1,8 +1,8 @@
 package com.optiflow.platform.notification.application.eventhandlers;
 
-import com.optiflow.platform.notification.application.commands.DismissAppointmentReminderCommand;
-import com.optiflow.platform.notification.application.services.DismissAppointmentReminderHandler;
-import com.optiflow.platform.searchbooking.domain.events.AppointmentCancelled;
+import com.optiflow.platform.notification.application.commandhandlers.DismissAppointmentReminderHandler;
+import com.optiflow.platform.notification.domain.model.commands.DismissAppointmentReminderCommand;
+import com.optiflow.platform.searchbooking.domain.model.events.AppointmentCancelled;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;

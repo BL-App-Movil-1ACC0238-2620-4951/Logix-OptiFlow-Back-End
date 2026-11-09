@@ -1,8 +1,8 @@
 package com.optiflow.platform.clinical.domain.repositories;
 
-import com.optiflow.platform.clinical.domain.entities.Sale;
-import com.optiflow.platform.clinical.domain.valueobjects.QuotationId;
-import com.optiflow.platform.clinical.domain.valueobjects.SaleId;
+import com.optiflow.platform.clinical.domain.model.aggregates.Sale;
+import com.optiflow.platform.clinical.domain.model.valueobjects.QuotationId;
+import com.optiflow.platform.clinical.domain.model.valueobjects.SaleId;
 import java.util.Optional;
 
 public interface SaleRepository {
