@@ -1,7 +1,9 @@
 package com.optiflow.platform.shared.infrastructure.security;
 
 import static org.hamcrest.Matchers.endsWith;
+import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -133,8 +135,7 @@ class AuthenticationAuthorizationApiTest {
     mockMvc.perform(get(ApiV1.path("/staff-members"))
             .header(HttpHeaders.AUTHORIZATION, bearer(adminToken)))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.length()").value(1))
-        .andExpect(jsonPath("$[0].role").value("ADMIN"));
+        .andExpect(jsonPath("$[*].role", hasItem("ADMIN")));
   }
 
   @Test
@@ -157,6 +158,97 @@ class AuthenticationAuthorizationApiTest {
         .andExpect(header().string(HttpHeaders.LOCATION,
             endsWith(ApiV1.path("/optical-stores/" + storeId + "/time-slots"))))
         .andExpect(jsonPath("$.length()").value(1));
+  }
+
+  @Test
+  void forbidsPatientFromStaffOperations() throws Exception {
+    String patientToken = registerPatientAndIssueToken(
+        "Curious Patient", "curious.patient@optiflow.test", "999444555");
+    String anyId = "00000000-0000-0000-0000-000000000009";
+
+    mockMvc.perform(post(ApiV1.path("/clinical-records"))
+            .header(HttpHeaders.AUTHORIZATION, bearer(patientToken))
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{}"))
+        .andExpect(status().isForbidden());
+    mockMvc.perform(patch(ApiV1.path("/sales/" + anyId + "/status"))
+            .header(HttpHeaders.AUTHORIZATION, bearer(patientToken))
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{\"status\":\"CLOSED\"}"))
+        .andExpect(status().isForbidden());
+    mockMvc.perform(post(ApiV1.path("/work-orders"))
+            .header(HttpHeaders.AUTHORIZATION, bearer(patientToken))
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{}"))
+        .andExpect(status().isForbidden());
+  }
+
+  @Test
+  void appliesTheRolesOfEachStaffMember() throws Exception {
+    String adminToken = issueTokenFor("admin@optiflow.test");
+    String technicianToken = registerStaffAndIssueToken(
+        adminToken, "Tech Staff", "tech.staff@optiflow.test", "TECHNICIAN");
+    String advisorToken = registerStaffAndIssueToken(
+        adminToken, "Advisor Staff", "advisor.staff@optiflow.test", "SALES_ADVISOR");
+    String anyId = "00000000-0000-0000-0000-000000000009";
+
+    mockMvc.perform(post(ApiV1.path("/quotations"))
+            .header(HttpHeaders.AUTHORIZATION, bearer(technicianToken))
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{}"))
+        .andExpect(status().isForbidden());
+    mockMvc.perform(get(ApiV1.path("/patients/" + anyId + "/work-orders"))
+            .header(HttpHeaders.AUTHORIZATION, bearer(technicianToken)))
+        .andExpect(status().isOk());
+    mockMvc.perform(get(ApiV1.path("/clinical-records/" + anyId))
+            .header(HttpHeaders.AUTHORIZATION, bearer(advisorToken)))
+        .andExpect(status().isNotFound());
+    mockMvc.perform(get(ApiV1.path("/technicians"))
+            .header(HttpHeaders.AUTHORIZATION, bearer(advisorToken)))
+        .andExpect(status().isForbidden());
+    mockMvc.perform(get(ApiV1.path("/work-orders"))
+            .header(HttpHeaders.AUTHORIZATION, bearer(advisorToken)))
+        .andExpect(status().isOk());
+    mockMvc.perform(patch(ApiV1.path("/work-orders/" + anyId + "/status"))
+            .header(HttpHeaders.AUTHORIZATION, bearer(advisorToken))
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{\"status\":\"DELIVERED\"}"))
+        .andExpect(status().isForbidden());
+  }
+
+  @Test
+  void forbidsPatientFromOtherPatientsRecordsOrdersAndFavorites() throws Exception {
+    String patientToken = registerPatientAndIssueToken(
+        "Nosy Patient", "nosy.patient@optiflow.test", "999555666");
+    String otherPatientId = "00000000-0000-0000-0000-000000000009";
+
+    mockMvc.perform(get(ApiV1.path("/patients/" + otherPatientId + "/clinical-records"))
+            .header(HttpHeaders.AUTHORIZATION, bearer(patientToken)))
+        .andExpect(status().isForbidden());
+    mockMvc.perform(get(ApiV1.path("/patients/" + otherPatientId + "/work-orders"))
+            .header(HttpHeaders.AUTHORIZATION, bearer(patientToken)))
+        .andExpect(status().isForbidden());
+    mockMvc.perform(post(ApiV1.path("/patients/" + otherPatientId + "/favorites"))
+            .header(HttpHeaders.AUTHORIZATION, bearer(patientToken))
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{\"opticalStoreId\":\"11111111-1111-1111-1111-111111111111\"}"))
+        .andExpect(status().isForbidden());
+  }
+
+  private String registerStaffAndIssueToken(
+      String adminToken, String name, String email, String role) throws Exception {
+    String storeId = objectMapper.readTree(
+            mockMvc.perform(get(ApiV1.path("/optical-stores")))
+                .andReturn().getResponse().getContentAsString())
+        .get(0).get("id").asText();
+    mockMvc.perform(post(ApiV1.path("/staff-members"))
+            .header(HttpHeaders.AUTHORIZATION, bearer(adminToken))
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("""
+                {"name":"%s","email":"%s","password":"secret12","opticalStoreId":"%s","role":"%s"}
+                """.formatted(name, email, storeId, role)))
+        .andExpect(status().isCreated());
+    return issueTokenFor(email);
   }
 
   private String registerPatientAndIssueToken(String name, String email, String phone)

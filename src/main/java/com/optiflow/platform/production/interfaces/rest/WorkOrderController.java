@@ -26,6 +26,8 @@ import com.optiflow.platform.production.interfaces.rest.resources.UpdateWorkOrde
 import com.optiflow.platform.production.interfaces.rest.resources.WorkOrderResponse;
 import com.optiflow.platform.production.interfaces.rest.resources.WorkOrderStatusResponse;
 import com.optiflow.platform.shared.infrastructure.documentation.openapi.configuration.OpenApiTags;
+import com.optiflow.platform.shared.infrastructure.security.AuthenticatedUser;
+import com.optiflow.platform.shared.infrastructure.security.PatientDataAccessGuard;
 import com.optiflow.platform.shared.interfaces.rest.ApiV1;
 import com.optiflow.platform.shared.interfaces.rest.CreatedResourceResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -33,6 +35,7 @@ import jakarta.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -55,6 +58,7 @@ public class WorkOrderController {
   private final FromCompleteLensesRequestAssembler lensesAssembler;
   private final FromNotifyDeliveryDelayRequestAssembler delayAssembler;
   private final ProductionTrackingResponseAssembler responseAssembler;
+  private final PatientDataAccessGuard patientDataAccessGuard;
 
   public WorkOrderController(
       WorkOrderApplicationService workOrderApplicationService,
@@ -64,7 +68,8 @@ public class WorkOrderController {
       FromUpdateWorkOrderStatusRequestAssembler statusAssembler,
       FromCompleteLensesRequestAssembler lensesAssembler,
       FromNotifyDeliveryDelayRequestAssembler delayAssembler,
-      ProductionTrackingResponseAssembler responseAssembler) {
+      ProductionTrackingResponseAssembler responseAssembler,
+      PatientDataAccessGuard patientDataAccessGuard) {
     this.workOrderApplicationService = workOrderApplicationService;
     this.generateAssembler = generateAssembler;
     this.assignAssembler = assignAssembler;
@@ -73,6 +78,7 @@ public class WorkOrderController {
     this.lensesAssembler = lensesAssembler;
     this.delayAssembler = delayAssembler;
     this.responseAssembler = responseAssembler;
+    this.patientDataAccessGuard = patientDataAccessGuard;
   }
 
   /** Kanban board: every filter is optional. */
@@ -104,7 +110,9 @@ public class WorkOrderController {
   }
 
   @GetMapping("/patients/{patientId}/work-orders")
-  public List<WorkOrderResponse> findByPatient(@PathVariable UUID patientId) {
+  public List<WorkOrderResponse> findByPatient(
+      @PathVariable UUID patientId, @AuthenticationPrincipal AuthenticatedUser user) {
+    patientDataAccessGuard.ensureSelfPatientAccess(user, patientId);
     return workOrderApplicationService
         .findByPatient(new GetWorkOrdersByPatientIdQuery(PatientId.of(patientId)))
         .stream()

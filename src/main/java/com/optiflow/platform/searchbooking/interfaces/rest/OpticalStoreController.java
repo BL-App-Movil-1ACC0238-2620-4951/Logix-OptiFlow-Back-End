@@ -1,14 +1,15 @@
 package com.optiflow.platform.searchbooking.interfaces.rest;
 
 import com.optiflow.platform.searchbooking.application.services.OpticalStoreApplicationService;
+import com.optiflow.platform.searchbooking.domain.model.queries.FilterOpticalStoresQuery;
 import com.optiflow.platform.searchbooking.domain.model.queries.GetNearbyOpticalStoresQuery;
 import com.optiflow.platform.searchbooking.domain.model.queries.GetOpticalStoreQuery;
+import com.optiflow.platform.searchbooking.domain.model.queries.SearchOpticalStoresQuery;
 import com.optiflow.platform.searchbooking.domain.model.valueobjects.OpticalStoreId;
 import com.optiflow.platform.searchbooking.interfaces.rest.assemblers.FromOpticalStoreQueryParamsAssembler;
 import com.optiflow.platform.searchbooking.interfaces.rest.assemblers.SearchBookingResponseAssembler;
 import com.optiflow.platform.searchbooking.interfaces.rest.resources.OpticalStoreQueryParams;
 import com.optiflow.platform.searchbooking.interfaces.rest.resources.OpticalStoreResponse;
-import com.optiflow.platform.shared.domain.exceptions.DomainException;
 import com.optiflow.platform.shared.infrastructure.documentation.openapi.configuration.OpenApiTags;
 import com.optiflow.platform.shared.interfaces.rest.ApiV1;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -49,15 +50,11 @@ public class OpticalStoreController {
       @RequestParam(required = false) BigDecimal radiusKm) {
     OpticalStoreQueryParams params =
         new OpticalStoreQueryParams(name, address, minRating, lat, lng, radiusKm);
-    if (params.isNearbySearch()) {
-      if (lat == null || lng == null || radiusKm == null) {
-        throw new DomainException("lat, lng and radiusKm are required for a nearby search.", 400);
-      }
-      return responseAssembler.toStoreResponses(opticalStoreApplicationService.findNearby(
-          new GetNearbyOpticalStoresQuery(lat, lng, radiusKm)));
-    }
-    return responseAssembler.toStoreResponses(opticalStoreApplicationService.findStores(
-        queryAssembler.toQuery(params)));
+    return responseAssembler.toStoreResponses(switch (queryAssembler.toQuery(params)) {
+      case SearchOpticalStoresQuery query -> opticalStoreApplicationService.searchStores(query);
+      case FilterOpticalStoresQuery query -> opticalStoreApplicationService.findStores(query);
+      case GetNearbyOpticalStoresQuery query -> opticalStoreApplicationService.findNearby(query);
+    });
   }
 
   @GetMapping("/optical-stores/{id:[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}}")
