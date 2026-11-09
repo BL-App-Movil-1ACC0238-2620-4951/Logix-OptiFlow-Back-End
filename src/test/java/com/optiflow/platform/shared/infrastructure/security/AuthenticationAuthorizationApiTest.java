@@ -151,7 +151,7 @@ class AuthenticationAuthorizationApiTest {
             .header(HttpHeaders.AUTHORIZATION, bearer(adminToken))
             .contentType(MediaType.APPLICATION_JSON)
             .content("""
-                {"slots":[{"startDateTime":"2030-01-15T14:00:00Z",
+                {"timeSlots":[{"startDateTime":"2030-01-15T14:00:00Z",
                            "endDateTime":"2030-01-15T14:30:00Z"}]}
                 """))
         .andExpect(status().isCreated())
@@ -233,6 +233,53 @@ class AuthenticationAuthorizationApiTest {
             .contentType(MediaType.APPLICATION_JSON)
             .content("{\"opticalStoreId\":\"11111111-1111-1111-1111-111111111111\"}"))
         .andExpect(status().isForbidden());
+  }
+
+  @Test
+  void letsPatientReadOnlyTheirOwnProfile() throws Exception {
+    String patientToken = registerPatientAndIssueToken(
+        "Profile Patient", "profile.patient@optiflow.test", "999666777");
+    String patientId = objectMapper.readTree(
+            mockMvc.perform(post(ApiV1.path("/auth/tokens"))
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content("""
+                        {"email":"profile.patient@optiflow.test","password":"secret12"}
+                        """))
+                .andReturn().getResponse().getContentAsString())
+        .get("userId").asText();
+
+    mockMvc.perform(get(ApiV1.path("/patients/" + patientId))
+            .header(HttpHeaders.AUTHORIZATION, bearer(patientToken)))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.name").value("Profile Patient"))
+        .andExpect(jsonPath("$.email").value("profile.patient@optiflow.test"));
+    mockMvc.perform(get(ApiV1.path("/patients/00000000-0000-0000-0000-000000000009"))
+            .header(HttpHeaders.AUTHORIZATION, bearer(patientToken)))
+        .andExpect(status().isForbidden());
+    mockMvc.perform(get(ApiV1.path("/patients"))
+            .header(HttpHeaders.AUTHORIZATION, bearer(patientToken)))
+        .andExpect(status().isForbidden());
+  }
+
+  @Test
+  void letsStaffSearchPatientsAndBookForThem() throws Exception {
+    registerPatientAndIssueToken(
+        "Directory Patient", "directory.patient@optiflow.test", "999777888");
+    String adminToken = issueTokenFor("admin@optiflow.test");
+    String advisorToken = registerStaffAndIssueToken(
+        adminToken, "Front Desk", "front.desk@optiflow.test", "SALES_ADVISOR");
+
+    mockMvc.perform(get(ApiV1.path("/patients"))
+            .param("name", "directory")
+            .header(HttpHeaders.AUTHORIZATION, bearer(advisorToken)))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.length()").value(1))
+        .andExpect(jsonPath("$[0].email").value("directory.patient@optiflow.test"));
+    mockMvc.perform(post(ApiV1.path("/appointments"))
+            .header(HttpHeaders.AUTHORIZATION, bearer(advisorToken))
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{}"))
+        .andExpect(status().isBadRequest());
   }
 
   private String registerStaffAndIssueToken(

@@ -7,6 +7,7 @@ import com.optiflow.platform.searchbooking.domain.repositories.PatientRepository
 import com.optiflow.platform.searchbooking.infrastructure.persistence.jpa.mappers.PatientMapper;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import org.springframework.stereotype.Repository;
 
@@ -38,6 +39,13 @@ public class PatientRepositoryImpl implements PatientRepository {
   }
 
   @Override
+  public List<Patient> search(String name, String email) {
+    return patientJpaRepository.search(normalize(name), normalize(email)).stream()
+        .map(patientMapper::toDomain)
+        .toList();
+  }
+
+  @Override
   public Optional<String> findPasswordHashByEmail(EmailAddress email) {
     return patientJpaRepository.findByEmail(email.value()).map(entity -> entity.getPasswordHash());
   }
@@ -48,5 +56,9 @@ public class PatientRepositoryImpl implements PatientRepository {
         .stream()
         .map(PatientId::of)
         .toList();
+  }
+
+  private static String normalize(String text) {
+    return text == null ? "" : text.trim().toLowerCase(Locale.ROOT);
   }
 }

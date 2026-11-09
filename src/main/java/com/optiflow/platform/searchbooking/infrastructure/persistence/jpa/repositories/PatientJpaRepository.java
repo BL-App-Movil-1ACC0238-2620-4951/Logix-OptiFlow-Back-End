@@ -13,6 +13,14 @@ public interface PatientJpaRepository extends JpaRepository<PatientEntity, UUID>
   Optional<PatientEntity> findByEmail(String email);
 
   @Query("""
+      select patient from PatientEntity patient
+      where lower(patient.fullName) like concat('%', :name, '%')
+        and lower(patient.email) like concat('%', :email, '%')
+      order by patient.fullName
+      """)
+  List<PatientEntity> search(@Param("name") String name, @Param("email") String email);
+
+  @Query("""
       select patient.id from PatientEntity patient
       where patient.birthDate is not null
         and extract(month from patient.birthDate) = :month

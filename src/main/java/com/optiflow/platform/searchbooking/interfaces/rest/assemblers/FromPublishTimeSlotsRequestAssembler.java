@@ -12,7 +12,7 @@ public class FromPublishTimeSlotsRequestAssembler {
   public PublishAvailableTimeSlotsCommand toCommand(UUID opticalStoreId, PublishTimeSlotsRequest request) {
     return new PublishAvailableTimeSlotsCommand(
         OpticalStoreId.of(opticalStoreId),
-        request.slots().stream()
+        request.timeSlots().stream()
             .map(slot -> new PublishAvailableTimeSlotsCommand.SlotDraft(
                 slot.startDateTime(), slot.endDateTime()))
             .toList());
