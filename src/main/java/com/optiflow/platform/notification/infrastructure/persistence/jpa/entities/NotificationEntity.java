@@ -41,6 +41,15 @@ public class NotificationEntity {
   @Column(name = "scheduled_at")
   private Instant scheduledAt;
 
+  @Column(name = "survey_rating")
+  private Integer surveyRating;
+
+  @Column(name = "survey_comment", length = 500)
+  private String surveyComment;
+
+  @Column(name = "answered_at")
+  private Instant answeredAt;
+
   @Column(name = "created_at", nullable = false)
   private Instant createdAt;
 
@@ -125,6 +134,30 @@ public class NotificationEntity {
 
   public void setScheduledAt(Instant scheduledAt) {
     this.scheduledAt = scheduledAt;
+  }
+
+  public Integer getSurveyRating() {
+    return surveyRating;
+  }
+
+  public void setSurveyRating(Integer surveyRating) {
+    this.surveyRating = surveyRating;
+  }
+
+  public String getSurveyComment() {
+    return surveyComment;
+  }
+
+  public void setSurveyComment(String surveyComment) {
+    this.surveyComment = surveyComment;
+  }
+
+  public Instant getAnsweredAt() {
+    return answeredAt;
+  }
+
+  public void setAnsweredAt(Instant answeredAt) {
+    this.answeredAt = answeredAt;
   }
 
   public Instant getCreatedAt() {

@@ -8,6 +8,7 @@ import com.optiflow.platform.notification.domain.model.valueobjects.Notification
 import com.optiflow.platform.notification.domain.model.valueobjects.NotificationType;
 import com.optiflow.platform.notification.domain.model.valueobjects.PatientId;
 import com.optiflow.platform.notification.domain.model.valueobjects.PushStatus;
+import com.optiflow.platform.notification.domain.model.valueobjects.SurveyResponse;
 import com.optiflow.platform.notification.domain.model.valueobjects.WorkOrderId;
 import com.optiflow.platform.notification.infrastructure.persistence.jpa.entities.NotificationEntity;
 import org.springframework.stereotype.Component;
@@ -27,7 +28,9 @@ public class NotificationMapper {
         PushStatus.valueOf(entity.getPushStatus()),
         entity.getScheduledAt(),
         entity.getCreatedAt(),
-        entity.getReadAt());
+        entity.getReadAt(),
+        entity.getSurveyRating() == null ? null : new SurveyResponse(
+            entity.getSurveyRating(), entity.getSurveyComment(), entity.getAnsweredAt()));
   }
 
   public NotificationEntity toEntity(Notification notification) {
@@ -44,6 +47,11 @@ public class NotificationMapper {
     entity.setScheduledAt(notification.scheduledAt().orElse(null));
     entity.setCreatedAt(notification.createdAt());
     entity.setReadAt(notification.readAt().orElse(null));
+    notification.surveyResponse().ifPresent(answer -> {
+      entity.setSurveyRating(answer.rating());
+      entity.setSurveyComment(answer.comment());
+      entity.setAnsweredAt(answer.answeredAt());
+    });
     return entity;
   }
 }

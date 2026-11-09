@@ -4,14 +4,17 @@ import com.optiflow.platform.notification.application.services.NotificationAppli
 import com.optiflow.platform.notification.domain.model.aggregates.Notification;
 import com.optiflow.platform.notification.domain.model.queries.GetNotificationByIdQuery;
 import com.optiflow.platform.notification.domain.model.queries.GetNotificationsByPatientQuery;
+import com.optiflow.platform.notification.interfaces.rest.assemblers.FromAnswerSatisfactionSurveyRequestAssembler;
 import com.optiflow.platform.notification.interfaces.rest.assemblers.FromUpdateNotificationRequestAssembler;
 import com.optiflow.platform.notification.interfaces.rest.assemblers.NotificationResourceAssembler;
+import com.optiflow.platform.notification.interfaces.rest.resources.AnswerSatisfactionSurveyRequest;
 import com.optiflow.platform.notification.interfaces.rest.resources.NotificationResponse;
 import com.optiflow.platform.notification.interfaces.rest.resources.UpdateNotificationRequest;
 import com.optiflow.platform.shared.infrastructure.documentation.openapi.configuration.OpenApiTags;
 import com.optiflow.platform.shared.infrastructure.security.AuthenticatedUser;
 import com.optiflow.platform.shared.infrastructure.security.PatientDataAccessGuard;
 import com.optiflow.platform.shared.interfaces.rest.ApiV1;
+import com.optiflow.platform.shared.interfaces.rest.CreatedResourceResponses;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -19,10 +22,12 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
 import java.util.UUID;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,16 +39,19 @@ public class NotificationController {
 
   private final NotificationApplicationService notificationApplicationService;
   private final FromUpdateNotificationRequestAssembler updateAssembler;
+  private final FromAnswerSatisfactionSurveyRequestAssembler surveyAssembler;
   private final NotificationResourceAssembler resourceAssembler;
   private final PatientDataAccessGuard patientDataAccessGuard;
 
   public NotificationController(
       NotificationApplicationService notificationApplicationService,
       FromUpdateNotificationRequestAssembler updateAssembler,
+      FromAnswerSatisfactionSurveyRequestAssembler surveyAssembler,
       NotificationResourceAssembler resourceAssembler,
       PatientDataAccessGuard patientDataAccessGuard) {
     this.notificationApplicationService = notificationApplicationService;
     this.updateAssembler = updateAssembler;
+    this.surveyAssembler = surveyAssembler;
     this.resourceAssembler = resourceAssembler;
     this.patientDataAccessGuard = patientDataAccessGuard;
   }
@@ -90,6 +98,27 @@ public class NotificationController {
     ownNotification(id, user);
     return resourceAssembler.toResponse(
         notificationApplicationService.markAsRead(updateAssembler.toCommand(id, request)));
+  }
+
+  @Operation(
+      summary = "Answer a satisfaction survey",
+      description = "Saves the rating (1 to 5) and the optional comment of the patient. A survey"
+          + " is answered only once.")
+  @ApiResponses({
+      @ApiResponse(responseCode = "201", description = "Survey answered."),
+      @ApiResponse(responseCode = "404", description = "The notification was not found."),
+      @ApiResponse(responseCode = "409",
+          description = "The survey was already answered or the notification is not a survey.")
+  })
+  @PostMapping("/notifications/{id}/survey-response")
+  public ResponseEntity<NotificationResponse> answerSurvey(
+      @PathVariable UUID id,
+      @Valid @RequestBody AnswerSatisfactionSurveyRequest request,
+      @AuthenticationPrincipal AuthenticatedUser user) {
+    ownNotification(id, user);
+    NotificationResponse response = resourceAssembler.toResponse(
+        notificationApplicationService.answerSurvey(surveyAssembler.toCommand(id, request)));
+    return CreatedResourceResponses.at("/notifications/{id}", response, id);
   }
 
   private Notification ownNotification(UUID id, AuthenticatedUser user) {

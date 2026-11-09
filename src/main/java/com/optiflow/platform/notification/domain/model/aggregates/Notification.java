@@ -7,6 +7,7 @@ import com.optiflow.platform.notification.domain.model.valueobjects.Notification
 import com.optiflow.platform.notification.domain.model.valueobjects.NotificationType;
 import com.optiflow.platform.notification.domain.model.valueobjects.PatientId;
 import com.optiflow.platform.notification.domain.model.valueobjects.PushStatus;
+import com.optiflow.platform.notification.domain.model.valueobjects.SurveyResponse;
 import com.optiflow.platform.notification.domain.model.valueobjects.WorkOrderId;
 import com.optiflow.platform.shared.domain.exceptions.DomainException;
 import java.time.Instant;
@@ -25,6 +26,7 @@ public class Notification {
   private final Instant scheduledAt;
   private final Instant createdAt;
   private Instant readAt;
+  private SurveyResponse surveyResponse;
 
   private Notification(
       NotificationId id,
@@ -130,6 +132,17 @@ public class Notification {
         null);
   }
 
+  /** Satisfaction survey of a delivered order; the patient answers it once. */
+  public static Notification sendSatisfactionSurvey(
+      NotificationId id,
+      PatientId patientId,
+      WorkOrderId workOrderId,
+      NotificationMessage message,
+      Instant now) {
+    return new Notification(id, patientId, NotificationType.SATISFACTION_SURVEY, message, null,
+        workOrderId, NotificationStatus.UNREAD, PushStatus.PENDING, null, now, null);
+  }
+
   public static Notification sendBirthdayDiscount(
       NotificationId id,
       PatientId patientId,
@@ -160,9 +173,12 @@ public class Notification {
       PushStatus pushStatus,
       Instant scheduledAt,
       Instant createdAt,
-      Instant readAt) {
-    return new Notification(id, patientId, type, message, appointmentId, workOrderId, status,
-        pushStatus, scheduledAt, createdAt, readAt);
+      Instant readAt,
+      SurveyResponse surveyResponse) {
+    Notification notification = new Notification(id, patientId, type, message, appointmentId,
+        workOrderId, status, pushStatus, scheduledAt, createdAt, readAt);
+    notification.surveyResponse = surveyResponse;
+    return notification;
   }
 
   public void markAsRead(Instant now) {
@@ -171,6 +187,21 @@ public class Notification {
     }
     status = NotificationStatus.READ;
     readAt = now;
+  }
+
+  /** Saves the answer of the patient; answering also marks the survey as read. */
+  public void answerSurvey(int rating, String comment, Instant now) {
+    if (type != NotificationType.SATISFACTION_SURVEY) {
+      throw new DomainException("This notification is not a satisfaction survey.", 409);
+    }
+    if (surveyResponse != null) {
+      throw new DomainException("The satisfaction survey was already answered.", 409);
+    }
+    surveyResponse = new SurveyResponse(rating, comment, now);
+    if (status == NotificationStatus.UNREAD) {
+      status = NotificationStatus.READ;
+      readAt = now;
+    }
   }
 
   /** A notification without a scheduled date is due right away. */
@@ -223,6 +254,10 @@ public class Notification {
 
   public NotificationStatus status() {
     return status;
+  }
+
+  public Optional<SurveyResponse> surveyResponse() {
+    return Optional.ofNullable(surveyResponse);
   }
 
   public PushStatus pushStatus() {

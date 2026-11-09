@@ -80,6 +80,28 @@ class NotificationApiTest {
   }
 
   @Test
+  void answersASatisfactionSurveyOnce() throws Exception {
+    Notification survey = Notification.sendSatisfactionSurvey(
+        NotificationId.generate(), PatientId.of(UUID.randomUUID()),
+        WorkOrderId.of(UUID.randomUUID()),
+        new NotificationMessage("Encuesta de satisfacción", "Califícanos del 1 al 5."),
+        Instant.now());
+    notificationRepository.save(survey);
+    String route = ApiV1.path("/notifications/" + survey.id().value() + "/survey-response");
+
+    mockMvc.perform(post(route).contentType(MediaType.APPLICATION_JSON).content("{\"rating\":0}"))
+        .andExpect(status().isBadRequest());
+    mockMvc.perform(post(route).contentType(MediaType.APPLICATION_JSON)
+            .content("{\"rating\":5,\"comment\":\"Excelente\"}"))
+        .andExpect(status().isCreated())
+        .andExpect(jsonPath("$.surveyRating").value(5))
+        .andExpect(jsonPath("$.surveyComment").value("Excelente"))
+        .andExpect(jsonPath("$.status").value("READ"));
+    mockMvc.perform(post(route).contentType(MediaType.APPLICATION_JSON).content("{\"rating\":4}"))
+        .andExpect(status().isConflict());
+  }
+
+  @Test
   void registersADeviceTokenAndMovesItToTheLastPatient() throws Exception {
     UUID firstPatient = UUID.randomUUID();
     UUID secondPatient = UUID.randomUUID();

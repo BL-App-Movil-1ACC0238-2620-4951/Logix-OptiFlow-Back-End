@@ -16,5 +16,8 @@ public record NotificationResponse(
     Instant scheduledAt,
     @Schema(description = "Null while the notification is unread.") Instant readAt,
     @Schema(description = "Appointment of a reminder, if any.") UUID appointmentId,
-    @Schema(description = "Work order of an order notification, if any.") UUID workOrderId) {
+    @Schema(description = "Work order of an order notification, if any.") UUID workOrderId,
+    @Schema(example = "5", description = "Rating of an answered survey.") Integer surveyRating,
+    @Schema(description = "Comment of an answered survey.") String surveyComment,
+    @Schema(description = "Null until the survey is answered.") Instant answeredAt) {
 }

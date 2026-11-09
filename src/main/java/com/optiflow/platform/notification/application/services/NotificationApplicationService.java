@@ -1,5 +1,6 @@
 package com.optiflow.platform.notification.application.services;
 
+import com.optiflow.platform.notification.application.commandhandlers.AnswerSatisfactionSurveyHandler;
 import com.optiflow.platform.notification.application.commandhandlers.GrantBirthdayDiscountHandler;
 import com.optiflow.platform.notification.application.commandhandlers.MarkNotificationAsReadHandler;
 import com.optiflow.platform.notification.application.commandhandlers.NotifyLensOrderProgressHandler;
@@ -9,6 +10,7 @@ import com.optiflow.platform.notification.application.commandhandlers.SendDelive
 import com.optiflow.platform.notification.application.queryservices.GetNotificationByIdQueryService;
 import com.optiflow.platform.notification.application.queryservices.GetNotificationsByPatientQueryService;
 import com.optiflow.platform.notification.domain.model.aggregates.Notification;
+import com.optiflow.platform.notification.domain.model.commands.AnswerSatisfactionSurveyCommand;
 import com.optiflow.platform.notification.domain.model.commands.GrantBirthdayDiscountCommand;
 import com.optiflow.platform.notification.domain.model.commands.MarkNotificationAsReadCommand;
 import com.optiflow.platform.notification.domain.model.commands.NotifyLensOrderProgressCommand;
@@ -30,6 +32,7 @@ public class NotificationApplicationService {
   private final GrantBirthdayDiscountHandler grantBirthdayDiscountHandler;
   private final MarkNotificationAsReadHandler markNotificationAsReadHandler;
   private final RegisterDeviceTokenHandler registerDeviceTokenHandler;
+  private final AnswerSatisfactionSurveyHandler answerSatisfactionSurveyHandler;
   private final GetNotificationsByPatientQueryService getNotificationsByPatientQueryService;
   private final GetNotificationByIdQueryService getNotificationByIdQueryService;
 
@@ -40,6 +43,7 @@ public class NotificationApplicationService {
       GrantBirthdayDiscountHandler grantBirthdayDiscountHandler,
       MarkNotificationAsReadHandler markNotificationAsReadHandler,
       RegisterDeviceTokenHandler registerDeviceTokenHandler,
+      AnswerSatisfactionSurveyHandler answerSatisfactionSurveyHandler,
       GetNotificationsByPatientQueryService getNotificationsByPatientQueryService,
       GetNotificationByIdQueryService getNotificationByIdQueryService) {
     this.scheduleAppointmentReminderHandler = scheduleAppointmentReminderHandler;
@@ -48,6 +52,7 @@ public class NotificationApplicationService {
     this.grantBirthdayDiscountHandler = grantBirthdayDiscountHandler;
     this.markNotificationAsReadHandler = markNotificationAsReadHandler;
     this.registerDeviceTokenHandler = registerDeviceTokenHandler;
+    this.answerSatisfactionSurveyHandler = answerSatisfactionSurveyHandler;
     this.getNotificationsByPatientQueryService = getNotificationsByPatientQueryService;
     this.getNotificationByIdQueryService = getNotificationByIdQueryService;
   }
@@ -70,6 +75,10 @@ public class NotificationApplicationService {
 
   public Notification markAsRead(MarkNotificationAsReadCommand command) {
     return markNotificationAsReadHandler.handle(command);
+  }
+
+  public Notification answerSurvey(AnswerSatisfactionSurveyCommand command) {
+    return answerSatisfactionSurveyHandler.handle(command);
   }
 
   public DeviceToken registerDeviceToken(RegisterDeviceTokenCommand command) {

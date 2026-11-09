@@ -3,19 +3,23 @@ package com.optiflow.platform.notification.application.services;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import com.optiflow.platform.notification.application.commandhandlers.AnswerSatisfactionSurveyHandler;
 import com.optiflow.platform.notification.application.commandhandlers.GrantBirthdayDiscountHandler;
 import com.optiflow.platform.notification.application.commandhandlers.MarkNotificationAsReadHandler;
 import com.optiflow.platform.notification.application.commandhandlers.NotifyLensOrderProgressHandler;
 import com.optiflow.platform.notification.application.commandhandlers.RegisterDeviceTokenHandler;
 import com.optiflow.platform.notification.application.commandhandlers.ScheduleAppointmentReminderHandler;
 import com.optiflow.platform.notification.application.commandhandlers.SendDeliveryDelayNotificationHandler;
+import com.optiflow.platform.notification.application.commandhandlers.SendSatisfactionSurveyHandler;
 import com.optiflow.platform.notification.application.queryservices.GetLoyaltyAccountByPatientQueryService;
 import com.optiflow.platform.notification.application.queryservices.GetNotificationByIdQueryService;
 import com.optiflow.platform.notification.application.queryservices.GetNotificationsByPatientQueryService;
 import com.optiflow.platform.notification.domain.exceptions.LoyaltyAccountNotFoundException;
+import com.optiflow.platform.notification.domain.model.commands.AnswerSatisfactionSurveyCommand;
 import com.optiflow.platform.notification.domain.model.commands.GrantBirthdayDiscountCommand;
 import com.optiflow.platform.notification.domain.model.commands.MarkNotificationAsReadCommand;
 import com.optiflow.platform.notification.domain.model.commands.ScheduleAppointmentReminderCommand;
+import com.optiflow.platform.notification.domain.model.commands.SendSatisfactionSurveyCommand;
 import com.optiflow.platform.notification.domain.model.queries.GetLoyaltyAccountByPatientQuery;
 import com.optiflow.platform.notification.domain.model.queries.GetNotificationsByPatientQuery;
 import com.optiflow.platform.notification.domain.model.valueobjects.NotificationStatus;
@@ -76,6 +80,7 @@ class NotificationApplicationServiceTest {
         grantBirthdayDiscountHandler,
         markNotificationAsReadHandler,
         new RegisterDeviceTokenHandler(new FakeDeviceTokenRepository(), eventPublisher, clock),
+        new AnswerSatisfactionSurveyHandler(notificationRepository, eventPublisher, clock),
         getNotificationsByPatientQueryService,
         getNotificationByIdQueryService);
     loyaltyApplicationService = new LoyaltyApplicationService(getLoyaltyAccountByPatientQueryService);
@@ -123,6 +128,24 @@ class NotificationApplicationServiceTest {
         new ScheduleAppointmentReminderCommand(PATIENT_ID, APPOINTMENT_ID));
 
     assertEquals(2, notificationRepository.findAll().size());
+  }
+
+  @Test
+  void sendsASurveyForADeliveredOrderAndSavesItsAnswerOnce() {
+    var survey = new SendSatisfactionSurveyHandler(notificationRepository,
+        Mockito.mock(DomainEventPublisher.class), Clock.fixed(NOW, ZoneOffset.UTC))
+        .handle(new SendSatisfactionSurveyCommand(PATIENT_ID, UUID.randomUUID()));
+
+    var answered = notificationApplicationService.answerSurvey(
+        new AnswerSatisfactionSurveyCommand(survey.id().value(), 4, "  Muy buena atención. "));
+
+    assertEquals(4, answered.surveyResponse().orElseThrow().rating());
+    assertEquals("Muy buena atención.", answered.surveyResponse().orElseThrow().comment());
+    assertEquals(NotificationStatus.READ, answered.status());
+    DomainException exception = assertThrows(DomainException.class,
+        () -> notificationApplicationService.answerSurvey(
+            new AnswerSatisfactionSurveyCommand(survey.id().value(), 5, null)));
+    assertEquals(409, exception.status());
   }
 
   @Test
