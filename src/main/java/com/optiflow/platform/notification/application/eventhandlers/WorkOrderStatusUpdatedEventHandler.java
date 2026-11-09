@@ -42,11 +42,11 @@ public class WorkOrderStatusUpdatedEventHandler {
 
   private static String progressMessage(WorkOrderStatus status) {
     return switch (status) {
-      case IN_WORKSHOP -> "Your lenses are being prepared in the workshop.";
-      case QUALITY_CONTROL -> "Your lenses are in quality control.";
-      case READY_FOR_DELIVERY -> "Your order is ready for delivery.";
-      case DELIVERED -> "Your order was delivered.";
-      case PENDING -> "Your order is pending.";
+      case IN_WORKSHOP -> "Tus lentes se están preparando en el taller.";
+      case QUALITY_CONTROL -> "Tus lentes están en control de calidad.";
+      case READY_FOR_DELIVERY -> "Tu pedido está listo para recoger en la óptica.";
+      case DELIVERED -> "Tu pedido fue entregado.";
+      case PENDING -> "Tu pedido está pendiente.";
     };
   }
 }

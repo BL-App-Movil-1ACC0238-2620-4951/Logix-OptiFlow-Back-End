@@ -27,7 +27,8 @@ public class ProductionDeliveryDelayNotifiedEventHandler {
       sendDeliveryDelayNotificationHandler.handle(new SendDeliveryDelayNotificationCommand(
           event.patientId().value(),
           event.workOrderId().value(),
-          event.delay().reason()));
+          event.delay().reason(),
+          event.delay().newEstimatedDeliveryDate()));
     } catch (RuntimeException exception) {
       LOGGER.error(
           "Could not send the delivery delay notification for work order {}.",

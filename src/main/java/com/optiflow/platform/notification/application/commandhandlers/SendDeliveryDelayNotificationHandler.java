@@ -11,12 +11,15 @@ import com.optiflow.platform.notification.domain.repositories.NotificationReposi
 import com.optiflow.platform.shared.domain.events.DomainEventPublisher;
 import java.time.Clock;
 import java.time.Instant;
+import java.time.format.DateTimeFormatter;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class SendDeliveryDelayNotificationHandler {
+
+  private static final DateTimeFormatter DATE = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
   private final NotificationRepository notificationRepository;
   private final DomainEventPublisher eventPublisher;
@@ -41,8 +44,10 @@ public class SendDeliveryDelayNotificationHandler {
         patientId,
         workOrderId,
         new NotificationMessage(
-            "Delivery delay",
-            "Your lens order delivery was delayed: " + command.reason()),
+            "Demora en la entrega",
+            "Tu pedido estará listo el "
+                + DATE.format(command.newEstimatedDeliveryDate())
+                + ". Motivo: " + command.reason()),
         now);
     notificationRepository.save(notification);
     eventPublisher.publish(new InAppNotificationSent(
