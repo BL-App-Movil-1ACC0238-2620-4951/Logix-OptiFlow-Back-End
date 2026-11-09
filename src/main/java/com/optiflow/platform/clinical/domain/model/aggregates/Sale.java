@@ -97,6 +97,20 @@ public class Sale {
     status = SaleStatus.PAID;
   }
 
+  /** A rejected payment keeps the sale pending, so the patient can try again. */
+  public void rejectPayment(Payment payment) {
+    ensurePendingPayment();
+    if (payment.isApproved()) {
+      throw new DomainException("Only a rejected payment can be recorded as rejected.", 400);
+    }
+    this.payment = payment;
+  }
+
+  /** True when this gateway payment was already recorded, approved or rejected. */
+  public boolean hasPayment(String transactionReference) {
+    return payment != null && payment.transactionReference().equals(transactionReference);
+  }
+
   public ElectronicReceipt close(String receiptNumber, Instant now) {
     if (status != SaleStatus.PAID) {
       throw new DomainException("Only a paid sale can be closed.", 409);
