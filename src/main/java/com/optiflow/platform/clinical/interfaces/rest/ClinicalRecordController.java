@@ -23,6 +23,9 @@ import com.optiflow.platform.shared.infrastructure.security.AuthenticatedUser;
 import com.optiflow.platform.shared.infrastructure.security.PatientDataAccessGuard;
 import com.optiflow.platform.shared.interfaces.rest.ApiV1;
 import com.optiflow.platform.shared.interfaces.rest.CreatedResourceResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -64,6 +67,16 @@ public class ClinicalRecordController {
     this.patientDataAccessGuard = patientDataAccessGuard;
   }
 
+  @Operation(summary = "Register a clinical record",
+      description = "The optometrist registers the examination of the booked appointment; the "
+          + "record opened by AppointmentBooked becomes OPEN.")
+  @ApiResponses({
+      @ApiResponse(responseCode = "201", description = "Clinical record registered."),
+      @ApiResponse(responseCode = "404", description = "The appointment was not found."),
+      @ApiResponse(responseCode = "409",
+          description = "The appointment is cancelled, belongs to another patient or is "
+              + "already registered.")
+  })
   @PostMapping("/clinical-records")
   public ResponseEntity<ClinicalRecordResponse> register(
       @Valid @RequestBody RegisterClinicalRecordRequest request) {
@@ -72,12 +85,25 @@ public class ClinicalRecordController {
     return CreatedResourceResponses.at("/clinical-records/{id}", response, response.id());
   }
 
+  @Operation(summary = "Get the clinical records summary",
+      description = "Returns how many patients have at least one clinical record, for the staff "
+          + "directory.")
+  @ApiResponses(@ApiResponse(responseCode = "200",
+      description = "Summary of the clinical records."))
   @GetMapping("/clinical-records/summary")
   public ClinicalRecordsSummaryResponse summary() {
     return responseAssembler.toClinicalRecordsSummaryResponse(
         clinicalRecordApplicationService.getSummary(new GetClinicalRecordsSummaryQuery()));
   }
 
+  @Operation(summary = "Get a clinical record",
+      description = "Returns the record with its medical history and prescription. A patient can "
+          + "only read their own records.")
+  @ApiResponses({
+      @ApiResponse(responseCode = "200", description = "Clinical record found."),
+      @ApiResponse(responseCode = "403", description = "The record belongs to another patient."),
+      @ApiResponse(responseCode = "404", description = "The clinical record was not found.")
+  })
   @GetMapping("/clinical-records/{id}")
   public ClinicalRecordResponse get(
       @PathVariable UUID id, @AuthenticationPrincipal AuthenticatedUser user) {
@@ -87,6 +113,14 @@ public class ClinicalRecordController {
     return responseAssembler.toClinicalRecordResponse(record);
   }
 
+  @Operation(summary = "List the clinical records of a patient",
+      description = "Returns the clinical history of the patient. A patient can only read "
+          + "their own records.")
+  @ApiResponses({
+      @ApiResponse(responseCode = "200", description = "Clinical records of the patient."),
+      @ApiResponse(responseCode = "403",
+          description = "A patient asked for another patient's records.")
+  })
   @GetMapping("/patients/{patientId}/clinical-records")
   public List<ClinicalRecordResponse> findByPatient(
       @PathVariable UUID patientId, @AuthenticationPrincipal AuthenticatedUser user) {
@@ -98,6 +132,14 @@ public class ClinicalRecordController {
         .toList();
   }
 
+  @Operation(summary = "Record the medical history",
+      description = "Replaces the allergies, previous conditions and family ocular history of the "
+          + "record.")
+  @ApiResponses({
+      @ApiResponse(responseCode = "200", description = "Medical history recorded."),
+      @ApiResponse(responseCode = "404", description = "The clinical record was not found."),
+      @ApiResponse(responseCode = "409", description = "The clinical record is closed.")
+  })
   @PutMapping("/clinical-records/{id}/medical-history")
   public ClinicalRecordResponse recordMedicalHistory(
       @PathVariable UUID id, @Valid @RequestBody RecordMedicalHistoryRequest request) {
@@ -106,6 +148,14 @@ public class ClinicalRecordController {
             medicalHistoryAssembler.toCommand(id, request)));
   }
 
+  @Operation(summary = "Generate the optical prescription",
+      description = "Registers the sphere, cylinder and axis of each eye of an examined patient.")
+  @ApiResponses({
+      @ApiResponse(responseCode = "201", description = "Prescription generated."),
+      @ApiResponse(responseCode = "404", description = "The clinical record was not found."),
+      @ApiResponse(responseCode = "409",
+          description = "The patient was not examined yet or the record is closed.")
+  })
   @PostMapping("/clinical-records/{id}/prescription")
   public ResponseEntity<OpticalPrescriptionResponse> generatePrescription(
       @PathVariable UUID id, @Valid @RequestBody GenerateOpticalPrescriptionRequest request) {
@@ -116,6 +166,15 @@ public class ClinicalRecordController {
         "/clinical-records/{id}/prescription", response, id);
   }
 
+  @Operation(summary = "Get the optical prescription",
+      description = "Returns the prescription of the record. A patient can only read their own "
+          + "prescriptions.")
+  @ApiResponses({
+      @ApiResponse(responseCode = "200", description = "Prescription found."),
+      @ApiResponse(responseCode = "403", description = "The record belongs to another patient."),
+      @ApiResponse(responseCode = "404",
+          description = "The clinical record or its prescription was not found.")
+  })
   @GetMapping("/clinical-records/{id}/prescription")
   public OpticalPrescriptionResponse getPrescription(
       @PathVariable UUID id, @AuthenticationPrincipal AuthenticatedUser user) {

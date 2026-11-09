@@ -1,6 +1,10 @@
 package com.optiflow.platform.inventory.interfaces.rest;
 
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.endsWith;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -50,6 +54,7 @@ class StoreInventoryApiTest {
   private static final String MIRAFLORES_ID = "11111111-1111-1111-1111-111111111111";
   private static final String UNKNOWN_ID = "00000000-0000-0000-0000-000000000000";
   private static final String SKU = "RB-2140-BLK";
+  private static final String STOCK = "$.stocks[?(@.sku == '" + SKU + "')]";
 
   @Autowired
   private MockMvc mockMvc;
@@ -62,12 +67,17 @@ class StoreInventoryApiTest {
 
   @Test
   void managesTheCatalogStockAndTheExitOfASoldFrame() throws Exception {
+    // The seeded catalog is already in the stores: the report is compared with this baseline.
+    String today = LocalDate.now(ZoneId.of("America/Lima")).toString();
+    JsonNode before = read(mockMvc.perform(get(ApiV1.path("/reports/inventory"))
+            .param("opticalStoreId", MIRAFLORES_ID).param("from", today).param("to", today))
+        .andExpect(status().isOk()));
     String supplierId = read(perform(post(ApiV1.path("/suppliers")), """
         {"name":"Distribuidora Andina","contact":"ventas@andina.pe"}
         """).andExpect(status().isCreated())).get("id").asText();
     mockMvc.perform(get(ApiV1.path("/suppliers")))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$[0].name").value("Distribuidora Andina"));
+        .andExpect(jsonPath("$[*].name", hasItem("Distribuidora Andina")));
 
     String frame = """
         {"sku":"%s","name":"Ray-Ban Wayfarer","material":"Acetato","shape":"Cuadrada",
@@ -80,7 +90,7 @@ class StoreInventoryApiTest {
     perform(post(ApiV1.path("/inventory/frames")), frame).andExpect(status().isConflict());
     mockMvc.perform(get(ApiV1.path("/inventory/frames")))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$[0].sku").value(SKU));
+        .andExpect(jsonPath("$[*].sku", hasItem(SKU)));
     perform(patch(ApiV1.path("/inventory/frames/" + SKU + "/price")), "{\"price\":299.90}")
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.price").value(299.90));
@@ -94,8 +104,8 @@ class StoreInventoryApiTest {
         .andExpect(jsonPath("$.quantity").value(3));
     mockMvc.perform(get(ApiV1.path("/inventory/stock")).param("opticalStoreId", MIRAFLORES_ID))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.stocks[0].quantity").value(3))
-        .andExpect(jsonPath("$.stocks[0].low").value(false));
+        .andExpect(jsonPath(STOCK + ".quantity", contains(3)))
+        .andExpect(jsonPath(STOCK + ".low", contains(false)));
     mockMvc.perform(get(ApiV1.path("/inventory/frames/" + SKU)).param("opticalStoreId", MIRAFLORES_ID))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.quantity").value(3))
@@ -106,13 +116,11 @@ class StoreInventoryApiTest {
     // Closing the sale took the frame out of the stock (SaleWasClosed -> UpdateInventory).
     mockMvc.perform(get(ApiV1.path("/inventory/stock")).param("opticalStoreId", MIRAFLORES_ID))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.stocks[0].quantity").value(2))
-        .andExpect(jsonPath("$.stocks[0].low").value(true));
+        .andExpect(jsonPath(STOCK + ".quantity", contains(2)))
+        .andExpect(jsonPath(STOCK + ".low", contains(true)));
     mockMvc.perform(get(ApiV1.path("/inventory/alerts")).param("opticalStoreId", MIRAFLORES_ID))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$[0].sku").value(SKU))
-        .andExpect(jsonPath("$[0].quantity").value(2));
-    String today = LocalDate.now(ZoneId.of("America/Lima")).toString();
+        .andExpect(jsonPath("$[?(@.sku == '" + SKU + "')].quantity", contains(2)));
     JsonNode movements = read(mockMvc.perform(get(ApiV1.path("/inventory/movements"))
             .param("opticalStoreId", MIRAFLORES_ID)
             .param("from", today)
@@ -133,9 +141,10 @@ class StoreInventoryApiTest {
             .param("from", today)
             .param("to", today))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.unitsIn").value(3))
-        .andExpect(jsonPath("$.unitsOut").value(1))
-        .andExpect(jsonPath("$.lowStockProducts").value(1));
+        .andExpect(jsonPath("$.unitsIn").value(before.get("unitsIn").asInt() + 3))
+        .andExpect(jsonPath("$.unitsOut").value(before.get("unitsOut").asInt() + 1))
+        .andExpect(jsonPath("$.lowStockProducts")
+            .value(before.get("lowStockProducts").asInt() + 1));
     mockMvc.perform(get(ApiV1.path("/reports/inventory"))
             .accept("text/csv")
             .param("opticalStoreId", MIRAFLORES_ID)
@@ -143,9 +152,9 @@ class StoreInventoryApiTest {
             .param("to", today))
         .andExpect(status().isOk())
         .andExpect(header().string(HttpHeaders.CONTENT_TYPE, startsWith("text/csv")))
-        .andExpect(content().string(
-            "sku,name,quantity,minimum_stock,low_stock,units_in,units_out\n"
-                + SKU + ",Ray-Ban Wayfarer,2,2,true,3,1\n"));
+        .andExpect(content().string(allOf(
+            startsWith("sku,name,quantity,minimum_stock,low_stock,units_in,units_out\n"),
+            containsString("\n" + SKU + ",Ray-Ban Wayfarer,2,2,true,3,1\n"))));
   }
 
   @Test

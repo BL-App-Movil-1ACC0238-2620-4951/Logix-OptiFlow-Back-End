@@ -8,6 +8,10 @@ import com.optiflow.platform.searchbooking.interfaces.rest.resources.LoginRespon
 import com.optiflow.platform.shared.infrastructure.documentation.openapi.configuration.OpenApiTags;
 import com.optiflow.platform.shared.interfaces.rest.ApiV1;
 import com.optiflow.platform.shared.interfaces.rest.CreatedResourceResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +38,15 @@ public class AuthenticationController {
     this.responseAssembler = responseAssembler;
   }
 
+  @Operation(summary = "Log in",
+      description = "Issues a JWT access token for a patient or a staff member with their "
+          + "email and password. Send it as Authorization: Bearer <token> in the other requests.")
+  @ApiResponses({
+      @ApiResponse(responseCode = "201",
+          description = "Token issued with its expiration, the user id and the role."),
+      @ApiResponse(responseCode = "401", description = "The credentials are invalid.")
+  })
+  @SecurityRequirements
   @PostMapping("/auth/tokens")
   public ResponseEntity<LoginResponse> create(@Valid @RequestBody LoginRequest request) {
     LoginResponse response = responseAssembler.toLoginResponse(

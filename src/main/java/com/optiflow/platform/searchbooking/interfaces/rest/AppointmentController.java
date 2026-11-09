@@ -16,6 +16,9 @@ import com.optiflow.platform.searchbooking.interfaces.rest.resources.UpdateAppoi
 import com.optiflow.platform.shared.infrastructure.documentation.openapi.configuration.OpenApiTags;
 import com.optiflow.platform.shared.interfaces.rest.ApiV1;
 import com.optiflow.platform.shared.interfaces.rest.CreatedResourceResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.time.LocalDate;
@@ -53,6 +56,19 @@ public class AppointmentController {
     this.responseAssembler = responseAssembler;
   }
 
+  @Operation(summary = "Book an appointment",
+      description = "Books an available time slot for a patient; the appointment starts CONFIRMED. "
+          + "It publishes AppointmentBooked, which opens the clinical record and schedules "
+          + "the reminders. Patients and the clinical staff can book.")
+  @ApiResponses({
+      @ApiResponse(responseCode = "201", description = "Appointment booked."),
+      @ApiResponse(responseCode = "400",
+          description = "The time slot does not belong to the optical store."),
+      @ApiResponse(responseCode = "404",
+          description = "The patient, the optical store or the time slot was not found."),
+      @ApiResponse(responseCode = "409",
+          description = "The time slot is no longer available or the store is not available.")
+  })
   @PostMapping("/appointments")
   public ResponseEntity<AppointmentResponse> book(@Valid @RequestBody BookAppointmentRequest request) {
     AppointmentResponse response = responseAssembler.toAppointmentResponse(
@@ -60,6 +76,10 @@ public class AppointmentController {
     return CreatedResourceResponses.at("/appointments/{id}", response, response.id());
   }
 
+  @Operation(summary = "Get the agenda of a store",
+      description = "Returns the appointments of the optical store on the given date. Only "
+          + "optometrists and admins.")
+  @ApiResponses(@ApiResponse(responseCode = "200", description = "Appointments of the day."))
   @GetMapping("/appointments")
   public List<AppointmentResponse> listByOpticalStore(
       @RequestParam UUID opticalStoreId,
@@ -72,12 +92,29 @@ public class AppointmentController {
         .toList();
   }
 
+  @Operation(summary = "Get an appointment",
+      description = "Returns the appointment with its patient, store and time slot.")
+  @ApiResponses({
+      @ApiResponse(responseCode = "200", description = "Appointment found."),
+      @ApiResponse(responseCode = "404", description = "The appointment was not found.")
+  })
   @GetMapping("/appointments/{id}")
   public AppointmentResponse get(@PathVariable UUID id) {
     return responseAssembler.toAppointmentResponse(
         appointmentApplicationService.getById(new GetAppointmentQuery(AppointmentId.of(id))));
   }
 
+  @Operation(summary = "Cancel or complete an appointment",
+      description = "With status CANCELLED, cancels the appointment and frees its time slot; with "
+          + "COMPLETED, marks it as attended. To reschedule, book another time slot and "
+          + "cancel this appointment.")
+  @ApiResponses({
+      @ApiResponse(responseCode = "200", description = "Appointment updated."),
+      @ApiResponse(responseCode = "400", description = "The status is not CANCELLED or COMPLETED."),
+      @ApiResponse(responseCode = "404", description = "The appointment was not found."),
+      @ApiResponse(responseCode = "409",
+          description = "The appointment can no longer be cancelled or completed.")
+  })
   @PatchMapping("/appointments/{id}/status")
   public AppointmentResponse updateStatus(
       @PathVariable UUID id, @Valid @RequestBody UpdateAppointmentStatusRequest request) {

@@ -37,7 +37,7 @@ class SearchAndBookingApiTest {
   void searchesStoresAndRejectsASecondBookingForTheSameSlot() throws Exception {
     MvcResult stores = mockMvc.perform(get(ApiV1.path("/optical-stores")))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.length()").value(2))
+        .andExpect(jsonPath("$.length()").value(5))
         .andReturn();
     String storeId = objectMapper.readTree(stores.getResponse().getContentAsString())
         .get(0).get("id").asText();
@@ -191,7 +191,8 @@ class SearchAndBookingApiTest {
             .param("lng", "-77.031000")
             .param("radiusKm", "5"))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.length()").value(2))
+        // Miraflores, San Isidro and Surco; San Miguel and Chorrillos are farther away.
+        .andExpect(jsonPath("$.length()").value(3))
         .andExpect(jsonPath("$[0].latitude").isNumber())
         .andExpect(jsonPath("$[0].longitude").isNumber());
 

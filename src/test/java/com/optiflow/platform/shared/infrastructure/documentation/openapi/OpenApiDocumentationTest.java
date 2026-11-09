@@ -2,10 +2,14 @@ package com.optiflow.platform.shared.infrastructure.documentation.openapi;
 
 import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.Matchers.not;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.jayway.jsonpath.JsonPath;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -22,6 +26,9 @@ class OpenApiDocumentationTest {
   private static final String REPORT = "$.paths['/api/v1/reports/inventory'].get.responses['200']";
   private static final String WEBHOOK = "$.paths['/api/v1/payment-notifications'].post";
   private static final String ERROR_REF = "#/components/schemas/ApiError";
+  private static final String STORES = "$.paths['/api/v1/optical-stores'].get";
+  private static final String WORK_ORDER_STATUS =
+      "$.paths['/api/v1/work-orders/{id}/status'].patch";
 
   @Autowired
   private MockMvc mockMvc;
@@ -45,5 +52,25 @@ class OpenApiDocumentationTest {
         .andExpect(jsonPath(REPORT + ".content", hasKey("text/csv")))
         .andExpect(jsonPath(WEBHOOK + ".responses", hasKey("401")))
         .andExpect(jsonPath(WEBHOOK + ".responses", not(hasKey("403"))));
+  }
+
+  @Test
+  void documentsEveryOperationAndLeavesPublicRoutesWithoutSecurity() throws Exception {
+    String docs = mockMvc.perform(get("/v3/api-docs"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath(STORES + ".security").isEmpty())
+        .andExpect(jsonPath(STORES + ".responses", not(hasKey("401"))))
+        .andExpect(jsonPath("$.paths['/api/v1/patients'].post.security").isEmpty())
+        .andExpect(jsonPath("$.paths['/api/v1/auth/tokens'].post.responses", not(hasKey("403"))))
+        .andExpect(jsonPath("$.paths['/api/v1/patients'].get.responses", hasKey("403")))
+        .andExpect(jsonPath(WORK_ORDER_STATUS + ".summary")
+            .value("Update the status of a work order"))
+        .andExpect(jsonPath(WORK_ORDER_STATUS + ".responses['409'].content['application/json']"
+            + ".schema['$ref']").value(ERROR_REF))
+        .andReturn().getResponse().getContentAsString();
+    List<Object> operations = JsonPath.read(docs, "$.paths.*.*.responses");
+    List<Object> summaries = JsonPath.read(docs, "$.paths.*.*.summary");
+    assertTrue(operations.size() > 60);
+    assertEquals(operations.size(), summaries.size());
   }
 }

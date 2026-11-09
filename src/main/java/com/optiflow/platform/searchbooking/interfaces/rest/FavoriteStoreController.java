@@ -10,6 +10,9 @@ import com.optiflow.platform.shared.infrastructure.security.AuthenticatedUser;
 import com.optiflow.platform.shared.infrastructure.security.PatientDataAccessGuard;
 import com.optiflow.platform.shared.interfaces.rest.ApiV1;
 import com.optiflow.platform.shared.interfaces.rest.CreatedResourceResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.UUID;
@@ -42,6 +45,18 @@ public class FavoriteStoreController {
     this.patientDataAccessGuard = patientDataAccessGuard;
   }
 
+  @Operation(summary = "Save a favorite store",
+      description = "Saves an optical store as a favorite of the patient. A patient can only save "
+          + "their own favorites.")
+  @ApiResponses({
+      @ApiResponse(responseCode = "201", description = "Favorite saved."),
+      @ApiResponse(responseCode = "403",
+          description = "A patient tried to save another patient's favorite."),
+      @ApiResponse(responseCode = "404",
+          description = "The patient or the optical store was not found."),
+      @ApiResponse(responseCode = "409",
+          description = "The store is already a favorite or it is not available.")
+  })
   @PostMapping("/patients/{patientId}/favorites")
   public ResponseEntity<FavoriteStoreResponse> save(
       @PathVariable UUID patientId,
