@@ -16,7 +16,13 @@ import com.optiflow.platform.clinical.SaleTestData;
 import com.optiflow.platform.clinical.domain.repositories.ClinicalRecordRepository;
 import com.optiflow.platform.clinical.domain.repositories.QuotationRepository;
 import com.optiflow.platform.clinical.domain.repositories.SaleRepository;
+import com.optiflow.platform.notification.domain.model.aggregates.Notification;
+import com.optiflow.platform.notification.domain.model.valueobjects.NotificationId;
+import com.optiflow.platform.notification.domain.model.valueobjects.NotificationMessage;
+import com.optiflow.platform.notification.domain.model.valueobjects.PatientId;
+import com.optiflow.platform.notification.domain.repositories.NotificationRepository;
 import com.optiflow.platform.shared.interfaces.rest.ApiV1;
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
@@ -38,6 +44,7 @@ class AuthenticationAuthorizationApiTest {
   @Autowired private ObjectMapper objectMapper;
   @Autowired private QuotationRepository quotationRepository;
   @Autowired private ClinicalRecordRepository clinicalRecordRepository;
+  @Autowired private NotificationRepository notificationRepository;
   @Autowired private SaleRepository saleRepository;
 
   @Test
@@ -453,6 +460,45 @@ class AuthenticationAuthorizationApiTest {
               .header(HttpHeaders.AUTHORIZATION, bearer(advisorToken)))
           .andExpect(status().isOk());
     }
+  }
+
+  @Test
+  void letsOnlyThePatientReadTheirNotificationsAndLoyaltyAccount() throws Exception {
+    String adminToken = issueTokenFor("admin@optiflow.test");
+    String advisorToken = registerStaffAndIssueToken(
+        adminToken, "Notice Advisor", "notice.advisor@optiflow.test", "SALES_ADVISOR");
+    String ownerToken = registerPatientAndIssueToken(
+        "Notice Owner", "notice.owner@optiflow.test", "999555111");
+    String otherToken = registerPatientAndIssueToken(
+        "Notice Stranger", "notice.stranger@optiflow.test", "999555112");
+    UUID ownerId = UUID.fromString(objectMapper.readTree(mockMvc.perform(
+            post(ApiV1.path("/auth/tokens")).contentType(MediaType.APPLICATION_JSON)
+                .content("{\"email\":\"notice.owner@optiflow.test\",\"password\":\"secret12\"}"))
+            .andReturn().getResponse().getContentAsString())
+        .get("userId").asText());
+    Notification notification = Notification.sendBirthdayDiscount(
+        NotificationId.generate(), PatientId.of(ownerId),
+        new NotificationMessage("¡Feliz cumpleaños!", "Sumamos 100 puntos a tu cuenta."),
+        Instant.now());
+    notificationRepository.save(notification);
+    String notice = ApiV1.path("/notifications/" + notification.id().value());
+    String notices = ApiV1.path("/patients/" + ownerId + "/notifications");
+
+    for (String route : List.of(notice, notices)) {
+      mockMvc.perform(get(route).header(HttpHeaders.AUTHORIZATION, bearer(otherToken)))
+          .andExpect(status().isForbidden())
+          .andExpect(jsonPath("$.message").value("You cannot access another patient's data."));
+      mockMvc.perform(get(route).header(HttpHeaders.AUTHORIZATION, bearer(advisorToken)))
+          .andExpect(status().isForbidden());
+      mockMvc.perform(get(route).header(HttpHeaders.AUTHORIZATION, bearer(ownerToken)))
+          .andExpect(status().isOk());
+    }
+    mockMvc.perform(patch(notice).header(HttpHeaders.AUTHORIZATION, bearer(otherToken))
+            .contentType(MediaType.APPLICATION_JSON).content("{\"read\":true}"))
+        .andExpect(status().isForbidden());
+    mockMvc.perform(get(ApiV1.path("/patients/" + ownerId + "/loyalty-account"))
+            .header(HttpHeaders.AUTHORIZATION, bearer(otherToken)))
+        .andExpect(status().isForbidden());
   }
 
   private String registerStaffAndIssueToken(
