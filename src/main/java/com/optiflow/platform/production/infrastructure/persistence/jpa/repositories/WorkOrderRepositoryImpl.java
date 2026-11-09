@@ -11,6 +11,7 @@ import com.optiflow.platform.production.domain.repositories.WorkOrderRepository;
 import com.optiflow.platform.production.infrastructure.persistence.jpa.entities.WorkOrderEntity;
 import com.optiflow.platform.production.infrastructure.persistence.jpa.mappers.WorkOrderMapper;
 import jakarta.persistence.criteria.Predicate;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -78,6 +79,14 @@ public class WorkOrderRepositoryImpl implements WorkOrderRepository {
       return builder.and(predicates.toArray(Predicate[]::new));
     };
     return workOrderJpaRepository.findAll(filters, Sort.by("createdAt")).stream()
+        .map(this::toDomain)
+        .toList();
+  }
+
+  @Override
+  public List<WorkOrder> findWithActivityBetween(Instant from, Instant to) {
+    return workOrderJpaRepository
+        .findByCreatedAtLessThanAndUpdatedAtGreaterThanEqualOrderByCreatedAt(to, from).stream()
         .map(this::toDomain)
         .toList();
   }

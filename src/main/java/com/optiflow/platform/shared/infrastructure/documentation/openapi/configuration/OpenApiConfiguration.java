@@ -52,6 +52,8 @@ public class OpenApiConfiguration {
                 "Work orders generated from closed sales: Kanban board, lenses and delivery."),
             tag(OpenApiTags.TECHNICIANS_AND_LABORATORIES,
                 "Technicians and laboratories that can work on an order."),
+            tag(OpenApiTags.PRODUCTION_REPORTS,
+                "Production metrics of the business for the admin, in JSON or CSV."),
             tag(OpenApiTags.FRAME_MODELS,
                 "Frame catalog, scanned frames and prices."),
             tag(OpenApiTags.INVENTORY,
