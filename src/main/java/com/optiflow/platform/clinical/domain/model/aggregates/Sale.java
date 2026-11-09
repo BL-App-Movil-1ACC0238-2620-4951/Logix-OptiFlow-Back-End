@@ -60,11 +60,28 @@ public class Sale {
         id, quotationId, patientId, status, closedAt, paymentPreferenceId, payment, receipt);
   }
 
-  /** Validates a payment before it is sent to the payment gateway. */
-  public void ensurePaymentCanBeRecorded(Money amount, Money amountDue) {
+  public boolean belongsTo(PatientId patientId) {
+    return this.patientId.equals(patientId);
+  }
+
+  public void ensurePendingPayment() {
     if (status != SaleStatus.PENDING_PAYMENT) {
       throw new DomainException("A payment was already recorded for this sale.", 409);
     }
+  }
+
+  /** Keeps the gateway preference that the patient pays from the app. */
+  public void attachPaymentPreference(String preferenceId) {
+    ensurePendingPayment();
+    if (preferenceId == null || preferenceId.isBlank()) {
+      throw new DomainException("Payment preference id is required.", 400);
+    }
+    paymentPreferenceId = preferenceId;
+  }
+
+  /** Validates a payment before it is recorded. */
+  public void ensurePaymentCanBeRecorded(Money amount, Money amountDue) {
+    ensurePendingPayment();
     if (amount == null || amount.amount().compareTo(amountDue.amount()) != 0) {
       throw new DomainException(
           "The payment amount must match the quotation total of " + amountDue + ".", 400);

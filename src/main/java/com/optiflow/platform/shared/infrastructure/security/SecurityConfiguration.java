@@ -77,6 +77,7 @@ public class SecurityConfiguration {
                 "/api/v1/patients/*/clinical-records")
             .hasAnyRole(PATIENT, OPTOMETRIST, SALES_ADVISOR, ADMIN)
             .requestMatchers("/api/v1/clinical-records/**").hasAnyRole(OPTOMETRIST, ADMIN)
+            .requestMatchers(HttpMethod.POST, "/api/v1/sales/*/payment-preference").hasRole(PATIENT)
             .requestMatchers(HttpMethod.GET, "/api/v1/quotations/*", "/api/v1/sales/*")
             .hasAnyRole(PATIENT, SALES_ADVISOR, ADMIN)
             .requestMatchers("/api/v1/quotations/**", "/api/v1/sales/**")

@@ -2,24 +2,33 @@ package com.optiflow.platform.clinical.interfaces.rest;
 
 import com.optiflow.platform.clinical.application.services.SaleApplicationService;
 import com.optiflow.platform.clinical.domain.model.commands.CloseSaleCommand;
+import com.optiflow.platform.clinical.domain.model.commands.CreatePaymentPreferenceCommand;
 import com.optiflow.platform.clinical.domain.model.queries.GetSaleByIdQuery;
+import com.optiflow.platform.clinical.domain.model.valueobjects.PatientId;
 import com.optiflow.platform.clinical.domain.model.valueobjects.SaleId;
 import com.optiflow.platform.clinical.domain.model.valueobjects.SaleStatus;
 import com.optiflow.platform.clinical.interfaces.rest.assemblers.ClinicalCommercialResponseAssembler;
 import com.optiflow.platform.clinical.interfaces.rest.assemblers.FromRecordPaymentRequestAssembler;
 import com.optiflow.platform.clinical.interfaces.rest.assemblers.FromRegisterSaleRequestAssembler;
+import com.optiflow.platform.clinical.interfaces.rest.resources.PaymentPreferenceResponse;
 import com.optiflow.platform.clinical.interfaces.rest.resources.RecordPaymentRequest;
 import com.optiflow.platform.clinical.interfaces.rest.resources.RegisterSaleRequest;
 import com.optiflow.platform.clinical.interfaces.rest.resources.SaleResponse;
 import com.optiflow.platform.clinical.interfaces.rest.resources.UpdateSaleStatusRequest;
 import com.optiflow.platform.shared.domain.exceptions.DomainException;
 import com.optiflow.platform.shared.infrastructure.documentation.openapi.configuration.OpenApiTags;
+import com.optiflow.platform.shared.infrastructure.security.AuthenticatedUser;
 import com.optiflow.platform.shared.interfaces.rest.ApiV1;
 import com.optiflow.platform.shared.interfaces.rest.CreatedResourceResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.UUID;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -60,6 +69,26 @@ public class SaleController {
   public SaleResponse get(@PathVariable UUID id) {
     return responseAssembler.toSaleResponse(
         saleApplicationService.getById(new GetSaleByIdQuery(SaleId.of(id))));
+  }
+
+  @Operation(summary = "Create the payment preference of a sale",
+      description = "The patient asks to pay a sale pending payment from the app. Returns the "
+          + "Checkout Pro link (initPoint) where the patient pays with card or Yape; the result "
+          + "arrives later through the payment notifications. Only the patient of the sale.")
+  @ApiResponses({
+      @ApiResponse(responseCode = "201", description = "Payment preference created."),
+      @ApiResponse(responseCode = "403", description = "The sale belongs to another patient."),
+      @ApiResponse(responseCode = "404", description = "The sale was not found."),
+      @ApiResponse(responseCode = "409", description = "The sale is not pending payment."),
+      @ApiResponse(responseCode = "503", description = "The payment gateway is not available.")
+  })
+  @PostMapping("/sales/{id}/payment-preference")
+  public ResponseEntity<PaymentPreferenceResponse> createPaymentPreference(
+      @PathVariable UUID id, @AuthenticationPrincipal AuthenticatedUser user) {
+    PaymentPreferenceResponse response = responseAssembler.toPaymentPreferenceResponse(
+        saleApplicationService.createPaymentPreference(new CreatePaymentPreferenceCommand(
+            SaleId.of(id), user == null ? null : PatientId.of(user.userId()))));
+    return ResponseEntity.status(HttpStatus.CREATED).body(response);
   }
 
   @PostMapping("/sales/{id}/payments")

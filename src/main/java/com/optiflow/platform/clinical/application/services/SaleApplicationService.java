@@ -1,12 +1,15 @@
 package com.optiflow.platform.clinical.application.services;
 
 import com.optiflow.platform.clinical.application.commandhandlers.CloseSaleHandler;
+import com.optiflow.platform.clinical.application.commandhandlers.CreatePaymentPreferenceHandler;
 import com.optiflow.platform.clinical.application.commandhandlers.RecordPaymentHandler;
 import com.optiflow.platform.clinical.application.commandhandlers.RegisterSaleHandler;
+import com.optiflow.platform.clinical.application.outboundservices.PaymentPreference;
 import com.optiflow.platform.clinical.application.queryservices.SaleQueryService;
 import com.optiflow.platform.clinical.application.results.ClosedSaleDetails;
 import com.optiflow.platform.clinical.domain.model.aggregates.Sale;
 import com.optiflow.platform.clinical.domain.model.commands.CloseSaleCommand;
+import com.optiflow.platform.clinical.domain.model.commands.CreatePaymentPreferenceCommand;
 import com.optiflow.platform.clinical.domain.model.commands.RecordPaymentCommand;
 import com.optiflow.platform.clinical.domain.model.commands.RegisterSaleCommand;
 import com.optiflow.platform.clinical.domain.model.queries.GetClosedSaleQuery;
@@ -17,16 +20,19 @@ import org.springframework.stereotype.Service;
 public class SaleApplicationService {
 
   private final RegisterSaleHandler registerSaleHandler;
+  private final CreatePaymentPreferenceHandler createPaymentPreferenceHandler;
   private final RecordPaymentHandler recordPaymentHandler;
   private final CloseSaleHandler closeSaleHandler;
   private final SaleQueryService saleQueryService;
 
   public SaleApplicationService(
       RegisterSaleHandler registerSaleHandler,
+      CreatePaymentPreferenceHandler createPaymentPreferenceHandler,
       RecordPaymentHandler recordPaymentHandler,
       CloseSaleHandler closeSaleHandler,
       SaleQueryService saleQueryService) {
     this.registerSaleHandler = registerSaleHandler;
+    this.createPaymentPreferenceHandler = createPaymentPreferenceHandler;
     this.recordPaymentHandler = recordPaymentHandler;
     this.closeSaleHandler = closeSaleHandler;
     this.saleQueryService = saleQueryService;
@@ -34,6 +40,10 @@ public class SaleApplicationService {
 
   public Sale register(RegisterSaleCommand command) {
     return registerSaleHandler.handle(command);
+  }
+
+  public PaymentPreference createPaymentPreference(CreatePaymentPreferenceCommand command) {
+    return createPaymentPreferenceHandler.handle(command);
   }
 
   public Sale recordPayment(RecordPaymentCommand command) {

@@ -1,5 +1,6 @@
 package com.optiflow.platform.clinical.interfaces.rest.assemblers;
 
+import com.optiflow.platform.clinical.application.outboundservices.PaymentPreference;
 import com.optiflow.platform.clinical.application.results.ClinicalRecordsSummary;
 import com.optiflow.platform.clinical.domain.model.aggregates.ClinicalRecord;
 import com.optiflow.platform.clinical.domain.model.aggregates.Quotation;
@@ -16,6 +17,7 @@ import com.optiflow.platform.clinical.interfaces.rest.resources.DiscountResponse
 import com.optiflow.platform.clinical.interfaces.rest.resources.ElectronicReceiptResponse;
 import com.optiflow.platform.clinical.interfaces.rest.resources.MedicalHistoryResponse;
 import com.optiflow.platform.clinical.interfaces.rest.resources.OpticalPrescriptionResponse;
+import com.optiflow.platform.clinical.interfaces.rest.resources.PaymentPreferenceResponse;
 import com.optiflow.platform.clinical.interfaces.rest.resources.PaymentResponse;
 import com.optiflow.platform.clinical.interfaces.rest.resources.QuotationItemResponse;
 import com.optiflow.platform.clinical.interfaces.rest.resources.QuotationResponse;
@@ -113,6 +115,10 @@ public class ClinicalCommercialResponseAssembler {
         item.unitPrice().amount(),
         item.quantity(),
         item.subtotal().amount());
+  }
+
+  public PaymentPreferenceResponse toPaymentPreferenceResponse(PaymentPreference preference) {
+    return new PaymentPreferenceResponse(preference.id(), preference.initPoint());
   }
 
   private PaymentResponse toPaymentResponse(Payment payment) {

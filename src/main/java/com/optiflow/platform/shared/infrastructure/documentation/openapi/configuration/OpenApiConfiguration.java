@@ -61,7 +61,7 @@ public class OpenApiConfiguration {
 
   /**
    * Documents the error responses shared by every route once: 400 on routes with input, 401 and
-   * 403 on secured routes, and the {@link ApiError} body of every 4xx response, which springdoc
+   * 403 on secured routes, and the {@link ApiError} body of every 4xx and 5xx response, which springdoc
    * would otherwise fill with the return type of the method.
    */
   @Bean
@@ -84,7 +84,7 @@ public class OpenApiConfiguration {
               .description("The role of the user cannot use this route."));
         }
         responses.forEach((code, response) -> {
-          if (code.startsWith("4")) {
+          if (code.startsWith("4") || code.startsWith("5")) {
             response.setContent(new Content().addMediaType(
                 org.springframework.http.MediaType.APPLICATION_JSON_VALUE,
                 new MediaType().schema(new Schema<>().$ref("#/components/schemas/" + API_ERROR))));
