@@ -1,25 +1,17 @@
 package com.optiflow.platform.production.infrastructure.outboundservices;
 
-import com.optiflow.platform.clinical.application.services.ClinicalRecordApplicationService;
-import com.optiflow.platform.clinical.application.services.QuotationApplicationService;
+import com.optiflow.platform.clinical.application.results.ClosedSaleDetails;
 import com.optiflow.platform.clinical.application.services.SaleApplicationService;
 import com.optiflow.platform.clinical.domain.model.aggregates.ClinicalRecord;
 import com.optiflow.platform.clinical.domain.model.aggregates.Quotation;
-import com.optiflow.platform.clinical.domain.model.aggregates.Sale;
-import com.optiflow.platform.clinical.domain.model.queries.GetClinicalRecordByIdQuery;
-import com.optiflow.platform.clinical.domain.model.queries.GetQuotationByIdQuery;
-import com.optiflow.platform.clinical.domain.model.queries.GetSaleByIdQuery;
+import com.optiflow.platform.clinical.domain.model.queries.GetClosedSaleQuery;
 import com.optiflow.platform.clinical.domain.model.valueobjects.OpticalPrescription;
 import com.optiflow.platform.clinical.domain.model.valueobjects.QuotationItemType;
-import com.optiflow.platform.clinical.domain.model.valueobjects.SaleStatus;
 import com.optiflow.platform.production.application.outboundservices.ClosedSale;
 import com.optiflow.platform.production.application.outboundservices.ExternalSaleService;
 import com.optiflow.platform.production.domain.model.valueobjects.OpticalStoreId;
 import com.optiflow.platform.production.domain.model.valueobjects.PatientId;
 import com.optiflow.platform.production.domain.model.valueobjects.SaleId;
-import com.optiflow.platform.searchbooking.application.services.AppointmentApplicationService;
-import com.optiflow.platform.searchbooking.domain.model.queries.GetAppointmentQuery;
-import com.optiflow.platform.searchbooking.domain.model.valueobjects.AppointmentId;
 import com.optiflow.platform.shared.domain.exceptions.DomainException;
 import java.math.BigDecimal;
 import java.util.List;
@@ -38,26 +30,16 @@ public class ClinicalCommercialSaleAdapter implements ExternalSaleService {
   private static final String DEFAULT_LENS = "Lunas según la cotización aprobada";
 
   private final SaleApplicationService saleApplicationService;
-  private final QuotationApplicationService quotationApplicationService;
-  private final ClinicalRecordApplicationService clinicalRecordApplicationService;
-  private final AppointmentApplicationService appointmentApplicationService;
 
-  public ClinicalCommercialSaleAdapter(
-      SaleApplicationService saleApplicationService,
-      QuotationApplicationService quotationApplicationService,
-      ClinicalRecordApplicationService clinicalRecordApplicationService,
-      AppointmentApplicationService appointmentApplicationService) {
+  public ClinicalCommercialSaleAdapter(SaleApplicationService saleApplicationService) {
     this.saleApplicationService = saleApplicationService;
-    this.quotationApplicationService = quotationApplicationService;
-    this.clinicalRecordApplicationService = clinicalRecordApplicationService;
-    this.appointmentApplicationService = appointmentApplicationService;
   }
 
   @Override
   public Optional<ClosedSale> findSale(SaleId saleId) {
-    Sale sale;
+    ClosedSaleDetails details;
     try {
-      sale = saleApplicationService.getById(new GetSaleByIdQuery(
+      details = saleApplicationService.getClosedSale(new GetClosedSaleQuery(
           com.optiflow.platform.clinical.domain.model.valueobjects.SaleId.of(saleId.value())));
     } catch (DomainException exception) {
       if (exception.status() == 404) {
@@ -65,29 +47,12 @@ public class ClinicalCommercialSaleAdapter implements ExternalSaleService {
       }
       throw exception;
     }
-    Quotation quotation =
-        quotationApplicationService.getById(new GetQuotationByIdQuery(sale.quotationId()));
-    ClinicalRecord clinicalRecord = clinicalRecordApplicationService.getById(
-        new GetClinicalRecordByIdQuery(quotation.clinicalRecordId()));
     return Optional.of(new ClosedSale(
         saleId,
-        PatientId.of(sale.patientId().value()),
-        findOpticalStore(clinicalRecord),
-        sale.status() == SaleStatus.CLOSED,
-        lensSpecifications(clinicalRecord, quotation)));
-  }
-
-  private OpticalStoreId findOpticalStore(ClinicalRecord clinicalRecord) {
-    try {
-      return OpticalStoreId.of(appointmentApplicationService
-          .getById(new GetAppointmentQuery(
-              AppointmentId.of(clinicalRecord.appointmentId().value())))
-          .appointment()
-          .opticalStoreId()
-          .value());
-    } catch (DomainException exception) {
-      return null;
-    }
+        PatientId.of(details.sale().patientId().value()),
+        details.opticalStoreId() == null ? null : OpticalStoreId.of(details.opticalStoreId()),
+        details.closed(),
+        lensSpecifications(details.clinicalRecord(), details.quotation())));
   }
 
   private static List<String> lensSpecifications(

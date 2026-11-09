@@ -58,12 +58,12 @@ public class PatientController {
     return CreatedResourceResponses.at("/patients/{id}", response, response.id());
   }
 
-  @GetMapping("/patients/{id}/appointments")
+  @GetMapping("/patients/{patientId}/appointments")
   public List<AppointmentResponse> appointments(
-      @PathVariable UUID id, @AuthenticationPrincipal AuthenticatedUser user) {
-    patientDataAccessGuard.ensureSelfPatientAccess(user, id);
+      @PathVariable UUID patientId, @AuthenticationPrincipal AuthenticatedUser user) {
+    patientDataAccessGuard.ensureSelfPatientAccess(user, patientId);
     return appointmentApplicationService
-        .findByPatient(new GetPatientAppointmentsQuery(PatientId.of(id)))
+        .findByPatient(new GetPatientAppointmentsQuery(PatientId.of(patientId)))
         .stream()
         .map(responseAssembler::toAppointmentResponse)
         .toList();

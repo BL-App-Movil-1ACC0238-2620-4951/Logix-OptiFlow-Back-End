@@ -2,6 +2,8 @@ package com.optiflow.platform.production.application.queryservices;
 
 import com.optiflow.platform.production.domain.model.entities.Laboratory;
 import com.optiflow.platform.production.domain.model.entities.Technician;
+import com.optiflow.platform.production.domain.model.queries.GetLaboratoriesQuery;
+import com.optiflow.platform.production.domain.model.queries.GetTechniciansQuery;
 import com.optiflow.platform.production.domain.repositories.LaboratoryRepository;
 import com.optiflow.platform.production.domain.repositories.TechnicianRepository;
 import java.util.List;
@@ -22,12 +24,12 @@ public class ProductionCatalogQueryService {
   }
 
   @Transactional(readOnly = true)
-  public List<Technician> technicians() {
+  public List<Technician> handle(GetTechniciansQuery query) {
     return technicianRepository.findAll();
   }
 
   @Transactional(readOnly = true)
-  public List<Laboratory> laboratories() {
+  public List<Laboratory> handle(GetLaboratoriesQuery query) {
     return laboratoryRepository.findAll();
   }
 }

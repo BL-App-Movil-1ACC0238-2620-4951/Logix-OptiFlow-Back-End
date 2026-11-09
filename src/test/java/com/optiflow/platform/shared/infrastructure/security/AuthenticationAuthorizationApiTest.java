@@ -1,7 +1,9 @@
 package com.optiflow.platform.shared.infrastructure.security;
 
+import static org.hamcrest.Matchers.endsWith;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -133,6 +135,28 @@ class AuthenticationAuthorizationApiTest {
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.length()").value(1))
         .andExpect(jsonPath("$[0].role").value("ADMIN"));
+  }
+
+  @Test
+  void allowsAdminToPublishTimeSlotsAndReturnsTheirLocation() throws Exception {
+    String adminToken = issueTokenFor("admin@optiflow.test");
+    MvcResult stores = mockMvc.perform(get(ApiV1.path("/optical-stores")))
+        .andExpect(status().isOk())
+        .andReturn();
+    String storeId = objectMapper.readTree(stores.getResponse().getContentAsString())
+        .get(0).get("id").asText();
+
+    mockMvc.perform(post(ApiV1.path("/optical-stores/" + storeId + "/time-slots"))
+            .header(HttpHeaders.AUTHORIZATION, bearer(adminToken))
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("""
+                {"slots":[{"startDateTime":"2030-01-15T14:00:00Z",
+                           "endDateTime":"2030-01-15T14:30:00Z"}]}
+                """))
+        .andExpect(status().isCreated())
+        .andExpect(header().string(HttpHeaders.LOCATION,
+            endsWith(ApiV1.path("/optical-stores/" + storeId + "/time-slots"))))
+        .andExpect(jsonPath("$.length()").value(1));
   }
 
   private String registerPatientAndIssueToken(String name, String email, String phone)

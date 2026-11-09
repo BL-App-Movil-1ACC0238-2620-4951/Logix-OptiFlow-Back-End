@@ -1,20 +1,17 @@
 package com.optiflow.platform.production.application.eventhandlers;
 
-import com.optiflow.platform.clinical.domain.model.events.SaleWasClosed;
 import com.optiflow.platform.production.application.commandhandlers.GenerateWorkOrderHandler;
 import com.optiflow.platform.production.domain.model.commands.GenerateWorkOrderCommand;
 import com.optiflow.platform.production.domain.model.valueobjects.SaleId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.event.TransactionalEventListener;
 
 /**
- * Consumes the Clinical & Commercial {@link SaleWasClosed} event and starts manufacturing by
- * running the {@code GenerateWorkOrder} command (customer/supplier relationship with an
- * anti-corruption layer, as described in the context map).
+ * Reacts to a closed sale received by the {@code SaleWasClosedConsumer} and starts manufacturing
+ * by running the {@code GenerateWorkOrder} command.
  *
- * <p>It runs after the sale commits, so a failure here never rolls back the closed sale.
+ * <p>A failure is logged and never rolls back the closed sale.
  */
 @Component
 public class SaleWasClosedEventHandler {
@@ -27,14 +24,11 @@ public class SaleWasClosedEventHandler {
     this.generateWorkOrderHandler = generateWorkOrderHandler;
   }
 
-  @TransactionalEventListener(fallbackExecution = true)
-  public void onSaleWasClosed(SaleWasClosed event) {
+  public void handle(SaleId saleId) {
     try {
-      generateWorkOrderHandler.handle(
-          new GenerateWorkOrderCommand(SaleId.of(event.saleId().value())));
+      generateWorkOrderHandler.handle(new GenerateWorkOrderCommand(saleId));
     } catch (RuntimeException exception) {
-      LOGGER.error(
-          "Could not generate the work order for sale {}.", event.saleId().value(), exception);
+      LOGGER.error("Could not generate the work order for sale {}.", saleId.value(), exception);
     }
   }
 }

@@ -42,7 +42,6 @@ class AppointmentBookingRulesTest {
   void cancelsAConfirmedAppointmentAndReleasesTheTimeSlot() {
     Instant now = Instant.parse("2026-10-06T15:00:00Z");
     TimeSlot timeSlot = availableSlot(now.plus(1, ChronoUnit.DAYS));
-    timeSlot.reserve(now);
     Appointment appointment = confirmedAppointment(timeSlot, now);
 
     appointment.cancel(now);

@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.EmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,13 +26,18 @@ class ApiRequestErrorsTest {
   private MockMvc mockMvc;
 
   @ParameterizedTest
-  @ValueSource(strings = {"/appointments/abc", "/patients/abc/appointments", "/optical-stores/abc/time-slots"})
-  void explainsInvalidUuidParameters(String url) throws Exception {
+  @CsvSource({
+      "/appointments/abc, id",
+      "/patients/abc/appointments, patientId",
+      "/optical-stores/abc/time-slots, id"
+  })
+  void explainsInvalidUuidParameters(String url, String parameter) throws Exception {
     mockMvc.perform(get(ApiV1.path(url)))
         .andExpect(status().isBadRequest())
         .andExpect(jsonPath("$.status").value(400))
         .andExpect(jsonPath("$.error").value("Bad Request"))
-        .andExpect(jsonPath("$.message").value("El parámetro id debe ser un UUID válido."));
+        .andExpect(jsonPath("$.message")
+            .value("El parámetro " + parameter + " debe ser un UUID válido."));
   }
 
   @ParameterizedTest

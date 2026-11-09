@@ -9,17 +9,17 @@ import com.optiflow.platform.searchbooking.interfaces.rest.resources.PublishTime
 import com.optiflow.platform.searchbooking.interfaces.rest.resources.TimeSlotResponse;
 import com.optiflow.platform.shared.infrastructure.documentation.openapi.configuration.OpenApiTags;
 import com.optiflow.platform.shared.interfaces.rest.ApiV1;
+import com.optiflow.platform.shared.interfaces.rest.CreatedResourceResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
 import java.util.UUID;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = OpenApiTags.AVAILABILITY)
@@ -40,19 +40,19 @@ public class TimeSlotController {
     this.publishAssembler = publishAssembler;
   }
 
-  @GetMapping("/optical-stores/{opticalStoreId}/time-slots")
-  public List<TimeSlotResponse> list(@PathVariable UUID opticalStoreId) {
+  @GetMapping("/optical-stores/{id}/time-slots")
+  public List<TimeSlotResponse> list(@PathVariable UUID id) {
     return responseAssembler.toTimeSlotResponses(
         opticalStoreApplicationService.availability(
-            new GetAvailableTimeSlotsQuery(OpticalStoreId.of(opticalStoreId))));
+            new GetAvailableTimeSlotsQuery(OpticalStoreId.of(id))));
   }
 
-  @PostMapping("/optical-stores/{opticalStoreId}/time-slots")
-  @ResponseStatus(HttpStatus.CREATED)
-  public List<TimeSlotResponse> publish(
-      @PathVariable UUID opticalStoreId, @Valid @RequestBody PublishTimeSlotsRequest request) {
-    return responseAssembler.toTimeSlotResponses(
+  @PostMapping("/optical-stores/{id}/time-slots")
+  public ResponseEntity<List<TimeSlotResponse>> publish(
+      @PathVariable UUID id, @Valid @RequestBody PublishTimeSlotsRequest request) {
+    List<TimeSlotResponse> response = responseAssembler.toTimeSlotResponses(
         opticalStoreApplicationService.publishTimeSlots(
-            publishAssembler.toCommand(opticalStoreId, request)));
+            publishAssembler.toCommand(id, request)));
+    return CreatedResourceResponses.at("/optical-stores/{id}/time-slots", response, id);
   }
 }
