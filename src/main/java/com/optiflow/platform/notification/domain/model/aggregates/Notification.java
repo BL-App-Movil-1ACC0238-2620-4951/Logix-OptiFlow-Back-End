@@ -154,6 +154,11 @@ public class Notification {
     readAt = now;
   }
 
+  /** A notification without a scheduled date is due right away. */
+  public boolean isDue(Instant now) {
+    return scheduledAt == null || !scheduledAt.isAfter(now);
+  }
+
   public void markPushSent() {
     pushStatus = PushStatus.SENT;
   }

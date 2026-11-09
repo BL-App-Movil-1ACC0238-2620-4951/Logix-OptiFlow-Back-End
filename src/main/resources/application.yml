@@ -37,3 +37,7 @@ optiflow:
       base-url: https://api.mercadopago.com
       notification-url: ${MERCADOPAGO_NOTIFICATION_URL:https://logix-optiflow-back-end.onrender.com/api/v1/payment-notifications}
       back-url: optiflow://payment-result
+  notifications:
+    firebase:
+      credentials: ${FIREBASE_CREDENTIALS:}
+      base-url: https://fcm.googleapis.com
