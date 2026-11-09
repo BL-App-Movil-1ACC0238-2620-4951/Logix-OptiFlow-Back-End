@@ -2,6 +2,7 @@ package com.optiflow.platform.clinical.domain.model.aggregates;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.optiflow.platform.clinical.domain.model.entities.ElectronicReceipt;
 import com.optiflow.platform.clinical.domain.model.entities.QuotationItem;
@@ -15,6 +16,7 @@ import com.optiflow.platform.clinical.domain.model.valueobjects.OpticalPrescript
 import com.optiflow.platform.clinical.domain.model.valueobjects.PatientId;
 import com.optiflow.platform.clinical.domain.model.valueobjects.Payment;
 import com.optiflow.platform.clinical.domain.model.valueobjects.PaymentMethod;
+import com.optiflow.platform.clinical.domain.model.valueobjects.PaymentStatus;
 import com.optiflow.platform.clinical.domain.model.valueobjects.QuotationItemType;
 import com.optiflow.platform.clinical.domain.model.valueobjects.QuotationStatus;
 import com.optiflow.platform.clinical.domain.model.valueobjects.SaleStatus;
@@ -90,16 +92,35 @@ class ClinicalCommercialRulesTest {
     Money amountDue = money("440.10");
 
     DomainException exception = assertThrows(DomainException.class, () -> sale.recordPayment(
-        new Payment(PaymentMethod.CASH, money("400.00"), "CASH-1", NOW), amountDue));
+        Payment.approved(PaymentMethod.CASH, money("400.00"), "CASH-1", NOW), amountDue));
     assertEquals(400, exception.status());
 
-    sale.recordPayment(new Payment(PaymentMethod.YAPE, amountDue, "YAPE-123", NOW), amountDue);
+    sale.recordPayment(Payment.approved(PaymentMethod.YAPE, amountDue, "YAPE-123", NOW), amountDue);
     ElectronicReceipt receipt = sale.close(ElectronicReceipt.formatNumber(1), NOW);
 
     assertEquals(SaleStatus.CLOSED, sale.status());
     assertEquals("B001-00000001", receipt.receiptNumber());
     assertEquals(money("440.10"), receipt.totalAmount());
     assertEquals(money("67.13"), receipt.taxAmount());
+  }
+
+  @Test
+  void keepsTheSalePendingWhenThePaymentIsRejected() {
+    Sale sale = Sale.register(draftQuotation().id(), PatientId.generate());
+    Money amountDue = money("440.10");
+    Payment rejected = new Payment(PaymentMethod.CARD, amountDue, "111", PaymentStatus.REJECTED,
+        "cc_rejected_insufficient_amount", NOW);
+
+    assertEquals(400, assertThrows(DomainException.class,
+        () -> sale.recordPayment(rejected, amountDue)).status());
+    sale.rejectPayment(rejected);
+    assertEquals(SaleStatus.PENDING_PAYMENT, sale.status());
+    assertTrue(sale.hasPayment("111"));
+
+    sale.recordPayment(Payment.approved(PaymentMethod.YAPE, amountDue, "222", NOW), amountDue);
+    assertEquals(SaleStatus.PAID, sale.status());
+    assertEquals(409, assertThrows(DomainException.class,
+        () -> sale.rejectPayment(rejected)).status());
   }
 
   private static Quotation draftQuotation() {

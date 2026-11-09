@@ -11,9 +11,12 @@ import com.optiflow.platform.clinical.domain.model.aggregates.Quotation;
 import com.optiflow.platform.clinical.domain.model.aggregates.Sale;
 import com.optiflow.platform.clinical.domain.model.queries.GetClosedSaleQuery;
 import com.optiflow.platform.clinical.domain.model.queries.GetSaleByIdQuery;
+import com.optiflow.platform.clinical.domain.model.queries.GetSalesByPatientIdQuery;
 import com.optiflow.platform.clinical.domain.repositories.ClinicalRecordRepository;
 import com.optiflow.platform.clinical.domain.repositories.QuotationRepository;
 import com.optiflow.platform.clinical.domain.repositories.SaleRepository;
+import java.util.Comparator;
+import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,6 +42,14 @@ public class SaleQueryService {
   @Transactional(readOnly = true)
   public Sale handle(GetSaleByIdQuery query) {
     return saleRepository.findById(query.saleId()).orElseThrow(SaleNotFoundException::new);
+  }
+
+  /** Sales of the patient: the ones pending payment first, then the paid and closed ones. */
+  @Transactional(readOnly = true)
+  public List<Sale> handle(GetSalesByPatientIdQuery query) {
+    return saleRepository.findByPatientId(query.patientId()).stream()
+        .sorted(Comparator.comparing(Sale::status))
+        .toList();
   }
 
   /** Sale with its quotation, clinical record and store, as Production & Tracking needs it. */

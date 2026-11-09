@@ -1,6 +1,7 @@
 package com.optiflow.platform.clinical.interfaces.rest;
 
 import com.optiflow.platform.clinical.application.services.ClinicalRecordApplicationService;
+import com.optiflow.platform.clinical.domain.model.aggregates.ClinicalRecord;
 import com.optiflow.platform.clinical.domain.model.queries.GetClinicalRecordByIdQuery;
 import com.optiflow.platform.clinical.domain.model.queries.GetClinicalRecordsByPatientIdQuery;
 import com.optiflow.platform.clinical.domain.model.queries.GetClinicalRecordsSummaryQuery;
@@ -78,9 +79,12 @@ public class ClinicalRecordController {
   }
 
   @GetMapping("/clinical-records/{id}")
-  public ClinicalRecordResponse get(@PathVariable UUID id) {
-    return responseAssembler.toClinicalRecordResponse(clinicalRecordApplicationService.getById(
-        new GetClinicalRecordByIdQuery(ClinicalRecordId.of(id))));
+  public ClinicalRecordResponse get(
+      @PathVariable UUID id, @AuthenticationPrincipal AuthenticatedUser user) {
+    ClinicalRecord record = clinicalRecordApplicationService.getById(
+        new GetClinicalRecordByIdQuery(ClinicalRecordId.of(id)));
+    patientDataAccessGuard.ensureSelfPatientAccess(user, record.patientId().value());
+    return responseAssembler.toClinicalRecordResponse(record);
   }
 
   @GetMapping("/patients/{patientId}/clinical-records")
@@ -113,9 +117,11 @@ public class ClinicalRecordController {
   }
 
   @GetMapping("/clinical-records/{id}/prescription")
-  public OpticalPrescriptionResponse getPrescription(@PathVariable UUID id) {
-    return responseAssembler.toPrescriptionResponse(
-        clinicalRecordApplicationService.getPrescription(
-            new GetOpticalPrescriptionQuery(ClinicalRecordId.of(id))));
+  public OpticalPrescriptionResponse getPrescription(
+      @PathVariable UUID id, @AuthenticationPrincipal AuthenticatedUser user) {
+    ClinicalRecord record = clinicalRecordApplicationService.getPrescription(
+        new GetOpticalPrescriptionQuery(ClinicalRecordId.of(id)));
+    patientDataAccessGuard.ensureSelfPatientAccess(user, record.patientId().value());
+    return responseAssembler.toPrescriptionResponse(record);
   }
 }

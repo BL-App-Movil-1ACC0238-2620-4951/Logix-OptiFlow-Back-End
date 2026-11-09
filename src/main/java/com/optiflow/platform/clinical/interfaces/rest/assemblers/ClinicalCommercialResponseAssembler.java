@@ -1,5 +1,7 @@
 package com.optiflow.platform.clinical.interfaces.rest.assemblers;
 
+import com.optiflow.platform.clinical.application.outboundservices.PaymentPreference;
+import com.optiflow.platform.clinical.application.results.ClinicalRecordsSummary;
 import com.optiflow.platform.clinical.domain.model.aggregates.ClinicalRecord;
 import com.optiflow.platform.clinical.domain.model.aggregates.Quotation;
 import com.optiflow.platform.clinical.domain.model.aggregates.Sale;
@@ -9,13 +11,13 @@ import com.optiflow.platform.clinical.domain.model.entities.QuotationItem;
 import com.optiflow.platform.clinical.domain.model.valueobjects.Money;
 import com.optiflow.platform.clinical.domain.model.valueobjects.OpticalPrescription;
 import com.optiflow.platform.clinical.domain.model.valueobjects.Payment;
-import com.optiflow.platform.clinical.application.results.ClinicalRecordsSummary;
 import com.optiflow.platform.clinical.interfaces.rest.resources.ClinicalRecordResponse;
 import com.optiflow.platform.clinical.interfaces.rest.resources.ClinicalRecordsSummaryResponse;
 import com.optiflow.platform.clinical.interfaces.rest.resources.DiscountResponse;
 import com.optiflow.platform.clinical.interfaces.rest.resources.ElectronicReceiptResponse;
 import com.optiflow.platform.clinical.interfaces.rest.resources.MedicalHistoryResponse;
 import com.optiflow.platform.clinical.interfaces.rest.resources.OpticalPrescriptionResponse;
+import com.optiflow.platform.clinical.interfaces.rest.resources.PaymentPreferenceResponse;
 import com.optiflow.platform.clinical.interfaces.rest.resources.PaymentResponse;
 import com.optiflow.platform.clinical.interfaces.rest.resources.QuotationItemResponse;
 import com.optiflow.platform.clinical.interfaces.rest.resources.QuotationResponse;
@@ -115,11 +117,17 @@ public class ClinicalCommercialResponseAssembler {
         item.subtotal().amount());
   }
 
+  public PaymentPreferenceResponse toPaymentPreferenceResponse(PaymentPreference preference) {
+    return new PaymentPreferenceResponse(preference.id(), preference.initPoint());
+  }
+
   private PaymentResponse toPaymentResponse(Payment payment) {
     return new PaymentResponse(
         payment.method().name(),
         payment.amount().amount(),
         payment.transactionReference(),
+        payment.status().name(),
+        payment.statusDetail(),
         payment.paidAt());
   }
 

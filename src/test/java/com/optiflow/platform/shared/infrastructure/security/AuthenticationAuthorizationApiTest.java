@@ -11,7 +11,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.optiflow.platform.clinical.ClinicalRecordTestData;
+import com.optiflow.platform.clinical.SaleTestData;
+import com.optiflow.platform.clinical.domain.repositories.ClinicalRecordRepository;
+import com.optiflow.platform.clinical.domain.repositories.QuotationRepository;
+import com.optiflow.platform.clinical.domain.repositories.SaleRepository;
 import com.optiflow.platform.shared.interfaces.rest.ApiV1;
+import java.util.List;
+import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -29,6 +36,9 @@ class AuthenticationAuthorizationApiTest {
 
   @Autowired private MockMvc mockMvc;
   @Autowired private ObjectMapper objectMapper;
+  @Autowired private QuotationRepository quotationRepository;
+  @Autowired private ClinicalRecordRepository clinicalRecordRepository;
+  @Autowired private SaleRepository saleRepository;
 
   @Test
   void rejectsProtectedRequestsWithoutAToken() throws Exception {
@@ -367,6 +377,82 @@ class AuthenticationAuthorizationApiTest {
     mockMvc.perform(get(ApiV1.path("/staff-members/" + optometristId))
             .header(HttpHeaders.AUTHORIZATION, bearer(adminToken)))
         .andExpect(status().isOk());
+  }
+
+  @Test
+  void letsOnlyThePatientOfASaleReadAndPayIt() throws Exception {
+    String adminToken = issueTokenFor("admin@optiflow.test");
+    String advisorToken = registerStaffAndIssueToken(
+        adminToken, "Checkout Advisor", "checkout.advisor@optiflow.test", "SALES_ADVISOR");
+    String ownerToken = registerPatientAndIssueToken(
+        "Sale Owner", "sale.owner@optiflow.test", "999333111");
+    String otherToken = registerPatientAndIssueToken(
+        "Sale Stranger", "sale.stranger@optiflow.test", "999333112");
+    UUID ownerId = UUID.fromString(objectMapper.readTree(mockMvc.perform(
+            post(ApiV1.path("/auth/tokens")).contentType(MediaType.APPLICATION_JSON)
+                .content("{\"email\":\"sale.owner@optiflow.test\",\"password\":\"secret12\"}"))
+            .andReturn().getResponse().getContentAsString())
+        .get("userId").asText());
+    String sale = ApiV1.path("/sales/"
+        + SaleTestData.pendingSale(quotationRepository, saleRepository, ownerId));
+    String preference = sale + "/payment-preference";
+
+    mockMvc.perform(get(sale).header(HttpHeaders.AUTHORIZATION, bearer(otherToken)))
+        .andExpect(status().isForbidden())
+        .andExpect(jsonPath("$.message").value("You cannot access another patient's data."));
+    mockMvc.perform(get(sale).header(HttpHeaders.AUTHORIZATION, bearer(ownerToken)))
+        .andExpect(status().isOk());
+    mockMvc.perform(get(sale).header(HttpHeaders.AUTHORIZATION, bearer(advisorToken)))
+        .andExpect(status().isOk());
+    mockMvc.perform(get(ApiV1.path("/patients/" + ownerId + "/sales"))
+            .header(HttpHeaders.AUTHORIZATION, bearer(otherToken)))
+        .andExpect(status().isForbidden());
+    mockMvc.perform(get(ApiV1.path("/patients/" + ownerId + "/sales"))
+            .header(HttpHeaders.AUTHORIZATION, bearer(ownerToken)))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$[0].status").value("PENDING_PAYMENT"));
+
+    mockMvc.perform(post(preference).header(HttpHeaders.AUTHORIZATION, bearer(advisorToken)))
+        .andExpect(status().isForbidden());
+    mockMvc.perform(post(preference).header(HttpHeaders.AUTHORIZATION, bearer(otherToken)))
+        .andExpect(status().isForbidden())
+        .andExpect(jsonPath("$.message").value("You cannot pay another patient's sale."));
+    // The owner passes the checks; there is no Mercado Pago access token in the tests.
+    mockMvc.perform(post(preference).header(HttpHeaders.AUTHORIZATION, bearer(ownerToken)))
+        .andExpect(status().isServiceUnavailable())
+        .andExpect(jsonPath("$.message").value("The payment gateway is not configured."));
+  }
+
+  @Test
+  void letsOnlyThePatientOfAClinicalRecordReadItAndItsQuotations() throws Exception {
+    String adminToken = issueTokenFor("admin@optiflow.test");
+    String advisorToken = registerStaffAndIssueToken(
+        adminToken, "Record Advisor", "record.advisor@optiflow.test", "SALES_ADVISOR");
+    String ownerToken = registerPatientAndIssueToken(
+        "Record Owner", "record.owner@optiflow.test", "999444111");
+    String otherToken = registerPatientAndIssueToken(
+        "Record Stranger", "record.stranger@optiflow.test", "999444112");
+    UUID ownerId = UUID.fromString(objectMapper.readTree(mockMvc.perform(
+            post(ApiV1.path("/auth/tokens")).contentType(MediaType.APPLICATION_JSON)
+                .content("{\"email\":\"record.owner@optiflow.test\",\"password\":\"secret12\"}"))
+            .andReturn().getResponse().getContentAsString())
+        .get("userId").asText());
+    ClinicalRecordTestData.SavedRecord saved = ClinicalRecordTestData.withQuotation(
+        clinicalRecordRepository, quotationRepository, ownerId);
+
+    for (String route : List.of(
+        "/clinical-records/" + saved.clinicalRecordId(),
+        "/clinical-records/" + saved.clinicalRecordId() + "/prescription",
+        "/quotations/" + saved.quotationId())) {
+      mockMvc.perform(get(ApiV1.path(route)).header(HttpHeaders.AUTHORIZATION, bearer(otherToken)))
+          .andExpect(status().isForbidden())
+          .andExpect(jsonPath("$.message").value("You cannot access another patient's data."));
+      mockMvc.perform(get(ApiV1.path(route)).header(HttpHeaders.AUTHORIZATION, bearer(ownerToken)))
+          .andExpect(status().isOk());
+      mockMvc.perform(get(ApiV1.path(route))
+              .header(HttpHeaders.AUTHORIZATION, bearer(advisorToken)))
+          .andExpect(status().isOk());
+    }
   }
 
   private String registerStaffAndIssueToken(

@@ -7,6 +7,7 @@ import com.optiflow.platform.clinical.domain.model.valueobjects.Money;
 import com.optiflow.platform.clinical.domain.model.valueobjects.PatientId;
 import com.optiflow.platform.clinical.domain.model.valueobjects.Payment;
 import com.optiflow.platform.clinical.domain.model.valueobjects.PaymentMethod;
+import com.optiflow.platform.clinical.domain.model.valueobjects.PaymentStatus;
 import com.optiflow.platform.clinical.domain.model.valueobjects.QuotationId;
 import com.optiflow.platform.clinical.domain.model.valueobjects.SaleId;
 import com.optiflow.platform.clinical.domain.model.valueobjects.SaleStatus;
@@ -24,6 +25,8 @@ public class SaleMapper {
             PaymentMethod.valueOf(entity.getPaymentMethod()),
             Money.of(entity.getPaymentAmount()),
             entity.getTransactionReference(),
+            PaymentStatus.valueOf(entity.getPaymentStatus()),
+            entity.getPaymentStatusDetail(),
             entity.getPaidAt());
     return Sale.reconstitute(
         SaleId.of(entity.getId()),
@@ -31,6 +34,7 @@ public class SaleMapper {
         PatientId.of(entity.getPatientId()),
         SaleStatus.valueOf(entity.getStatus()),
         entity.getClosedAt(),
+        entity.getPaymentPreferenceId(),
         payment,
         receiptEntity == null ? null : toReceipt(receiptEntity));
   }
@@ -42,10 +46,13 @@ public class SaleMapper {
     entity.setPatientId(sale.patientId().value());
     entity.setStatus(sale.status().name());
     entity.setClosedAt(sale.closedAt());
+    entity.setPaymentPreferenceId(sale.paymentPreferenceId().orElse(null));
     sale.payment().ifPresent(payment -> {
       entity.setPaymentMethod(payment.method().name());
       entity.setPaymentAmount(payment.amount().amount());
       entity.setTransactionReference(payment.transactionReference());
+      entity.setPaymentStatus(payment.status().name());
+      entity.setPaymentStatusDetail(payment.statusDetail());
       entity.setPaidAt(payment.paidAt());
     });
     return entity;

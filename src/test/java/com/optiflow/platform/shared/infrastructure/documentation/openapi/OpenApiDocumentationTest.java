@@ -20,6 +20,7 @@ class OpenApiDocumentationTest {
 
   private static final String REPLENISH = "$.paths['/api/v1/inventory/replenishments'].post";
   private static final String REPORT = "$.paths['/api/v1/reports/inventory'].get.responses['200']";
+  private static final String WEBHOOK = "$.paths['/api/v1/payment-notifications'].post";
   private static final String ERROR_REF = "#/components/schemas/ApiError";
 
   @Autowired
@@ -41,6 +42,8 @@ class OpenApiDocumentationTest {
         .andExpect(jsonPath(REPLENISH + ".responses", hasKey("403")))
         .andExpect(jsonPath("$.paths['/api/v1/suppliers'].get.responses", not(hasKey("400"))))
         .andExpect(jsonPath(REPORT + ".content", hasKey("application/json")))
-        .andExpect(jsonPath(REPORT + ".content", hasKey("text/csv")));
+        .andExpect(jsonPath(REPORT + ".content", hasKey("text/csv")))
+        .andExpect(jsonPath(WEBHOOK + ".responses", hasKey("401")))
+        .andExpect(jsonPath(WEBHOOK + ".responses", not(hasKey("403"))));
   }
 }

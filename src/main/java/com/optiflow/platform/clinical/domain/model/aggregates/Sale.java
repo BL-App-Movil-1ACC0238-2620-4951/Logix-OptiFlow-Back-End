@@ -18,6 +18,7 @@ public class Sale {
   private final PatientId patientId;
   private SaleStatus status;
   private Instant closedAt;
+  private String paymentPreferenceId;
   private Payment payment;
   private ElectronicReceipt receipt;
 
@@ -27,6 +28,7 @@ public class Sale {
       PatientId patientId,
       SaleStatus status,
       Instant closedAt,
+      String paymentPreferenceId,
       Payment payment,
       ElectronicReceipt receipt) {
     this.id = id;
@@ -34,13 +36,15 @@ public class Sale {
     this.patientId = patientId;
     this.status = status;
     this.closedAt = closedAt;
+    this.paymentPreferenceId = paymentPreferenceId;
     this.payment = payment;
     this.receipt = receipt;
   }
 
   public static Sale register(QuotationId quotationId, PatientId patientId) {
     return new Sale(
-        SaleId.generate(), quotationId, patientId, SaleStatus.PENDING_PAYMENT, null, null, null);
+        SaleId.generate(), quotationId, patientId, SaleStatus.PENDING_PAYMENT, null, null, null,
+        null);
   }
 
   public static Sale reconstitute(
@@ -49,16 +53,35 @@ public class Sale {
       PatientId patientId,
       SaleStatus status,
       Instant closedAt,
+      String paymentPreferenceId,
       Payment payment,
       ElectronicReceipt receipt) {
-    return new Sale(id, quotationId, patientId, status, closedAt, payment, receipt);
+    return new Sale(
+        id, quotationId, patientId, status, closedAt, paymentPreferenceId, payment, receipt);
   }
 
-  /** Validates a payment before it is sent to the payment gateway. */
-  public void ensurePaymentCanBeRecorded(Money amount, Money amountDue) {
+  public boolean belongsTo(PatientId patientId) {
+    return this.patientId.equals(patientId);
+  }
+
+  public void ensurePendingPayment() {
     if (status != SaleStatus.PENDING_PAYMENT) {
       throw new DomainException("A payment was already recorded for this sale.", 409);
     }
+  }
+
+  /** Keeps the gateway preference that the patient pays from the app. */
+  public void attachPaymentPreference(String preferenceId) {
+    ensurePendingPayment();
+    if (preferenceId == null || preferenceId.isBlank()) {
+      throw new DomainException("Payment preference id is required.", 400);
+    }
+    paymentPreferenceId = preferenceId;
+  }
+
+  /** Validates a payment before it is recorded. */
+  public void ensurePaymentCanBeRecorded(Money amount, Money amountDue) {
+    ensurePendingPayment();
     if (amount == null || amount.amount().compareTo(amountDue.amount()) != 0) {
       throw new DomainException(
           "The payment amount must match the quotation total of " + amountDue + ".", 400);
@@ -66,9 +89,26 @@ public class Sale {
   }
 
   public void recordPayment(Payment payment, Money amountDue) {
+    if (!payment.isApproved()) {
+      throw new DomainException("Only an approved payment pays the sale.", 400);
+    }
     ensurePaymentCanBeRecorded(payment.amount(), amountDue);
     this.payment = payment;
     status = SaleStatus.PAID;
+  }
+
+  /** A rejected payment keeps the sale pending, so the patient can try again. */
+  public void rejectPayment(Payment payment) {
+    ensurePendingPayment();
+    if (payment.isApproved()) {
+      throw new DomainException("Only a rejected payment can be recorded as rejected.", 400);
+    }
+    this.payment = payment;
+  }
+
+  /** True when this gateway payment was already recorded, approved or rejected. */
+  public boolean hasPayment(String transactionReference) {
+    return payment != null && payment.transactionReference().equals(transactionReference);
   }
 
   public ElectronicReceipt close(String receiptNumber, Instant now) {
@@ -99,6 +139,10 @@ public class Sale {
 
   public Instant closedAt() {
     return closedAt;
+  }
+
+  public Optional<String> paymentPreferenceId() {
+    return Optional.ofNullable(paymentPreferenceId);
   }
 
   public Optional<Payment> payment() {

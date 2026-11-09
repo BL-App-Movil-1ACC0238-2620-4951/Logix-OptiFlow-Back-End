@@ -30,3 +30,10 @@ optiflow:
     jwt:
       secret: ${JWT_SECRET:optiflow-local-jwt-secret-key-32chars!!}
       expiration: PT24H
+  payments:
+    mercadopago:
+      access-token: ${MERCADOPAGO_ACCESS_TOKEN:}
+      webhook-secret: ${MERCADOPAGO_WEBHOOK_SECRET:}
+      base-url: https://api.mercadopago.com
+      notification-url: ${MERCADOPAGO_NOTIFICATION_URL:https://logix-optiflow-back-end.onrender.com/api/v1/payment-notifications}
+      back-url: optiflow://payment-result
