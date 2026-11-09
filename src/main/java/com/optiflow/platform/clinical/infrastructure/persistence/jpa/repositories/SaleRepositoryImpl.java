@@ -1,10 +1,12 @@
 package com.optiflow.platform.clinical.infrastructure.persistence.jpa.repositories;
 
 import com.optiflow.platform.clinical.domain.model.aggregates.Sale;
+import com.optiflow.platform.clinical.domain.model.valueobjects.PatientId;
 import com.optiflow.platform.clinical.domain.model.valueobjects.QuotationId;
 import com.optiflow.platform.clinical.domain.model.valueobjects.SaleId;
 import com.optiflow.platform.clinical.domain.repositories.SaleRepository;
 import com.optiflow.platform.clinical.infrastructure.persistence.jpa.mappers.SaleMapper;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Repository;
 
@@ -36,6 +38,14 @@ public class SaleRepositoryImpl implements SaleRepository {
     return saleJpaRepository.findById(id.value())
         .map(entity -> saleMapper.toDomain(
             entity, electronicReceiptJpaRepository.findBySaleId(entity.getId()).orElse(null)));
+  }
+
+  @Override
+  public List<Sale> findByPatientId(PatientId patientId) {
+    return saleJpaRepository.findByPatientId(patientId.value()).stream()
+        .map(entity -> saleMapper.toDomain(
+            entity, electronicReceiptJpaRepository.findBySaleId(entity.getId()).orElse(null)))
+        .toList();
   }
 
   @Override

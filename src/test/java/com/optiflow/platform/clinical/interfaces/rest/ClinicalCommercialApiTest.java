@@ -1,5 +1,6 @@
 package com.optiflow.platform.clinical.interfaces.rest;
 
+import static org.hamcrest.Matchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -130,20 +131,23 @@ class ClinicalCommercialApiTest {
     perform(post(ApiV1.path("/sales")), sale).andExpect(status().isConflict());
 
     perform(post(ApiV1.path("/sales/" + saleId + "/payments")), """
-        {"method":"YAPE","amount":400.00}
+        {"amount":400.00}
         """).andExpect(status().isBadRequest());
     perform(post(ApiV1.path("/sales/" + saleId + "/payments")), """
-        {"method":"BITCOIN","amount":440.10}
-        """)
-        .andExpect(status().isBadRequest())
-        .andExpect(jsonPath("$.message").value("Payment method must be one of: CASH, CARD, YAPE."));
-    perform(post(ApiV1.path("/sales/" + saleId + "/payments")), """
-        {"method":"YAPE","amount":440.10,"transactionReference":"YAPE-778899"}
+        {"amount":440.10}
         """)
         .andExpect(status().isCreated())
         .andExpect(jsonPath("$.status").value("PAID"))
-        .andExpect(jsonPath("$.payment.transactionReference").value("YAPE-778899"))
+        .andExpect(jsonPath("$.payment.method").value("CASH"))
+        .andExpect(jsonPath("$.payment.transactionReference", startsWith("CASH-")))
         .andExpect(jsonPath("$.payment.status").value("APPROVED"));
+    perform(post(ApiV1.path("/sales/" + saleId + "/payments")), """
+        {"amount":440.10}
+        """).andExpect(status().isConflict());
+    mockMvc.perform(get(ApiV1.path("/patients/" + patientId + "/sales")))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$[0].id").value(saleId))
+        .andExpect(jsonPath("$[0].status").value("PAID"));
 
     mockMvc.perform(patch(ApiV1.path("/sales/" + saleId + "/status"))
             .contentType(MediaType.APPLICATION_JSON)

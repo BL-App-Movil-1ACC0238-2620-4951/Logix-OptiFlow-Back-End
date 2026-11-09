@@ -222,7 +222,7 @@ class ProductionTrackingApiTest {
     String quotationId = approvedQuotation(clinicalRecordId);
     String saleId = read(perform(post(ApiV1.path("/sales")), "{\"quotationId\":\"%s\"}".formatted(quotationId))
         .andExpect(status().isCreated())).get("id").asText();
-    perform(post(ApiV1.path("/sales/" + saleId + "/payments")), "{\"method\":\"CASH\",\"amount\":489.00}")
+    perform(post(ApiV1.path("/sales/" + saleId + "/payments")), "{\"amount\":489.00}")
         .andExpect(status().isCreated());
     perform(patch(ApiV1.path("/sales/" + saleId + "/status")), "{\"status\":\"CLOSED\"}")
         .andExpect(status().isOk());

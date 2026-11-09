@@ -15,9 +15,9 @@ public class FromRecordPaymentRequestAssembler {
   public RecordPaymentCommand toCommand(UUID saleId, RecordPaymentRequest request) {
     return new RecordPaymentCommand(
         SaleId.of(saleId),
-        PaymentMethod.from(request.method()),
+        PaymentMethod.CASH,
         Money.of(request.amount()),
-        request.transactionReference(),
+        null,
         PaymentStatus.APPROVED,
         null);
   }

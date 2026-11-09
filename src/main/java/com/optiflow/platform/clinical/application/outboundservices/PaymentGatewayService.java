@@ -1,7 +1,6 @@
 package com.optiflow.platform.clinical.application.outboundservices;
 
 import com.optiflow.platform.clinical.domain.model.valueobjects.Money;
-import com.optiflow.platform.clinical.domain.model.valueobjects.PaymentMethod;
 import com.optiflow.platform.clinical.domain.model.valueobjects.SaleId;
 import java.util.Optional;
 
@@ -16,7 +15,4 @@ public interface PaymentGatewayService {
    * or rejected. It is empty for other topics and for payments still in process.
    */
   Optional<NotifiedPayment> translate(PaymentNotification notification);
-
-  /** Authorizes the charge and returns the gateway transaction reference. */
-  String authorize(PaymentMethod method, Money amount, String transactionReference);
 }

@@ -16,7 +16,9 @@ import com.optiflow.platform.clinical.domain.model.commands.RecordPaymentCommand
 import com.optiflow.platform.clinical.domain.model.commands.RegisterSaleCommand;
 import com.optiflow.platform.clinical.domain.model.queries.GetClosedSaleQuery;
 import com.optiflow.platform.clinical.domain.model.queries.GetSaleByIdQuery;
+import com.optiflow.platform.clinical.domain.model.queries.GetSalesByPatientIdQuery;
 import com.optiflow.platform.shared.domain.exceptions.DomainException;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -82,6 +84,10 @@ public class SaleApplicationService {
   }
 
   public Sale getById(GetSaleByIdQuery query) {
+    return saleQueryService.handle(query);
+  }
+
+  public List<Sale> getByPatient(GetSalesByPatientIdQuery query) {
     return saleQueryService.handle(query);
   }
 

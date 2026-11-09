@@ -1,20 +1,6 @@
 package com.optiflow.platform.clinical.domain.model.valueobjects;
 
-import com.optiflow.platform.shared.domain.exceptions.DomainException;
-import java.util.Arrays;
-import java.util.stream.Collectors;
-
+/** Card and Yape are paid in the payment gateway; cash is registered by the sales advisor. */
 public enum PaymentMethod {
-  CASH, CARD, YAPE;
-
-  public static PaymentMethod from(String value) {
-    return Arrays.stream(values())
-        .filter(candidate -> candidate.name().equalsIgnoreCase(value == null ? "" : value.trim()))
-        .findFirst()
-        .orElseThrow(() -> new DomainException(
-            "Payment method must be one of: "
-                + Arrays.stream(values()).map(Enum::name).collect(Collectors.joining(", "))
-                + ".",
-            400));
-  }
+  CASH, CARD, YAPE
 }

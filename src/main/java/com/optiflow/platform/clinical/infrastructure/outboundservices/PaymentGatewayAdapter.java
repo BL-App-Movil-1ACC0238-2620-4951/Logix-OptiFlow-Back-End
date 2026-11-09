@@ -175,17 +175,6 @@ public class PaymentGatewayAdapter implements PaymentGatewayService {
     }
   }
 
-  /** Charge made by the sales advisor; no real provider is involved. */
-  @Override
-  public String authorize(PaymentMethod method, Money amount, String transactionReference) {
-    String reference = transactionReference == null || transactionReference.isBlank()
-        ? method.name() + "-" + UUID.randomUUID().toString()
-            .substring(0, 8).toUpperCase(Locale.ROOT)
-        : transactionReference.trim();
-    LOGGER.info("Payment of {} via {} authorized with reference {}.", amount, method, reference);
-    return reference;
-  }
-
   private String accessToken() {
     if (properties.accessToken() == null || properties.accessToken().isBlank()) {
       throw new DomainException("The payment gateway is not configured.", 503);

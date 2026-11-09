@@ -197,7 +197,7 @@ class StoreInventoryApiTest {
         .andExpect(status().isOk());
     String saleId = read(perform(post(ApiV1.path("/sales")), "{\"quotationId\":\"%s\"}".formatted(quotationId))
         .andExpect(status().isCreated())).get("id").asText();
-    perform(post(ApiV1.path("/sales/" + saleId + "/payments")), "{\"method\":\"CASH\",\"amount\":468.90}")
+    perform(post(ApiV1.path("/sales/" + saleId + "/payments")), "{\"amount\":468.90}")
         .andExpect(status().isCreated());
     perform(patch(ApiV1.path("/sales/" + saleId + "/status")), "{\"status\":\"CLOSED\"}")
         .andExpect(status().isOk());
