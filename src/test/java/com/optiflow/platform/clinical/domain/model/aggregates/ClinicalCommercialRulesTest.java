@@ -90,10 +90,10 @@ class ClinicalCommercialRulesTest {
     Money amountDue = money("440.10");
 
     DomainException exception = assertThrows(DomainException.class, () -> sale.recordPayment(
-        new Payment(PaymentMethod.CASH, money("400.00"), "CASH-1", NOW), amountDue));
+        Payment.approved(PaymentMethod.CASH, money("400.00"), "CASH-1", NOW), amountDue));
     assertEquals(400, exception.status());
 
-    sale.recordPayment(new Payment(PaymentMethod.YAPE, amountDue, "YAPE-123", NOW), amountDue);
+    sale.recordPayment(Payment.approved(PaymentMethod.YAPE, amountDue, "YAPE-123", NOW), amountDue);
     ElectronicReceipt receipt = sale.close(ElectronicReceipt.formatNumber(1), NOW);
 
     assertEquals(SaleStatus.CLOSED, sale.status());

@@ -136,13 +136,14 @@ class ClinicalCommercialApiTest {
         {"method":"BITCOIN","amount":440.10}
         """)
         .andExpect(status().isBadRequest())
-        .andExpect(jsonPath("$.message").value("Payment method must be one of: CASH, CARD, YAPE, PLIN."));
+        .andExpect(jsonPath("$.message").value("Payment method must be one of: CASH, CARD, YAPE."));
     perform(post(ApiV1.path("/sales/" + saleId + "/payments")), """
         {"method":"YAPE","amount":440.10,"transactionReference":"YAPE-778899"}
         """)
         .andExpect(status().isCreated())
         .andExpect(jsonPath("$.status").value("PAID"))
-        .andExpect(jsonPath("$.payment.transactionReference").value("YAPE-778899"));
+        .andExpect(jsonPath("$.payment.transactionReference").value("YAPE-778899"))
+        .andExpect(jsonPath("$.payment.status").value("APPROVED"));
 
     mockMvc.perform(patch(ApiV1.path("/sales/" + saleId + "/status"))
             .contentType(MediaType.APPLICATION_JSON)

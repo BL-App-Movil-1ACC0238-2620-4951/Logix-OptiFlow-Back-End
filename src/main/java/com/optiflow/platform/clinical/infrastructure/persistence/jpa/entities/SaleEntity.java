@@ -33,7 +33,16 @@ public class SaleEntity {
   @Column(name = "payment_amount", precision = 10, scale = 2)
   private BigDecimal paymentAmount;
 
-  @Column(name = "transaction_reference", length = 255)
+  @Column(name = "payment_preference_id", length = 255)
+  private String paymentPreferenceId;
+
+  @Column(name = "payment_status", length = 20)
+  private String paymentStatus;
+
+  @Column(name = "payment_status_detail", length = 100)
+  private String paymentStatusDetail;
+
+  @Column(name = "transaction_reference", length = 255, unique = true)
   private String transactionReference;
 
   @Column(name = "paid_at")
@@ -93,6 +102,30 @@ public class SaleEntity {
 
   public void setPaymentAmount(BigDecimal paymentAmount) {
     this.paymentAmount = paymentAmount;
+  }
+
+  public String getPaymentPreferenceId() {
+    return paymentPreferenceId;
+  }
+
+  public void setPaymentPreferenceId(String paymentPreferenceId) {
+    this.paymentPreferenceId = paymentPreferenceId;
+  }
+
+  public String getPaymentStatus() {
+    return paymentStatus;
+  }
+
+  public void setPaymentStatus(String paymentStatus) {
+    this.paymentStatus = paymentStatus;
+  }
+
+  public String getPaymentStatusDetail() {
+    return paymentStatusDetail;
+  }
+
+  public void setPaymentStatusDetail(String paymentStatusDetail) {
+    this.paymentStatusDetail = paymentStatusDetail;
   }
 
   public String getTransactionReference() {

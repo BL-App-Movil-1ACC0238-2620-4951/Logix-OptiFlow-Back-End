@@ -18,6 +18,7 @@ public class Sale {
   private final PatientId patientId;
   private SaleStatus status;
   private Instant closedAt;
+  private String paymentPreferenceId;
   private Payment payment;
   private ElectronicReceipt receipt;
 
@@ -27,6 +28,7 @@ public class Sale {
       PatientId patientId,
       SaleStatus status,
       Instant closedAt,
+      String paymentPreferenceId,
       Payment payment,
       ElectronicReceipt receipt) {
     this.id = id;
@@ -34,13 +36,15 @@ public class Sale {
     this.patientId = patientId;
     this.status = status;
     this.closedAt = closedAt;
+    this.paymentPreferenceId = paymentPreferenceId;
     this.payment = payment;
     this.receipt = receipt;
   }
 
   public static Sale register(QuotationId quotationId, PatientId patientId) {
     return new Sale(
-        SaleId.generate(), quotationId, patientId, SaleStatus.PENDING_PAYMENT, null, null, null);
+        SaleId.generate(), quotationId, patientId, SaleStatus.PENDING_PAYMENT, null, null, null,
+        null);
   }
 
   public static Sale reconstitute(
@@ -49,9 +53,11 @@ public class Sale {
       PatientId patientId,
       SaleStatus status,
       Instant closedAt,
+      String paymentPreferenceId,
       Payment payment,
       ElectronicReceipt receipt) {
-    return new Sale(id, quotationId, patientId, status, closedAt, payment, receipt);
+    return new Sale(
+        id, quotationId, patientId, status, closedAt, paymentPreferenceId, payment, receipt);
   }
 
   /** Validates a payment before it is sent to the payment gateway. */
@@ -66,6 +72,9 @@ public class Sale {
   }
 
   public void recordPayment(Payment payment, Money amountDue) {
+    if (!payment.isApproved()) {
+      throw new DomainException("Only an approved payment pays the sale.", 400);
+    }
     ensurePaymentCanBeRecorded(payment.amount(), amountDue);
     this.payment = payment;
     status = SaleStatus.PAID;
@@ -99,6 +108,10 @@ public class Sale {
 
   public Instant closedAt() {
     return closedAt;
+  }
+
+  public Optional<String> paymentPreferenceId() {
+    return Optional.ofNullable(paymentPreferenceId);
   }
 
   public Optional<Payment> payment() {

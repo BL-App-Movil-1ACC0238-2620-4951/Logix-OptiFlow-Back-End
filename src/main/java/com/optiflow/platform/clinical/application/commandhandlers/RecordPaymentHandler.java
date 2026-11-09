@@ -50,7 +50,7 @@ public class RecordPaymentHandler {
         command.method(), command.amount(), command.transactionReference());
     Instant now = clock.instant();
     sale.recordPayment(
-        new Payment(command.method(), command.amount(), transactionReference, now),
+        Payment.approved(command.method(), command.amount(), transactionReference, now),
         quotation.total());
     saleRepository.save(sale);
     eventPublisher.publish(new PaymentRecorded(sale.id(), command.method(), command.amount(), now));
