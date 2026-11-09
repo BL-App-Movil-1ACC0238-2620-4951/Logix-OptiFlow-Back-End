@@ -23,6 +23,7 @@ public final class OpenApiTags {
   public static final String FRAME_MODELS = "Store Management & Inventory - Frame Models";
   public static final String INVENTORY = "Store Management & Inventory - Inventory";
   public static final String SUPPLIERS = "Store Management & Inventory - Suppliers";
+  public static final String INVENTORY_REPORTS = "Store Management & Inventory - Reports";
 
   private OpenApiTags() {
   }

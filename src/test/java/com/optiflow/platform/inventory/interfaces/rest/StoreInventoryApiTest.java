@@ -1,11 +1,13 @@
 package com.optiflow.platform.inventory.interfaces.rest;
 
 import static org.hamcrest.Matchers.endsWith;
+import static org.hamcrest.Matchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -125,6 +127,25 @@ class StoreInventoryApiTest {
     assertTrue(exit.get("performedBy").isNull());
     assertEquals(1, applicationEvents.stream(InventoryWasUpdated.class).count());
     assertEquals(1, applicationEvents.stream(LowStockAlertGenerated.class).count());
+
+    mockMvc.perform(get(ApiV1.path("/reports/inventory"))
+            .param("opticalStoreId", MIRAFLORES_ID)
+            .param("from", today)
+            .param("to", today))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.unitsIn").value(3))
+        .andExpect(jsonPath("$.unitsOut").value(1))
+        .andExpect(jsonPath("$.lowStockProducts").value(1));
+    mockMvc.perform(get(ApiV1.path("/reports/inventory"))
+            .accept("text/csv")
+            .param("opticalStoreId", MIRAFLORES_ID)
+            .param("from", today)
+            .param("to", today))
+        .andExpect(status().isOk())
+        .andExpect(header().string(HttpHeaders.CONTENT_TYPE, startsWith("text/csv")))
+        .andExpect(content().string(
+            "sku,name,quantity,minimum_stock,low_stock,units_in,units_out\n"
+                + SKU + ",Ray-Ban Wayfarer,2,2,true,3,1\n"));
   }
 
   @Test

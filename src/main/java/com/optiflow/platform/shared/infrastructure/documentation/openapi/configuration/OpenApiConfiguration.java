@@ -45,7 +45,9 @@ public class OpenApiConfiguration {
                 "Frame catalog, scanned frames and prices."),
             tag(OpenApiTags.INVENTORY,
                 "Stock of each optical store, replenishments, movements and low stock alerts."),
-            tag(OpenApiTags.SUPPLIERS, "Suppliers that deliver the replenishments.")));
+            tag(OpenApiTags.SUPPLIERS, "Suppliers that deliver the replenishments."),
+            tag(OpenApiTags.INVENTORY_REPORTS,
+                "Inventory metrics of a store for the admin, in JSON or CSV.")));
   }
 
   private static Tag tag(String name, String description) {

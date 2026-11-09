@@ -1,6 +1,7 @@
 package com.optiflow.platform.inventory.interfaces.rest.assemblers;
 
 import com.optiflow.platform.inventory.application.results.FrameModelDetails;
+import com.optiflow.platform.inventory.application.results.InventoryMetrics;
 import com.optiflow.platform.inventory.application.results.InventoryStock;
 import com.optiflow.platform.inventory.application.results.StockLevel;
 import com.optiflow.platform.inventory.application.results.StockMovementDetails;
@@ -9,6 +10,7 @@ import com.optiflow.platform.inventory.domain.model.entities.Stock;
 import com.optiflow.platform.inventory.domain.model.entities.StockMovement;
 import com.optiflow.platform.inventory.domain.model.entities.Supplier;
 import com.optiflow.platform.inventory.interfaces.rest.resources.FrameModelResponse;
+import com.optiflow.platform.inventory.interfaces.rest.resources.InventoryMetricsResponse;
 import com.optiflow.platform.inventory.interfaces.rest.resources.InventoryResponse;
 import com.optiflow.platform.inventory.interfaces.rest.resources.LowStockAlertResponse;
 import com.optiflow.platform.inventory.interfaces.rest.resources.StockMovementResponse;
@@ -80,6 +82,26 @@ public class StoreInventoryResponseAssembler {
         movement.saleId(),
         movement.supplierId() == null ? null : movement.supplierId().value(),
         movement.performedBy());
+  }
+
+  public InventoryMetricsResponse toInventoryMetricsResponse(InventoryMetrics metrics) {
+    return new InventoryMetricsResponse(
+        metrics.opticalStoreId().value(),
+        metrics.from(),
+        metrics.to(),
+        metrics.unitsIn(),
+        metrics.unitsOut(),
+        metrics.lowStockProducts(),
+        metrics.products().stream()
+            .map(product -> new InventoryMetricsResponse.ProductMetricResponse(
+                product.level().frameModel().sku().value(),
+                product.level().frameModel().name(),
+                product.level().stock().quantity(),
+                product.level().stock().minimumStock(),
+                product.level().stock().isLow(),
+                product.unitsIn(),
+                product.unitsOut()))
+            .toList());
   }
 
   public SupplierResponse toSupplierResponse(Supplier supplier) {

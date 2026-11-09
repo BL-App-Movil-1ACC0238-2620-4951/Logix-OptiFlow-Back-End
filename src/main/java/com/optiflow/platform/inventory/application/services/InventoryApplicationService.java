@@ -2,14 +2,17 @@ package com.optiflow.platform.inventory.application.services;
 
 import com.optiflow.platform.inventory.application.commandhandlers.ReplenishStockHandler;
 import com.optiflow.platform.inventory.application.queryservices.ConsultStockQueryService;
+import com.optiflow.platform.inventory.application.queryservices.InventoryMetricsQueryService;
 import com.optiflow.platform.inventory.application.queryservices.InventoryMovementQueryService;
 import com.optiflow.platform.inventory.application.results.FrameModelDetails;
+import com.optiflow.platform.inventory.application.results.InventoryMetrics;
 import com.optiflow.platform.inventory.application.results.InventoryStock;
 import com.optiflow.platform.inventory.application.results.StockLevel;
 import com.optiflow.platform.inventory.application.results.StockMovementDetails;
 import com.optiflow.platform.inventory.domain.model.commands.ReplenishStockCommand;
 import com.optiflow.platform.inventory.domain.model.queries.ConsultStockQuery;
 import com.optiflow.platform.inventory.domain.model.queries.GetFrameModelBySkuQuery;
+import com.optiflow.platform.inventory.domain.model.queries.GetInventoryMetricsQuery;
 import com.optiflow.platform.inventory.domain.model.queries.GetInventoryMovementsQuery;
 import com.optiflow.platform.inventory.domain.model.queries.GetLowStockAlertsQuery;
 import java.util.List;
@@ -22,14 +25,17 @@ public class InventoryApplicationService {
   private final ReplenishStockHandler replenishStockHandler;
   private final ConsultStockQueryService consultStockQueryService;
   private final InventoryMovementQueryService inventoryMovementQueryService;
+  private final InventoryMetricsQueryService inventoryMetricsQueryService;
 
   public InventoryApplicationService(
       ReplenishStockHandler replenishStockHandler,
       ConsultStockQueryService consultStockQueryService,
-      InventoryMovementQueryService inventoryMovementQueryService) {
+      InventoryMovementQueryService inventoryMovementQueryService,
+      InventoryMetricsQueryService inventoryMetricsQueryService) {
     this.replenishStockHandler = replenishStockHandler;
     this.consultStockQueryService = consultStockQueryService;
     this.inventoryMovementQueryService = inventoryMovementQueryService;
+    this.inventoryMetricsQueryService = inventoryMetricsQueryService;
   }
 
   public StockMovementDetails replenish(ReplenishStockCommand command) {
@@ -50,5 +56,9 @@ public class InventoryApplicationService {
 
   public List<StockLevel> lowStockAlerts(GetLowStockAlertsQuery query) {
     return inventoryMovementQueryService.handle(query);
+  }
+
+  public InventoryMetrics metrics(GetInventoryMetricsQuery query) {
+    return inventoryMetricsQueryService.handle(query);
   }
 }

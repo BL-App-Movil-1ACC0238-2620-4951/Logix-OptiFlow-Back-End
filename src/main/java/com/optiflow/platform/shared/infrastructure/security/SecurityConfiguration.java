@@ -96,6 +96,8 @@ public class SecurityConfiguration {
             .requestMatchers(HttpMethod.GET, "/api/v1/inventory/stock")
             .hasAnyRole(SALES_ADVISOR, ADMIN)
             .requestMatchers("/api/v1/inventory/**", "/api/v1/suppliers").hasRole(ADMIN)
+            // Reports
+            .requestMatchers("/api/v1/reports/**").hasRole(ADMIN)
             .anyRequest()
             .authenticated())
         .exceptionHandling(handler -> handler

@@ -266,6 +266,14 @@ class AuthenticationAuthorizationApiTest {
             .contentType(MediaType.APPLICATION_JSON)
             .content("{\"name\":\"Proveedor\"}"))
         .andExpect(status().isCreated());
+    mockMvc.perform(get(ApiV1.path("/reports/inventory"))
+            .param("opticalStoreId", storeId).param("from", "2030-01-01").param("to", "2030-01-31")
+            .header(HttpHeaders.AUTHORIZATION, bearer(advisorToken)))
+        .andExpect(status().isForbidden());
+    mockMvc.perform(get(ApiV1.path("/reports/inventory"))
+            .param("opticalStoreId", storeId).param("from", "2030-01-01").param("to", "2030-01-31")
+            .header(HttpHeaders.AUTHORIZATION, bearer(adminToken)))
+        .andExpect(status().isOk());
   }
 
   @Test
