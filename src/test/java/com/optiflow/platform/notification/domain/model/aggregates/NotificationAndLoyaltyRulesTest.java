@@ -1,6 +1,8 @@
 package com.optiflow.platform.notification.domain.model.aggregates;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -32,13 +34,16 @@ class NotificationAndLoyaltyRulesTest {
         NotificationId.generate(),
         PATIENT_ID,
         APPOINTMENT_ID,
-        new NotificationMessage("Appointment confirmed", "Your visit is scheduled."),
+        new NotificationMessage("Recordatorio de cita", "Tu evaluación visual es mañana."),
+        NOW.plusSeconds(3600),
         NOW);
 
     assertEquals(NotificationType.APPOINTMENT_REMINDER, notification.type());
     assertEquals(NotificationStatus.UNREAD, notification.status());
     assertTrue(notification.appointmentId().isPresent());
     assertEquals(APPOINTMENT_ID, notification.appointmentId().orElseThrow());
+    assertFalse(notification.isDue(NOW));
+    assertTrue(notification.isDue(NOW.plusSeconds(3600)));
   }
 
   @Test
@@ -58,6 +63,23 @@ class NotificationAndLoyaltyRulesTest {
     DomainException exception =
         assertThrows(DomainException.class, () -> notification.markAsRead(NOW.plusSeconds(60)));
     assertEquals(409, exception.status());
+  }
+
+  @Test
+  void acceptsOnlyRatingsFromOneToFiveInASurvey() {
+    Notification survey = Notification.sendSatisfactionSurvey(
+        NotificationId.generate(), PATIENT_ID, WORK_ORDER_ID,
+        new NotificationMessage("Encuesta de satisfacción", "Califícanos del 1 al 5."), NOW);
+    Notification progress = Notification.notifyLensOrderProgress(
+        NotificationId.generate(), PATIENT_ID, WORK_ORDER_ID,
+        new NotificationMessage("Avance de tu pedido", "Tu pedido fue entregado."), NOW);
+
+    assertEquals(400, assertThrows(DomainException.class,
+        () -> survey.answerSurvey(6, null, NOW)).status());
+    assertEquals(409, assertThrows(DomainException.class,
+        () -> progress.answerSurvey(5, null, NOW)).status());
+    survey.answerSurvey(5, "", NOW);
+    assertNull(survey.surveyResponse().orElseThrow().comment());
   }
 
   @Test

@@ -4,11 +4,14 @@ import com.optiflow.platform.notification.domain.model.aggregates.Notification;
 import com.optiflow.platform.notification.domain.model.valueobjects.AppointmentId;
 import com.optiflow.platform.notification.domain.model.valueobjects.NotificationId;
 import com.optiflow.platform.notification.domain.model.valueobjects.PatientId;
+import com.optiflow.platform.notification.domain.model.valueobjects.PushStatus;
 import com.optiflow.platform.notification.domain.repositories.NotificationRepository;
 import com.optiflow.platform.notification.infrastructure.persistence.jpa.mappers.NotificationMapper;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public class NotificationRepositoryImpl implements NotificationRepository {
@@ -44,5 +47,19 @@ public class NotificationRepositoryImpl implements NotificationRepository {
       PatientId patientId, AppointmentId appointmentId) {
     return notificationJpaRepository.existsByPatientIdAndAppointmentId(
         patientId.value(), appointmentId.value());
+  }
+
+  @Override
+  public List<Notification> findPendingDue(Instant now) {
+    return notificationJpaRepository
+        .findByPushStatusAndScheduledAtLessThanEqual(PushStatus.PENDING.name(), now).stream()
+        .map(notificationMapper::toDomain)
+        .toList();
+  }
+
+  @Override
+  @Transactional
+  public void deleteByAppointmentId(AppointmentId appointmentId) {
+    notificationJpaRepository.deleteByAppointmentId(appointmentId.value());
   }
 }

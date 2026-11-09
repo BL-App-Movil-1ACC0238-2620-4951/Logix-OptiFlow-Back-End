@@ -1,6 +1,7 @@
 package com.optiflow.platform.notification.infrastructure.persistence.jpa.repositories;
 
 import com.optiflow.platform.notification.infrastructure.persistence.jpa.entities.NotificationEntity;
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -10,4 +11,9 @@ public interface NotificationJpaRepository extends JpaRepository<NotificationEnt
   List<NotificationEntity> findByPatientIdOrderByCreatedAtDesc(UUID patientId);
 
   boolean existsByPatientIdAndAppointmentId(UUID patientId, UUID appointmentId);
+
+  List<NotificationEntity> findByPushStatusAndScheduledAtLessThanEqual(
+      String pushStatus, Instant scheduledAt);
+
+  void deleteByAppointmentId(UUID appointmentId);
 }

@@ -499,6 +499,16 @@ class AuthenticationAuthorizationApiTest {
     mockMvc.perform(get(ApiV1.path("/patients/" + ownerId + "/loyalty-account"))
             .header(HttpHeaders.AUTHORIZATION, bearer(otherToken)))
         .andExpect(status().isForbidden());
+    mockMvc.perform(post(ApiV1.path("/patients/" + ownerId + "/device-tokens"))
+            .header(HttpHeaders.AUTHORIZATION, bearer(otherToken))
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{\"token\":\"fcm-stranger\",\"platform\":\"ANDROID\"}"))
+        .andExpect(status().isForbidden());
+    mockMvc.perform(post(ApiV1.path("/patients/" + ownerId + "/device-tokens"))
+            .header(HttpHeaders.AUTHORIZATION, bearer(ownerToken))
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{\"token\":\"fcm-owner\",\"platform\":\"ANDROID\"}"))
+        .andExpect(status().isCreated());
   }
 
   private String registerStaffAndIssueToken(
