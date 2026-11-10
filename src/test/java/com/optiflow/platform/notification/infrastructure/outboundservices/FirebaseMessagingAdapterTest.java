@@ -11,8 +11,11 @@ import static org.springframework.test.web.client.match.MockRestRequestMatchers.
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.optiflow.platform.notification.infrastructure.configuration.FirebaseProperties;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyPairGenerator;
 import java.time.Clock;
 import java.time.Instant;
@@ -24,6 +27,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.mock.http.client.MockClientHttpRequest;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestClient;
 
@@ -46,6 +50,9 @@ class FirebaseMessagingAdapterTest {
     server.expect(once(), requestTo(TOKEN_URI))
         .andExpect(method(HttpMethod.POST))
         .andExpect(content().string(Matchers.containsString("grant-type%3Ajwt-bearer")))
+        .andExpect(request -> assertEquals(TOKEN_URI,
+            assertionClaims(((MockClientHttpRequest) request).getBodyAsString()).path("aud")
+                .asText()))
         .andRespond(withSuccess(
             "{\"access_token\":\"ya29.test\",\"expires_in\":3599}",
             MediaType.APPLICATION_JSON));
@@ -80,6 +87,13 @@ class FirebaseMessagingAdapterTest {
     return new FirebaseMessagingAdapter(new FirebaseProperties(credentials, BASE_URL),
         restClientBuilder, objectMapper,
         Clock.fixed(Instant.parse("2026-11-08T15:00:00Z"), ZoneOffset.UTC));
+  }
+
+  /** Claims of the JWT sent to Google; its audience must be a single string, not a list. */
+  private JsonNode assertionClaims(String form) throws java.io.IOException {
+    String assertion = URLDecoder.decode(
+        form.replaceAll(".*assertion=([^&]+).*", "$1"), StandardCharsets.UTF_8);
+    return objectMapper.readTree(Base64.getUrlDecoder().decode(assertion.split("\\.")[1]));
   }
 
   /** Service account key in the format Firebase downloads, with a key made for the test. */

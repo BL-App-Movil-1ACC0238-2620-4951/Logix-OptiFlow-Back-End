@@ -7,3 +7,7 @@ target/
 .vscode/
 *.log
 .DS_Store
+.env
+*.env
+*firebase-adminsdk*.json
+google-services.json

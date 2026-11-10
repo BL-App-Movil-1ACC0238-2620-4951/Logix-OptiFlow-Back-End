@@ -214,6 +214,16 @@ class AuthenticationAuthorizationApiTest {
   }
 
   @Test
+  void answersBadRequestWhenARequiredParameterIsMissing() throws Exception {
+    String adminToken = issueTokenFor("admin@optiflow.test");
+
+    mockMvc.perform(get(ApiV1.path("/reports/sales"))
+            .header(HttpHeaders.AUTHORIZATION, bearer(adminToken)))
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.message").value("The parameter from is required."));
+  }
+
+  @Test
   void allowsAdminToPublishTimeSlotsAndReturnsTheirLocation() throws Exception {
     String adminToken = issueTokenFor("admin@optiflow.test");
     MvcResult stores = mockMvc.perform(get(ApiV1.path("/optical-stores")))

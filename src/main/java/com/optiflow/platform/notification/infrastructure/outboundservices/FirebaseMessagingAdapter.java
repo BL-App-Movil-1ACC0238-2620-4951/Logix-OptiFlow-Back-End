@@ -108,7 +108,7 @@ public class FirebaseMessagingAdapter {
     String assertion = Jwts.builder()
         .issuer(account.clientEmail())
         .claim("scope", SCOPE)
-        .audience().add(account.tokenUri()).and()
+        .audience().single(account.tokenUri())
         .issuedAt(Date.from(now))
         .expiration(Date.from(now.plus(TOKEN_LIFETIME)))
         .signWith(account.privateKey(), Jwts.SIG.RS256)
