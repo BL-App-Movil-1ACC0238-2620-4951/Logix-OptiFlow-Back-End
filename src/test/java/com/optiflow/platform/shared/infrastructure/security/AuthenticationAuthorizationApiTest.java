@@ -324,6 +324,29 @@ class AuthenticationAuthorizationApiTest {
   }
 
   @Test
+  void letsClinicalStaffReadThePatientAppointments() throws Exception {
+    String adminToken = issueTokenFor("admin@optiflow.test");
+    String optometristToken = registerStaffAndIssueToken(
+        adminToken, "Agenda Optometrist", "agenda.optometrist@optiflow.test", "OPTOMETRIST");
+    String advisorToken = registerStaffAndIssueToken(
+        adminToken, "Agenda Advisor", "agenda.advisor@optiflow.test", "SALES_ADVISOR");
+    String technicianToken = registerStaffAndIssueToken(
+        adminToken, "Agenda Technician", "agenda.technician@optiflow.test", "TECHNICIAN");
+    registerPatientAndIssueToken("Agenda Patient", "agenda.patient@optiflow.test", "999888111");
+    String patientId = userIdOf("agenda.patient@optiflow.test");
+
+    mockMvc.perform(get(ApiV1.path("/patients/" + patientId + "/appointments"))
+            .header(HttpHeaders.AUTHORIZATION, bearer(optometristToken)))
+        .andExpect(status().isOk());
+    mockMvc.perform(get(ApiV1.path("/patients/" + patientId + "/appointments"))
+            .header(HttpHeaders.AUTHORIZATION, bearer(advisorToken)))
+        .andExpect(status().isOk());
+    mockMvc.perform(get(ApiV1.path("/patients/" + patientId + "/appointments"))
+            .header(HttpHeaders.AUTHORIZATION, bearer(technicianToken)))
+        .andExpect(status().isForbidden());
+  }
+
+  @Test
   void appliesTheInventoryRolesOfTheReport() throws Exception {
     String adminToken = issueTokenFor("admin@optiflow.test");
     String advisorToken = registerStaffAndIssueToken(

@@ -105,7 +105,7 @@ public class PatientController {
 
   @Operation(summary = "List the appointments of a patient",
       description = "Returns the appointment history of the patient. A patient can only read their "
-          + "own appointments.")
+          + "own appointments; the optometrist and the sales advisor can read them all.")
   @ApiResponses({
       @ApiResponse(responseCode = "200", description = "Appointments of the patient."),
       @ApiResponse(responseCode = "403",
