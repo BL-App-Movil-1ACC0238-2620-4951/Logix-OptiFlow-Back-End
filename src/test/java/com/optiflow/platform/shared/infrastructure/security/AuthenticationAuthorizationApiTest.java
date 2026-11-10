@@ -98,7 +98,42 @@ class AuthenticationAuthorizationApiTest {
             .header(HttpHeaders.AUTHORIZATION, bearer(patientToken))
             .contentType(MediaType.APPLICATION_JSON)
             .content(booking))
-        .andExpect(status().isCreated());
+        .andExpect(status().isForbidden());
+
+    String securedPatientId = objectMapper.readTree(
+            mockMvc.perform(post(ApiV1.path("/auth/tokens"))
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content("""
+                        {"email":"secured.patient@optiflow.test","password":"secret12"}
+                        """))
+                .andReturn().getResponse().getContentAsString())
+        .get("userId").asText();
+    String appointmentId = objectMapper.readTree(
+            mockMvc.perform(post(ApiV1.path("/appointments"))
+                    .header(HttpHeaders.AUTHORIZATION, bearer(patientToken))
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content("""
+                        {"patientId":"%s","opticalStoreId":"%s","timeSlotId":"%s"}
+                        """.formatted(securedPatientId, storeId, timeSlotId)))
+                .andExpect(status().isCreated())
+                .andReturn().getResponse().getContentAsString())
+        .get("id").asText();
+
+    String otherToken = issueTokenFor("other.patient@optiflow.test");
+    mockMvc.perform(get(ApiV1.path("/appointments/" + appointmentId))
+            .header(HttpHeaders.AUTHORIZATION, bearer(otherToken)))
+        .andExpect(status().isForbidden());
+    mockMvc.perform(patch(ApiV1.path("/appointments/" + appointmentId + "/status"))
+            .header(HttpHeaders.AUTHORIZATION, bearer(otherToken))
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("""
+                {"status":"CANCELLED"}
+                """))
+        .andExpect(status().isForbidden());
+    mockMvc.perform(get(ApiV1.path("/appointments/" + appointmentId))
+            .header(HttpHeaders.AUTHORIZATION, bearer(patientToken)))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.status").value("CONFIRMED"));
 
     mockMvc.perform(get(ApiV1.path("/staff-members"))
             .header(HttpHeaders.AUTHORIZATION, bearer(patientToken)))
@@ -143,6 +178,29 @@ class AuthenticationAuthorizationApiTest {
     mockMvc.perform(get(ApiV1.path("/patients/" + ownerId + "/appointments"))
             .header(HttpHeaders.AUTHORIZATION, bearer(ownerToken)))
         .andExpect(status().isOk());
+  }
+
+  @Test
+  void letsPatientRateStoresOnlyInTheirOwnName() throws Exception {
+    String raterToken = registerPatientAndIssueToken(
+        "Rater Patient", "rater.patient@optiflow.test", "999444555");
+    registerPatientAndIssueToken("Other Rater", "other.rater@optiflow.test", "999444556");
+    String raterId = userIdOf("rater.patient@optiflow.test");
+    String otherId = userIdOf("other.rater@optiflow.test");
+    String rating = """
+        {"patientId":"%s","score":4,"comment":"Good service"}
+        """;
+
+    mockMvc.perform(post(ApiV1.path("/optical-stores/22222222-2222-2222-2222-222222222222/ratings"))
+            .header(HttpHeaders.AUTHORIZATION, bearer(raterToken))
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(rating.formatted(otherId)))
+        .andExpect(status().isForbidden());
+    mockMvc.perform(post(ApiV1.path("/optical-stores/22222222-2222-2222-2222-222222222222/ratings"))
+            .header(HttpHeaders.AUTHORIZATION, bearer(raterToken))
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(rating.formatted(raterId)))
+        .andExpect(status().isCreated());
   }
 
   @Test
@@ -373,6 +431,21 @@ class AuthenticationAuthorizationApiTest {
             .contentType(MediaType.APPLICATION_JSON)
             .content("{}"))
         .andExpect(status().isBadRequest());
+    mockMvc.perform(get(ApiV1.path("/appointments"))
+            .param("opticalStoreId", "11111111-1111-1111-1111-111111111111")
+            .param("date", "2030-01-07")
+            .header(HttpHeaders.AUTHORIZATION, bearer(advisorToken)))
+        .andExpect(status().isOk());
+    mockMvc.perform(get(ApiV1.path("/appointments/00000000-0000-0000-0000-000000000009"))
+            .header(HttpHeaders.AUTHORIZATION, bearer(advisorToken)))
+        .andExpect(status().isNotFound());
+    mockMvc.perform(patch(ApiV1.path("/appointments/00000000-0000-0000-0000-000000000009/status"))
+            .header(HttpHeaders.AUTHORIZATION, bearer(advisorToken))
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("""
+                {"status":"CANCELLED"}
+                """))
+        .andExpect(status().isForbidden());
   }
 
   @Test
@@ -565,6 +638,18 @@ class AuthenticationAuthorizationApiTest {
     return objectMapper.readTree(tokenResponse.getResponse().getContentAsString())
         .get("token")
         .asText();
+  }
+
+  private String userIdOf(String email) throws Exception {
+    return objectMapper.readTree(
+            mockMvc.perform(post(ApiV1.path("/auth/tokens"))
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content("""
+                        {"email":"%s","password":"secret12"}
+                        """.formatted(email)))
+                .andExpect(status().isCreated())
+                .andReturn().getResponse().getContentAsString())
+        .get("userId").asText();
   }
 
   private static String bearer(String token) {

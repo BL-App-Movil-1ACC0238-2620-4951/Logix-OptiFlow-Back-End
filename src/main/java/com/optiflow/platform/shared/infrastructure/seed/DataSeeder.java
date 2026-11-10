@@ -35,7 +35,7 @@ import com.optiflow.platform.searchbooking.domain.model.valueobjects.UserRole;
 import com.optiflow.platform.searchbooking.domain.repositories.OpticalStoreRepository;
 import com.optiflow.platform.searchbooking.domain.repositories.PatientRepository;
 import com.optiflow.platform.searchbooking.domain.repositories.StaffMemberRepository;
-import com.optiflow.platform.searchbooking.domain.repositories.TimeSlotRepository;
+import com.optiflow.platform.searchbooking.infrastructure.persistence.jpa.repositories.TimeSlotJpaRepository;
 import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.DayOfWeek;
@@ -111,7 +111,7 @@ public class DataSeeder implements ApplicationRunner {
 
   private final OpticalStoreRepository opticalStoreRepository;
   private final OpticalStoreApplicationService opticalStoreApplicationService;
-  private final TimeSlotRepository timeSlotRepository;
+  private final TimeSlotJpaRepository timeSlotRepository;
   private final StaffMemberRepository staffMemberRepository;
   private final StaffMemberApplicationService staffMemberApplicationService;
   private final PatientRepository patientRepository;
@@ -127,7 +127,7 @@ public class DataSeeder implements ApplicationRunner {
   public DataSeeder(
       OpticalStoreRepository opticalStoreRepository,
       OpticalStoreApplicationService opticalStoreApplicationService,
-      TimeSlotRepository timeSlotRepository,
+      TimeSlotJpaRepository timeSlotRepository,
       StaffMemberRepository staffMemberRepository,
       StaffMemberApplicationService staffMemberApplicationService,
       PatientRepository patientRepository,
@@ -182,14 +182,18 @@ public class DataSeeder implements ApplicationRunner {
     }
   }
 
-  /** Time slots from 9:00 to 17:00, Monday to Saturday, for the days that still have none. */
+  /**
+   * Time slots from 9:00 to 17:00, Monday to Saturday, for the days that still have none. A day
+   * whose slots are all reserved already has its slots, so it is not published again.
+   */
   private void seedTimeSlots() {
     LocalDate today = LocalDate.now(clock.withZone(LIMA));
     for (StoreSeed store : STORES) {
       OpticalStoreId id = OpticalStoreId.of(store.id());
-      Set<LocalDate> daysWithSlots = timeSlotRepository.findAvailableByStore(id, clock.instant())
+      Set<LocalDate> daysWithSlots = timeSlotRepository
+          .findByOpticalStoreIdAndStartDateTimeAfter(store.id(), clock.instant())
           .stream()
-          .map(slot -> slot.startDateTime().atZone(LIMA).toLocalDate())
+          .map(slot -> slot.getStartDateTime().atZone(LIMA).toLocalDate())
           .collect(Collectors.toSet());
       List<SlotDraft> slots = new ArrayList<>();
       for (int day = 1; day <= SLOT_DAYS; day++) {

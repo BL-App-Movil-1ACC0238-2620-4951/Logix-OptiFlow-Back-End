@@ -26,4 +26,7 @@ public interface TimeSlotJpaRepository extends JpaRepository<TimeSlotEntity, UUI
       """)
   List<TimeSlotEntity> findAvailableByStore(
       @Param("storeId") UUID storeId, @Param("now") Instant now);
+
+  List<TimeSlotEntity> findByOpticalStoreIdAndStartDateTimeAfter(
+      UUID opticalStoreId, Instant startDateTime);
 }
