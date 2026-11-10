@@ -181,6 +181,29 @@ class AuthenticationAuthorizationApiTest {
   }
 
   @Test
+  void letsPatientRateStoresOnlyInTheirOwnName() throws Exception {
+    String raterToken = registerPatientAndIssueToken(
+        "Rater Patient", "rater.patient@optiflow.test", "999444555");
+    registerPatientAndIssueToken("Other Rater", "other.rater@optiflow.test", "999444556");
+    String raterId = userIdOf("rater.patient@optiflow.test");
+    String otherId = userIdOf("other.rater@optiflow.test");
+    String rating = """
+        {"patientId":"%s","score":4,"comment":"Good service"}
+        """;
+
+    mockMvc.perform(post(ApiV1.path("/optical-stores/22222222-2222-2222-2222-222222222222/ratings"))
+            .header(HttpHeaders.AUTHORIZATION, bearer(raterToken))
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(rating.formatted(otherId)))
+        .andExpect(status().isForbidden());
+    mockMvc.perform(post(ApiV1.path("/optical-stores/22222222-2222-2222-2222-222222222222/ratings"))
+            .header(HttpHeaders.AUTHORIZATION, bearer(raterToken))
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(rating.formatted(raterId)))
+        .andExpect(status().isCreated());
+  }
+
+  @Test
   void allowsAdminToListStaffMembers() throws Exception {
     String adminToken = issueTokenFor("admin@optiflow.test");
 
@@ -615,6 +638,18 @@ class AuthenticationAuthorizationApiTest {
     return objectMapper.readTree(tokenResponse.getResponse().getContentAsString())
         .get("token")
         .asText();
+  }
+
+  private String userIdOf(String email) throws Exception {
+    return objectMapper.readTree(
+            mockMvc.perform(post(ApiV1.path("/auth/tokens"))
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content("""
+                        {"email":"%s","password":"secret12"}
+                        """.formatted(email)))
+                .andExpect(status().isCreated())
+                .andReturn().getResponse().getContentAsString())
+        .get("userId").asText();
   }
 
   private static String bearer(String token) {
