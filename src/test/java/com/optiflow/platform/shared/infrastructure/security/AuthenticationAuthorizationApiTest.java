@@ -98,7 +98,42 @@ class AuthenticationAuthorizationApiTest {
             .header(HttpHeaders.AUTHORIZATION, bearer(patientToken))
             .contentType(MediaType.APPLICATION_JSON)
             .content(booking))
-        .andExpect(status().isCreated());
+        .andExpect(status().isForbidden());
+
+    String securedPatientId = objectMapper.readTree(
+            mockMvc.perform(post(ApiV1.path("/auth/tokens"))
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content("""
+                        {"email":"secured.patient@optiflow.test","password":"secret12"}
+                        """))
+                .andReturn().getResponse().getContentAsString())
+        .get("userId").asText();
+    String appointmentId = objectMapper.readTree(
+            mockMvc.perform(post(ApiV1.path("/appointments"))
+                    .header(HttpHeaders.AUTHORIZATION, bearer(patientToken))
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content("""
+                        {"patientId":"%s","opticalStoreId":"%s","timeSlotId":"%s"}
+                        """.formatted(securedPatientId, storeId, timeSlotId)))
+                .andExpect(status().isCreated())
+                .andReturn().getResponse().getContentAsString())
+        .get("id").asText();
+
+    String otherToken = issueTokenFor("other.patient@optiflow.test");
+    mockMvc.perform(get(ApiV1.path("/appointments/" + appointmentId))
+            .header(HttpHeaders.AUTHORIZATION, bearer(otherToken)))
+        .andExpect(status().isForbidden());
+    mockMvc.perform(patch(ApiV1.path("/appointments/" + appointmentId + "/status"))
+            .header(HttpHeaders.AUTHORIZATION, bearer(otherToken))
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("""
+                {"status":"CANCELLED"}
+                """))
+        .andExpect(status().isForbidden());
+    mockMvc.perform(get(ApiV1.path("/appointments/" + appointmentId))
+            .header(HttpHeaders.AUTHORIZATION, bearer(patientToken)))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.status").value("CONFIRMED"));
 
     mockMvc.perform(get(ApiV1.path("/staff-members"))
             .header(HttpHeaders.AUTHORIZATION, bearer(patientToken)))
