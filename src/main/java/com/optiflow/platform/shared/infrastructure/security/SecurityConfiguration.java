@@ -60,7 +60,10 @@ public class SecurityConfiguration {
             // Search & Booking
             .requestMatchers(HttpMethod.POST, "/api/v1/appointments")
             .hasAnyRole(PATIENT, OPTOMETRIST, SALES_ADVISOR, ADMIN)
-            .requestMatchers(HttpMethod.GET, "/api/v1/appointments").hasAnyRole(OPTOMETRIST, ADMIN)
+            .requestMatchers(HttpMethod.GET, "/api/v1/appointments")
+            .hasAnyRole(OPTOMETRIST, SALES_ADVISOR, ADMIN)
+            .requestMatchers(HttpMethod.GET, "/api/v1/appointments/*")
+            .hasAnyRole(PATIENT, OPTOMETRIST, SALES_ADVISOR, ADMIN)
             .requestMatchers("/api/v1/appointments/**").hasAnyRole(PATIENT, OPTOMETRIST, ADMIN)
             .requestMatchers(HttpMethod.GET, "/api/v1/patients")
             .hasAnyRole(OPTOMETRIST, SALES_ADVISOR, ADMIN)

@@ -373,6 +373,21 @@ class AuthenticationAuthorizationApiTest {
             .contentType(MediaType.APPLICATION_JSON)
             .content("{}"))
         .andExpect(status().isBadRequest());
+    mockMvc.perform(get(ApiV1.path("/appointments"))
+            .param("opticalStoreId", "11111111-1111-1111-1111-111111111111")
+            .param("date", "2030-01-07")
+            .header(HttpHeaders.AUTHORIZATION, bearer(advisorToken)))
+        .andExpect(status().isOk());
+    mockMvc.perform(get(ApiV1.path("/appointments/00000000-0000-0000-0000-000000000009"))
+            .header(HttpHeaders.AUTHORIZATION, bearer(advisorToken)))
+        .andExpect(status().isNotFound());
+    mockMvc.perform(patch(ApiV1.path("/appointments/00000000-0000-0000-0000-000000000009/status"))
+            .header(HttpHeaders.AUTHORIZATION, bearer(advisorToken))
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("""
+                {"status":"CANCELLED"}
+                """))
+        .andExpect(status().isForbidden());
   }
 
   @Test
