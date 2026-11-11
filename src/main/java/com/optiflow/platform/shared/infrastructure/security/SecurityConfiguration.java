@@ -105,7 +105,8 @@ public class SecurityConfiguration {
             .hasAnyRole(SALES_ADVISOR, ADMIN)
             .requestMatchers(HttpMethod.POST, "/api/v1/inventory/frames")
             .hasAnyRole(SALES_ADVISOR, ADMIN)
-            .requestMatchers(HttpMethod.PATCH, "/api/v1/inventory/frames/*/price")
+            .requestMatchers(HttpMethod.PATCH, "/api/v1/inventory/frames/*/price",
+                "/api/v1/inventory/frames/*/try-on-model")
             .hasAnyRole(SALES_ADVISOR, ADMIN)
             .requestMatchers("/api/v1/inventory/**", "/api/v1/suppliers").hasRole(ADMIN)
             // Notification & Loyalty

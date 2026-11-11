@@ -15,7 +15,7 @@ public class FrameModel {
   private final String shape;
   private final String color;
   private Price price;
-  private final String tryOnModelUrl;
+  private String tryOnModelUrl;
 
   private FrameModel(
       FrameModelId id,
@@ -60,6 +60,11 @@ public class FrameModel {
       throw new DomainException("Price is required.", 400);
     }
     this.price = newPrice;
+  }
+
+  /** Assigns the virtual try-on model of the frame; a blank value removes it. */
+  public void updateTryOnModel(String newTryOnModelUrl) {
+    this.tryOnModelUrl = optional(newTryOnModelUrl, 255, "Try-on model URL");
   }
 
   private static String optional(String value, int maxLength, String field) {

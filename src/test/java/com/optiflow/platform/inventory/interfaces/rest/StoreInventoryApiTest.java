@@ -94,6 +94,17 @@ class StoreInventoryApiTest {
     perform(patch(ApiV1.path("/inventory/frames/" + SKU + "/price")), "{\"price\":299.90}")
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.price").value(299.90));
+    perform(patch(ApiV1.path("/inventory/frames/" + SKU + "/try-on-model")),
+        "{\"tryOnModelUrl\":\"try-on/square\"}")
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.tryOnModelUrl").value("try-on/square"))
+        .andExpect(jsonPath("$.price").value(299.90));
+    perform(patch(ApiV1.path("/inventory/frames/" + SKU + "/try-on-model")), "{\"tryOnModelUrl\":\"\"}")
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.tryOnModelUrl").doesNotExist());
+    perform(patch(ApiV1.path("/inventory/frames/NO-EXISTE/try-on-model")),
+        "{\"tryOnModelUrl\":\"try-on/square\"}")
+        .andExpect(status().isNotFound());
 
     perform(post(ApiV1.path("/inventory/replenishments")), """
         {"opticalStoreId":"%s","sku":"%s","supplierId":"%s","quantity":3,"minimumStock":2}

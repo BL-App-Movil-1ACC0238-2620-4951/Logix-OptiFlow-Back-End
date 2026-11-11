@@ -8,10 +8,12 @@ import com.optiflow.platform.inventory.domain.model.valueobjects.OpticalStoreId;
 import com.optiflow.platform.inventory.domain.model.valueobjects.Sku;
 import com.optiflow.platform.inventory.interfaces.rest.assemblers.FromAddNewFrameModelRequestAssembler;
 import com.optiflow.platform.inventory.interfaces.rest.assemblers.FromUpdateFrameModelPriceRequestAssembler;
+import com.optiflow.platform.inventory.interfaces.rest.assemblers.FromUpdateFrameModelTryOnModelRequestAssembler;
 import com.optiflow.platform.inventory.interfaces.rest.assemblers.StoreInventoryResponseAssembler;
 import com.optiflow.platform.inventory.interfaces.rest.resources.AddNewFrameModelRequest;
 import com.optiflow.platform.inventory.interfaces.rest.resources.FrameModelResponse;
 import com.optiflow.platform.inventory.interfaces.rest.resources.UpdateFrameModelPriceRequest;
+import com.optiflow.platform.inventory.interfaces.rest.resources.UpdateFrameModelTryOnModelRequest;
 import com.optiflow.platform.shared.infrastructure.documentation.openapi.configuration.OpenApiTags;
 import com.optiflow.platform.shared.interfaces.rest.ApiV1;
 import com.optiflow.platform.shared.interfaces.rest.CreatedResourceResponses;
@@ -42,6 +44,7 @@ public class FrameModelController {
   private final InventoryApplicationService inventoryApplicationService;
   private final FromAddNewFrameModelRequestAssembler addAssembler;
   private final FromUpdateFrameModelPriceRequestAssembler priceAssembler;
+  private final FromUpdateFrameModelTryOnModelRequestAssembler tryOnModelAssembler;
   private final StoreInventoryResponseAssembler responseAssembler;
 
   public FrameModelController(
@@ -49,11 +52,13 @@ public class FrameModelController {
       InventoryApplicationService inventoryApplicationService,
       FromAddNewFrameModelRequestAssembler addAssembler,
       FromUpdateFrameModelPriceRequestAssembler priceAssembler,
+      FromUpdateFrameModelTryOnModelRequestAssembler tryOnModelAssembler,
       StoreInventoryResponseAssembler responseAssembler) {
     this.frameModelApplicationService = frameModelApplicationService;
     this.inventoryApplicationService = inventoryApplicationService;
     this.addAssembler = addAssembler;
     this.priceAssembler = priceAssembler;
+    this.tryOnModelAssembler = tryOnModelAssembler;
     this.responseAssembler = responseAssembler;
   }
 
@@ -114,5 +119,20 @@ public class FrameModelController {
       @Valid @RequestBody UpdateFrameModelPriceRequest request) {
     return responseAssembler.toFrameModelResponse(
         frameModelApplicationService.updatePrice(priceAssembler.toCommand(sku, request)));
+  }
+
+  @Operation(summary = "Update the virtual try-on model of a frame",
+      description = "Assigns the model that the app uses to show the frame on the patient's face. "
+          + "An empty or null value removes it, and the app then hides the try-on option.")
+  @ApiResponses({
+      @ApiResponse(responseCode = "200", description = "Frame model with its try-on model."),
+      @ApiResponse(responseCode = "404", description = "No frame model has this SKU.")
+  })
+  @PatchMapping("/inventory/frames/{sku}/try-on-model")
+  public FrameModelResponse updateTryOnModel(
+      @Parameter(description = "SKU of the frame.", example = "RB-2140-BLK") @PathVariable String sku,
+      @Valid @RequestBody UpdateFrameModelTryOnModelRequest request) {
+    return responseAssembler.toFrameModelResponse(frameModelApplicationService.updateTryOnModel(
+        tryOnModelAssembler.toCommand(sku, request)));
   }
 }
