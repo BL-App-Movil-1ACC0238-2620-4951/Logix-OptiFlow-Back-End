@@ -11,6 +11,8 @@ import com.optiflow.platform.clinical.domain.model.commands.ApproveQuotationComm
 import com.optiflow.platform.clinical.domain.model.commands.GenerateQuotationCommand;
 import com.optiflow.platform.clinical.domain.model.commands.RejectQuotationCommand;
 import com.optiflow.platform.clinical.domain.model.queries.GetQuotationByIdQuery;
+import com.optiflow.platform.clinical.domain.model.queries.GetQuotationsByClinicalRecordIdQuery;
+import java.util.List;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -52,6 +54,10 @@ public class QuotationApplicationService {
   }
 
   public Quotation getById(GetQuotationByIdQuery query) {
+    return quotationQueryService.handle(query);
+  }
+
+  public List<Quotation> getByClinicalRecord(GetQuotationsByClinicalRecordIdQuery query) {
     return quotationQueryService.handle(query);
   }
 }
