@@ -1,6 +1,7 @@
 package com.optiflow.platform.searchbooking.interfaces.rest;
 
 import com.optiflow.platform.searchbooking.application.services.StaffMemberApplicationService;
+import com.optiflow.platform.searchbooking.domain.model.commands.UpdateStaffMemberStatusCommand;
 import com.optiflow.platform.searchbooking.domain.model.queries.GetStaffMemberByIdQuery;
 import com.optiflow.platform.searchbooking.domain.model.queries.GetStaffMembersQuery;
 import com.optiflow.platform.searchbooking.domain.model.valueobjects.OpticalStoreId;
@@ -11,6 +12,8 @@ import com.optiflow.platform.searchbooking.interfaces.rest.assemblers.SearchBook
 import com.optiflow.platform.searchbooking.interfaces.rest.resources.AssignStaffRoleRequest;
 import com.optiflow.platform.searchbooking.interfaces.rest.resources.RegisterStaffMemberRequest;
 import com.optiflow.platform.searchbooking.interfaces.rest.resources.StaffMemberResponse;
+import com.optiflow.platform.searchbooking.interfaces.rest.resources.UpdateStaffMemberStatusRequest;
+import com.optiflow.platform.shared.domain.exceptions.DomainException;
 import com.optiflow.platform.shared.infrastructure.documentation.openapi.configuration.OpenApiTags;
 import com.optiflow.platform.shared.infrastructure.security.AuthenticatedUser;
 import com.optiflow.platform.shared.infrastructure.security.StaffDataAccessGuard;
@@ -119,5 +122,25 @@ public class StaffMemberController {
       @PathVariable UUID id, @Valid @RequestBody AssignStaffRoleRequest request) {
     return responseAssembler.toStaffMemberResponse(
         staffMemberApplicationService.assignRole(assignRoleAssembler.toCommand(id, request)));
+  }
+
+  @Operation(summary = "Activate or deactivate a staff member",
+      description = "The admin deactivates a staff member, who can no longer sign in, or activates "
+          + "them again. Admins cannot deactivate their own account.")
+  @ApiResponses({
+      @ApiResponse(responseCode = "200", description = "Status updated."),
+      @ApiResponse(responseCode = "400", description = "The admin tried to deactivate themselves."),
+      @ApiResponse(responseCode = "404", description = "The staff member was not found.")
+  })
+  @PatchMapping("/staff-members/{id}/status")
+  public StaffMemberResponse updateStatus(
+      @PathVariable UUID id,
+      @Valid @RequestBody UpdateStaffMemberStatusRequest request,
+      @AuthenticationPrincipal AuthenticatedUser user) {
+    if (!request.active() && id.equals(user.userId())) {
+      throw new DomainException("You cannot deactivate your own account.", 400);
+    }
+    return responseAssembler.toStaffMemberResponse(staffMemberApplicationService.updateStatus(
+        new UpdateStaffMemberStatusCommand(StaffMemberId.of(id), request.active())));
   }
 }

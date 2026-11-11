@@ -302,6 +302,43 @@ class AuthenticationAuthorizationApiTest {
   }
 
   @Test
+  void letsAdminDeactivateAndReactivateStaffMembers() throws Exception {
+    String adminToken = issueTokenFor("admin@optiflow.test");
+    String advisorToken = registerStaffAndIssueToken(
+        adminToken, "Leaving Advisor", "leaving.advisor@optiflow.test", "SALES_ADVISOR");
+    String advisorId = userIdOf("leaving.advisor@optiflow.test");
+    String adminId = userIdOf("admin@optiflow.test");
+
+    mockMvc.perform(patch(ApiV1.path("/staff-members/" + advisorId + "/status"))
+            .header(HttpHeaders.AUTHORIZATION, bearer(advisorToken))
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{\"active\":false}"))
+        .andExpect(status().isForbidden());
+    mockMvc.perform(patch(ApiV1.path("/staff-members/" + adminId + "/status"))
+            .header(HttpHeaders.AUTHORIZATION, bearer(adminToken))
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{\"active\":false}"))
+        .andExpect(status().isBadRequest());
+    mockMvc.perform(patch(ApiV1.path("/staff-members/" + advisorId + "/status"))
+            .header(HttpHeaders.AUTHORIZATION, bearer(adminToken))
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{\"active\":false}"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.active").value(false));
+    mockMvc.perform(post(ApiV1.path("/auth/tokens"))
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{\"email\":\"leaving.advisor@optiflow.test\",\"password\":\"secret12\"}"))
+        .andExpect(status().isUnauthorized());
+    mockMvc.perform(patch(ApiV1.path("/staff-members/" + advisorId + "/status"))
+            .header(HttpHeaders.AUTHORIZATION, bearer(adminToken))
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{\"active\":true}"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.active").value(true));
+    issueTokenFor("leaving.advisor@optiflow.test");
+  }
+
+  @Test
   void letsOnlyClinicalStaffReadTheClinicalRecordsSummary() throws Exception {
     String adminToken = issueTokenFor("admin@optiflow.test");
     String optometristToken = registerStaffAndIssueToken(
