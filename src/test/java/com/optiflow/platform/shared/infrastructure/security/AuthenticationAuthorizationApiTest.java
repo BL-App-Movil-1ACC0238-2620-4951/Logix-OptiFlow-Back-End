@@ -368,6 +368,24 @@ class AuthenticationAuthorizationApiTest {
     mockMvc.perform(get(ApiV1.path("/inventory/stock")).param("opticalStoreId", storeId)
             .header(HttpHeaders.AUTHORIZATION, bearer(advisorToken)))
         .andExpect(status().isOk());
+    mockMvc.perform(post(ApiV1.path("/inventory/frames"))
+            .header(HttpHeaders.AUTHORIZATION, bearer(advisorToken))
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{\"sku\":\"ADV-001-BLK\",\"name\":\"Montura del asesor\",\"price\":150.00}"))
+        .andExpect(status().isCreated());
+    mockMvc.perform(patch(ApiV1.path("/inventory/frames/ADV-001-BLK/price"))
+            .header(HttpHeaders.AUTHORIZATION, bearer(advisorToken))
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{\"price\":160.00}"))
+        .andExpect(status().isOk());
+    mockMvc.perform(post(ApiV1.path("/inventory/frames"))
+            .header(HttpHeaders.AUTHORIZATION, bearer(patientToken))
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{\"sku\":\"PAT-001-BLK\",\"name\":\"Montura\",\"price\":150.00}"))
+        .andExpect(status().isForbidden());
+    mockMvc.perform(get(ApiV1.path("/inventory/alerts")).param("opticalStoreId", storeId)
+            .header(HttpHeaders.AUTHORIZATION, bearer(advisorToken)))
+        .andExpect(status().isForbidden());
     mockMvc.perform(post(ApiV1.path("/suppliers"))
             .header(HttpHeaders.AUTHORIZATION, bearer(advisorToken))
             .contentType(MediaType.APPLICATION_JSON)
