@@ -329,6 +329,9 @@ class AuthenticationAuthorizationApiTest {
             .contentType(MediaType.APPLICATION_JSON)
             .content("{\"email\":\"leaving.advisor@optiflow.test\",\"password\":\"secret12\"}"))
         .andExpect(status().isUnauthorized());
+    mockMvc.perform(get(ApiV1.path("/work-orders"))
+            .header(HttpHeaders.AUTHORIZATION, bearer(advisorToken)))
+        .andExpect(status().isUnauthorized());
     mockMvc.perform(patch(ApiV1.path("/staff-members/" + advisorId + "/status"))
             .header(HttpHeaders.AUTHORIZATION, bearer(adminToken))
             .contentType(MediaType.APPLICATION_JSON)

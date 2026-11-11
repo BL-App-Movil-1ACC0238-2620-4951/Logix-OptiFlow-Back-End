@@ -16,9 +16,12 @@ import org.springframework.web.filter.OncePerRequestFilter;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
   private final JwtTokenService jwtTokenService;
+  private final AccountStatusChecker accountStatusChecker;
 
-  public JwtAuthenticationFilter(JwtTokenService jwtTokenService) {
+  public JwtAuthenticationFilter(
+      JwtTokenService jwtTokenService, AccountStatusChecker accountStatusChecker) {
     this.jwtTokenService = jwtTokenService;
+    this.accountStatusChecker = accountStatusChecker;
   }
 
   @Override
@@ -29,6 +32,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     if (authorization != null && authorization.startsWith("Bearer ")) {
       try {
         JwtClaims claims = jwtTokenService.parse(authorization.substring("Bearer ".length()));
+        if (!accountStatusChecker.isActive(claims.userId(), claims.role())) {
+          throw new DomainException("The account is no longer active.", 401);
+        }
         AuthenticatedUser user = new AuthenticatedUser(claims.userId(), claims.role());
         JwtAuthenticationToken authentication = new JwtAuthenticationToken(
             user,
