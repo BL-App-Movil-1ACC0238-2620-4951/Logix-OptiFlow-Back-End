@@ -8,6 +8,8 @@ import com.optiflow.platform.clinical.domain.model.commands.ApproveQuotationComm
 import com.optiflow.platform.clinical.domain.model.commands.RejectQuotationCommand;
 import com.optiflow.platform.clinical.domain.model.queries.GetClinicalRecordByIdQuery;
 import com.optiflow.platform.clinical.domain.model.queries.GetQuotationByIdQuery;
+import com.optiflow.platform.clinical.domain.model.queries.GetQuotationsByClinicalRecordIdQuery;
+import com.optiflow.platform.clinical.domain.model.valueobjects.ClinicalRecordId;
 import com.optiflow.platform.clinical.domain.model.valueobjects.QuotationId;
 import com.optiflow.platform.clinical.interfaces.rest.assemblers.ClinicalCommercialResponseAssembler;
 import com.optiflow.platform.clinical.interfaces.rest.assemblers.FromApplyPromotionOrDiscountRequestAssembler;
@@ -27,6 +29,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import java.util.List;
 import java.util.UUID;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -104,6 +107,30 @@ public class QuotationController {
       patientDataAccessGuard.ensureSelfPatientAccess(user, record.patientId().value());
     }
     return responseAssembler.toQuotationResponse(quotation);
+  }
+
+  @Operation(summary = "List the quotations of a clinical record",
+      description = "Returns every quotation generated from the clinical record, so a draft can be "
+          + "resumed. A patient can only read the quotations of their own records.")
+  @ApiResponses({
+      @ApiResponse(responseCode = "200", description = "Quotations of the clinical record."),
+      @ApiResponse(responseCode = "403",
+          description = "The clinical record belongs to another patient."),
+      @ApiResponse(responseCode = "404", description = "The clinical record was not found.")
+  })
+  @GetMapping("/clinical-records/{clinicalRecordId}/quotations")
+  public List<QuotationResponse> listByClinicalRecord(
+      @PathVariable UUID clinicalRecordId, @AuthenticationPrincipal AuthenticatedUser user) {
+    ClinicalRecord record = clinicalRecordApplicationService.getById(
+        new GetClinicalRecordByIdQuery(ClinicalRecordId.of(clinicalRecordId)));
+    if (user != null && "PATIENT".equals(user.role())) {
+      patientDataAccessGuard.ensureSelfPatientAccess(user, record.patientId().value());
+    }
+    return quotationApplicationService
+        .getByClinicalRecord(new GetQuotationsByClinicalRecordIdQuery(record.id()))
+        .stream()
+        .map(responseAssembler::toQuotationResponse)
+        .toList();
   }
 
   @Operation(summary = "Apply a promotion or discount",

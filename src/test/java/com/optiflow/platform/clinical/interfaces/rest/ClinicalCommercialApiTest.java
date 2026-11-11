@@ -119,6 +119,11 @@ class ClinicalCommercialApiTest {
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.discount.amount").value(48.90))
         .andExpect(jsonPath("$.total").value(440.10));
+    mockMvc.perform(get(ApiV1.path("/clinical-records/" + clinicalRecordId + "/quotations")))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.length()").value(1))
+        .andExpect(jsonPath("$[0].id").value(quotationId))
+        .andExpect(jsonPath("$[0].total").value(440.10));
 
     String sale = """
         {"quotationId":"%s"}
@@ -223,6 +228,8 @@ class ClinicalCommercialApiTest {
         .andExpect(status().isNotFound())
         .andExpect(jsonPath("$.message").value("Clinical record was not found."));
     mockMvc.perform(get(ApiV1.path("/quotations/" + unknownId))).andExpect(status().isNotFound());
+    mockMvc.perform(get(ApiV1.path("/clinical-records/" + unknownId + "/quotations")))
+        .andExpect(status().isNotFound());
     mockMvc.perform(get(ApiV1.path("/sales/" + unknownId))).andExpect(status().isNotFound());
     perform(post(ApiV1.path("/clinical-records")), """
         {"patientId":"%s","appointmentId":"%s"}
