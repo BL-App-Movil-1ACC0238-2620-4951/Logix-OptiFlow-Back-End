@@ -344,6 +344,10 @@ class AuthenticationAuthorizationApiTest {
     mockMvc.perform(get(ApiV1.path("/patients/" + patientId + "/appointments"))
             .header(HttpHeaders.AUTHORIZATION, bearer(technicianToken)))
         .andExpect(status().isForbidden());
+    // The technician reads the patient only to show the name on the work order.
+    mockMvc.perform(get(ApiV1.path("/patients/" + patientId))
+            .header(HttpHeaders.AUTHORIZATION, bearer(technicianToken)))
+        .andExpect(status().isOk());
   }
 
   @Test
