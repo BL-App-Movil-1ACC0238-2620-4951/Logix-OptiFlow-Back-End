@@ -66,6 +66,14 @@ public class StaffMember {
     this.role = newRole;
   }
 
+  public void activate() {
+    this.active = true;
+  }
+
+  public void deactivate() {
+    this.active = false;
+  }
+
   public StaffMemberId id() {
     return id;
   }
