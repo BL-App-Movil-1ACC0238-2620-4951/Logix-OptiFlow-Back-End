@@ -39,6 +39,13 @@ public class PublishAvailableTimeSlotsCommandHandler {
         .orElseThrow(() -> new DomainException("Optical store was not found.", 404));
     List<TimeSlot> published = new ArrayList<>();
     for (PublishAvailableTimeSlotsCommand.SlotDraft draft : command.slots()) {
+      boolean overlapsDraft = published.stream().anyMatch(slot ->
+          slot.startDateTime().isBefore(draft.endDateTime())
+              && slot.endDateTime().isAfter(draft.startDateTime()));
+      if (overlapsDraft || timeSlotRepository.existsOverlapping(
+          command.opticalStoreId(), draft.startDateTime(), draft.endDateTime())) {
+        throw new DomainException("Time slots cannot overlap.", 409);
+      }
       TimeSlot timeSlot = TimeSlot.publish(
           TimeSlotId.generate(),
           command.opticalStoreId(),

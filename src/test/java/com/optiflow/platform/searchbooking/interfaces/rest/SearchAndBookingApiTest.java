@@ -21,6 +21,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.ResultActions;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -80,6 +81,41 @@ class SearchAndBookingApiTest {
     mockMvc.perform(get(ApiV1.path("/optical-stores")).param("name", "does-not-exist"))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.length()").value(0));
+  }
+
+  @Test
+  void rejectsOverlappingTimeSlots() throws Exception {
+    MvcResult stores = mockMvc.perform(get(ApiV1.path("/optical-stores")))
+        .andExpect(status().isOk())
+        .andReturn();
+    String storeId = objectMapper.readTree(stores.getResponse().getContentAsString())
+        .get(0).get("id").asText();
+    String timeSlotsPath = ApiV1.path("/optical-stores/" + storeId + "/time-slots");
+
+    publishSlots(timeSlotsPath, "2031-03-10T14:00:00Z", "2031-03-10T14:30:00Z")
+        .andExpect(status().isCreated());
+    publishSlots(timeSlotsPath, "2031-03-10T14:15:00Z", "2031-03-10T14:45:00Z")
+        .andExpect(status().isConflict())
+        .andExpect(jsonPath("$.message").value("Time slots cannot overlap."));
+    mockMvc.perform(post(timeSlotsPath)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("""
+                {"timeSlots":[
+                  {"startDateTime":"2031-03-10T16:00:00Z","endDateTime":"2031-03-10T16:30:00Z"},
+                  {"startDateTime":"2031-03-10T16:15:00Z","endDateTime":"2031-03-10T16:45:00Z"}]}
+                """))
+        .andExpect(status().isConflict());
+    publishSlots(timeSlotsPath, "2031-03-10T14:30:00Z", "2031-03-10T15:00:00Z")
+        .andExpect(status().isCreated());
+  }
+
+  private ResultActions publishSlots(
+      String path, String start, String end) throws Exception {
+    return mockMvc.perform(post(path)
+        .contentType(MediaType.APPLICATION_JSON)
+        .content("""
+            {"timeSlots":[{"startDateTime":"%s","endDateTime":"%s"}]}
+            """.formatted(start, end)));
   }
 
   @Test

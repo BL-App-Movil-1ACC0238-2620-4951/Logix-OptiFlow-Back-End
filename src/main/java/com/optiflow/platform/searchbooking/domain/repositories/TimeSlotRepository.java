@@ -16,4 +16,6 @@ public interface TimeSlotRepository {
   Optional<TimeSlot> findByIdForUpdate(TimeSlotId id);
 
   List<TimeSlot> findAvailableByStore(OpticalStoreId opticalStoreId, Instant now);
+
+  boolean existsOverlapping(OpticalStoreId opticalStoreId, Instant start, Instant end);
 }

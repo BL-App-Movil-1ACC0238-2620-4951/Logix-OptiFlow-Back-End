@@ -29,4 +29,7 @@ public interface TimeSlotJpaRepository extends JpaRepository<TimeSlotEntity, UUI
 
   List<TimeSlotEntity> findByOpticalStoreIdAndStartDateTimeAfter(
       UUID opticalStoreId, Instant startDateTime);
+
+  boolean existsByOpticalStoreIdAndStartDateTimeBeforeAndEndDateTimeAfter(
+      UUID opticalStoreId, Instant end, Instant start);
 }

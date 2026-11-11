@@ -43,4 +43,10 @@ public class TimeSlotRepositoryImpl implements TimeSlotRepository {
         .map(timeSlotMapper::toDomain)
         .toList();
   }
+
+  @Override
+  public boolean existsOverlapping(OpticalStoreId opticalStoreId, Instant start, Instant end) {
+    return timeSlotJpaRepository.existsByOpticalStoreIdAndStartDateTimeBeforeAndEndDateTimeAfter(
+        opticalStoreId.value(), end, start);
+  }
 }
