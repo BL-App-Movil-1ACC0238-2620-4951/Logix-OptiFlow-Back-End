@@ -7,10 +7,12 @@ import com.optiflow.platform.searchbooking.domain.model.queries.GetPatientByIdQu
 import com.optiflow.platform.searchbooking.domain.model.queries.SearchPatientsQuery;
 import com.optiflow.platform.searchbooking.domain.model.valueobjects.PatientId;
 import com.optiflow.platform.searchbooking.interfaces.rest.assemblers.FromRegisterPatientRequestAssembler;
+import com.optiflow.platform.searchbooking.interfaces.rest.assemblers.FromUpdatePatientProfileRequestAssembler;
 import com.optiflow.platform.searchbooking.interfaces.rest.assemblers.SearchBookingResponseAssembler;
 import com.optiflow.platform.searchbooking.interfaces.rest.resources.AppointmentResponse;
 import com.optiflow.platform.searchbooking.interfaces.rest.resources.PatientResponse;
 import com.optiflow.platform.searchbooking.interfaces.rest.resources.RegisterPatientRequest;
+import com.optiflow.platform.searchbooking.interfaces.rest.resources.UpdatePatientProfileRequest;
 import com.optiflow.platform.shared.infrastructure.documentation.openapi.configuration.OpenApiTags;
 import com.optiflow.platform.shared.infrastructure.security.AuthenticatedUser;
 import com.optiflow.platform.shared.infrastructure.security.PatientDataAccessGuard;
@@ -27,6 +29,7 @@ import java.util.UUID;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -42,6 +45,7 @@ public class PatientController {
   private final PatientApplicationService patientApplicationService;
   private final AppointmentApplicationService appointmentApplicationService;
   private final FromRegisterPatientRequestAssembler registerAssembler;
+  private final FromUpdatePatientProfileRequestAssembler updateProfileAssembler;
   private final SearchBookingResponseAssembler responseAssembler;
   private final PatientDataAccessGuard patientDataAccessGuard;
 
@@ -49,11 +53,13 @@ public class PatientController {
       PatientApplicationService patientApplicationService,
       AppointmentApplicationService appointmentApplicationService,
       FromRegisterPatientRequestAssembler registerAssembler,
+      FromUpdatePatientProfileRequestAssembler updateProfileAssembler,
       SearchBookingResponseAssembler responseAssembler,
       PatientDataAccessGuard patientDataAccessGuard) {
     this.patientApplicationService = patientApplicationService;
     this.appointmentApplicationService = appointmentApplicationService;
     this.registerAssembler = registerAssembler;
+    this.updateProfileAssembler = updateProfileAssembler;
     this.responseAssembler = responseAssembler;
     this.patientDataAccessGuard = patientDataAccessGuard;
   }
@@ -101,6 +107,25 @@ public class PatientController {
     patientDataAccessGuard.ensureSelfPatientAccess(user, patientId);
     return responseAssembler.toPatientResponse(
         patientApplicationService.get(new GetPatientByIdQuery(PatientId.of(patientId))));
+  }
+
+  @Operation(summary = "Update a patient profile",
+      description = "Changes the name, phone and birth date of the patient. The email and the "
+          + "password do not change. A patient can only update their own profile.")
+  @ApiResponses({
+      @ApiResponse(responseCode = "200", description = "Profile updated."),
+      @ApiResponse(responseCode = "403",
+          description = "A patient tried to update another patient's profile."),
+      @ApiResponse(responseCode = "404", description = "The patient was not found.")
+  })
+  @PatchMapping("/patients/{patientId}")
+  public PatientResponse updateProfile(
+      @PathVariable UUID patientId,
+      @Valid @RequestBody UpdatePatientProfileRequest request,
+      @AuthenticationPrincipal AuthenticatedUser user) {
+    patientDataAccessGuard.ensureSelfPatientAccess(user, patientId);
+    return responseAssembler.toPatientResponse(
+        patientApplicationService.updateProfile(updateProfileAssembler.toCommand(patientId, request)));
   }
 
   @Operation(summary = "List the appointments of a patient",

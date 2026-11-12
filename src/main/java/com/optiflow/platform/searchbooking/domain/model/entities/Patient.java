@@ -11,10 +11,10 @@ import java.util.Optional;
 public class Patient {
 
   private final PatientId id;
-  private final Name name;
+  private Name name;
   private final EmailAddress email;
-  private final PhoneNumber phone;
-  private final LocalDate birthDate;
+  private PhoneNumber phone;
+  private LocalDate birthDate;
   private final Instant createdAt;
 
   private Patient(
@@ -50,6 +50,13 @@ public class Patient {
       LocalDate birthDate,
       Instant createdAt) {
     return new Patient(id, name, email, phone, birthDate, createdAt);
+  }
+
+  /** Changes the contact data of the patient; the email and the password stay the same. */
+  public void updateProfile(Name name, PhoneNumber phone, LocalDate birthDate) {
+    this.name = name;
+    this.phone = phone;
+    this.birthDate = birthDate;
   }
 
   public PatientId id() {

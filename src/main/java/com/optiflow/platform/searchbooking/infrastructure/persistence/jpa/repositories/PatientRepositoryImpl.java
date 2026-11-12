@@ -4,7 +4,9 @@ import com.optiflow.platform.searchbooking.domain.model.entities.Patient;
 import com.optiflow.platform.searchbooking.domain.model.valueobjects.EmailAddress;
 import com.optiflow.platform.searchbooking.domain.model.valueobjects.PatientId;
 import com.optiflow.platform.searchbooking.domain.repositories.PatientRepository;
+import com.optiflow.platform.searchbooking.infrastructure.persistence.jpa.entities.PatientEntity;
 import com.optiflow.platform.searchbooking.infrastructure.persistence.jpa.mappers.PatientMapper;
+import com.optiflow.platform.shared.domain.exceptions.DomainException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Locale;
@@ -26,6 +28,16 @@ public class PatientRepositoryImpl implements PatientRepository {
   @Override
   public void save(Patient patient, String passwordHash) {
     patientJpaRepository.save(patientMapper.toEntity(patient, passwordHash));
+  }
+
+  @Override
+  public void update(Patient patient) {
+    PatientEntity entity = patientJpaRepository.findById(patient.id().value())
+        .orElseThrow(() -> new DomainException("The patient was not found.", 404));
+    entity.setFullName(patient.name().value());
+    entity.setPhone(patient.phone().value());
+    entity.setBirthDate(patient.birthDate().orElse(null));
+    patientJpaRepository.save(entity);
   }
 
   @Override

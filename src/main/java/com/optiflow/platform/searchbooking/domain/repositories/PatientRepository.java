@@ -11,6 +11,9 @@ public interface PatientRepository {
 
   void save(Patient patient, String passwordHash);
 
+  /** Saves the profile changes of an existing patient; keeps the password. */
+  void update(Patient patient);
+
   Optional<Patient> findById(PatientId id);
 
   Optional<Patient> findByEmail(EmailAddress email);
