@@ -540,7 +540,7 @@ class AuthenticationAuthorizationApiTest {
             .content("""
                 {"status":"CANCELLED"}
                 """))
-        .andExpect(status().isForbidden());
+        .andExpect(status().isNotFound());
   }
 
   @Test
@@ -726,6 +726,49 @@ class AuthenticationAuthorizationApiTest {
             .contentType(MediaType.APPLICATION_JSON)
             .content(profile))
         .andExpect(status().isForbidden());
+  }
+
+  @Test
+  void letsSalesAdvisorCancelAnAppointmentButNotTechnician() throws Exception {
+    String adminToken = issueTokenFor("admin@optiflow.test");
+    String advisorToken = registerStaffAndIssueToken(
+        adminToken, "Booking Advisor", "booking.advisor@optiflow.test", "SALES_ADVISOR");
+    String technicianToken = registerStaffAndIssueToken(
+        adminToken, "Booking Tech", "booking.tech@optiflow.test", "TECHNICIAN");
+    registerPatientAndIssueToken("Walk In Patient", "walkin.patient@optiflow.test", "999777666");
+    String patientId = userIdOf("walkin.patient@optiflow.test");
+
+    JsonNode stores = objectMapper.readTree(
+        mockMvc.perform(get(ApiV1.path("/optical-stores")))
+            .andReturn().getResponse().getContentAsString());
+    String storeId = stores.get(stores.size() - 1).get("id").asText();
+    JsonNode slots = objectMapper.readTree(
+        mockMvc.perform(get(ApiV1.path("/optical-stores/" + storeId + "/time-slots")))
+            .andReturn().getResponse().getContentAsString());
+    String timeSlotId = slots.get(slots.size() - 1).get("id").asText();
+
+    String appointmentId = objectMapper.readTree(
+            mockMvc.perform(post(ApiV1.path("/appointments"))
+                    .header(HttpHeaders.AUTHORIZATION, bearer(advisorToken))
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content("""
+                        {"patientId":"%s","opticalStoreId":"%s","timeSlotId":"%s"}
+                        """.formatted(patientId, storeId, timeSlotId)))
+                .andExpect(status().isCreated())
+                .andReturn().getResponse().getContentAsString())
+        .get("id").asText();
+
+    mockMvc.perform(patch(ApiV1.path("/appointments/" + appointmentId + "/status"))
+            .header(HttpHeaders.AUTHORIZATION, bearer(technicianToken))
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{\"status\":\"CANCELLED\"}"))
+        .andExpect(status().isForbidden());
+    mockMvc.perform(patch(ApiV1.path("/appointments/" + appointmentId + "/status"))
+            .header(HttpHeaders.AUTHORIZATION, bearer(advisorToken))
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{\"status\":\"CANCELLED\"}"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.status").value("CANCELLED"));
   }
 
   private String registerStaffAndIssueToken(

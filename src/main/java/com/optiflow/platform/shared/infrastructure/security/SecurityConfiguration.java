@@ -64,6 +64,8 @@ public class SecurityConfiguration {
             .hasAnyRole(OPTOMETRIST, SALES_ADVISOR, ADMIN)
             .requestMatchers(HttpMethod.GET, "/api/v1/appointments/*")
             .hasAnyRole(PATIENT, OPTOMETRIST, SALES_ADVISOR, ADMIN)
+            .requestMatchers(HttpMethod.PATCH, "/api/v1/appointments/*/status")
+            .hasAnyRole(PATIENT, OPTOMETRIST, SALES_ADVISOR, ADMIN)
             .requestMatchers("/api/v1/appointments/**").hasAnyRole(PATIENT, OPTOMETRIST, ADMIN)
             .requestMatchers(HttpMethod.GET, "/api/v1/patients")
             .hasAnyRole(OPTOMETRIST, SALES_ADVISOR, ADMIN)
