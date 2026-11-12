@@ -695,6 +695,39 @@ class AuthenticationAuthorizationApiTest {
         .andExpect(status().isCreated());
   }
 
+  @Test
+  void letsPatientUpdateOnlyTheirOwnProfile() throws Exception {
+    String ownerToken = registerPatientAndIssueToken(
+        "Profile Owner", "profile.owner@optiflow.test", "999555111");
+    registerPatientAndIssueToken("Profile Other", "profile.other@optiflow.test", "999555112");
+    String ownerId = userIdOf("profile.owner@optiflow.test");
+    String otherId = userIdOf("profile.other@optiflow.test");
+    String profile = """
+        {"name":"Profile Owner Updated","phone":"988777666","birthDate":"1995-04-20"}
+        """;
+
+    mockMvc.perform(patch(ApiV1.path("/patients/" + ownerId))
+            .header(HttpHeaders.AUTHORIZATION, bearer(ownerToken))
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(profile))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.name").value("Profile Owner Updated"))
+        .andExpect(jsonPath("$.phone").value("988777666"))
+        .andExpect(jsonPath("$.email").value("profile.owner@optiflow.test"));
+    mockMvc.perform(get(ApiV1.path("/patients/" + ownerId))
+            .header(HttpHeaders.AUTHORIZATION, bearer(ownerToken)))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.name").value("Profile Owner Updated"))
+        .andExpect(jsonPath("$.birthDate").value("1995-04-20"));
+    issueTokenFor("profile.owner@optiflow.test");
+
+    mockMvc.perform(patch(ApiV1.path("/patients/" + otherId))
+            .header(HttpHeaders.AUTHORIZATION, bearer(ownerToken))
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(profile))
+        .andExpect(status().isForbidden());
+  }
+
   private String registerStaffAndIssueToken(
       String adminToken, String name, String email, String role) throws Exception {
     String storeId = objectMapper.readTree(
